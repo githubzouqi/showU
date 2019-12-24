@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <RelativeLayout
+        android:background="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:text="--"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <View
+        android:background="@android:color/darker_gray"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <FrameLayout
+        android:id="@+id/framelayout_container"
+        android:layout_weight="0.90"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+    </FrameLayout>
+
+    <View
+        android:id="@+id/view_tab_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/darker_gray" />
+
+    <LinearLayout
+        android:id="@+id/linear_tab"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="0.10"
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:background="@color/color_select"
+            android:foreground="@drawable/water_foreground"
+            android:clickable="true"
+            android:id="@+id/linear_one"
+            android:orientation="vertical"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:clickable="false"
+                android:id="@+id/iv_one"
+                android:layout_marginTop="2dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/selected_zhui"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:clickable="false"
+                android:id="@+id/tv_one"
+                android:text="@string/str_my_blog"
+                android:textSize="16sp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/color_white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:foreground="@drawable/water_foreground"
+            android:clickable="true"
+            android:id="@+id/linear_two"
+            android:orientation="vertical"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:clickable="false"
+                android:id="@+id/iv_two"
+                android:layout_marginTop="2dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/showu_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:clickable="false"
+                android:id="@+id/tv_two"
+                android:text="@string/str_joker"
+                android:textSize="16sp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/color_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

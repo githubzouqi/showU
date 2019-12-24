@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">奇</string>
+
+    <string name="app_name_pinyin"> Qi</string>
+
+    <!--activity_main-->
+    <string name="str_my_blog">主页</string>
+    <string name="str_joker">开心一刻</string>
+    <string name="str_finder">发现</string>
+    <string name="str_mine">我的</string>
+
+    <!--activity_launch-->
+    <string name="str_text_slogan">和平、爱、尊重 </string>
+    <string name="str_chase_dream">追梦</string>
+    <string name="str_copyright">Copyright © 2019 - xxxx Qi</string>
+
+    <!--toast_view_exit-->
+    <string name="str_exit_app">再按一次退出程序</string>
+
+    <!--fragment_joke-->
+    <string name="str_banner_animation_setting">默认动画样式 - Default</string>
+
+    <!--recyclerview_item_joker-->
+    <string name="str_joker_content">小区门口修车师傅生意特好小区门口修车师傅生意特好</string>
+    <string name="str_joker_update_time">2019-06-06 10:55:02</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

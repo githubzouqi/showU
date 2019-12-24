@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="MissingDefaultResource">
+
+    <View
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linear_item_joker"
+            android:foreground="@drawable/water_foreground"
+            android:clickable="true"
+            android:padding="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:clickable="false"
+                android:gravity="left"
+                android:id="@+id/tv_joker_content"
+                android:padding="2dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:maxEms="12"
+                android:textStyle="bold"
+                android:textColor="@color/color_black"
+                android:textSize="16sp"
+                android:text="@string/str_joker_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:clickable="false"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_joker_update_time"
+                android:padding="2dp"
+                android:textColor="@android:color/darker_gray"
+                android:gravity="left"
+                android:textSize="14sp"
+                android:text="@string/str_joker_update_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_joker"
+            android:layout_weight="0.3"
+            android:src="@drawable/xiaoyu"
+            android:layout_width="0dp"
+            android:layout_height="100dp" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
