@@ -37,6 +37,8 @@ import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.adapter.JokerCollectionAdapter;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.entity.JokerCollectionEntity;
+import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.ProgressDialogUtil;
 import com.mushiny.www.showU.util.ScreenUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.youth.banner.Banner;
@@ -52,6 +54,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import in.srain.cube.views.ptr.PtrClassicDefaultFooter;
+import in.srain.cube.views.ptr.PtrDefaultHandler2;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.header.MaterialHeader;
+import in.srain.cube.views.ptr.util.PtrLocalDisplay;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -69,6 +76,7 @@ public class JokeFragment extends BaseFragment {
     @BindView(R.id.tv_get_joker)TextView tv_get_joker;
     @BindView(R.id.recycle_view_joker)RecyclerView recycle_view_joker;
     @BindView(R.id.linear_joker_root)LinearLayout linear_joker_root;
+    @BindView(R.id.ptr_frame_joker)PtrFrameLayout ptr_frame_joker;// 支持上拉加载，下拉刷新
 
     private static final int WHAT_GET_JOKER = 0x10;
 
@@ -80,13 +88,16 @@ public class JokeFragment extends BaseFragment {
     private int checkedItem = -1;
 
     private String BASE_URL_JUHE = "http://v.juhe.cn/";
-    private int PAGE = 1;
+    private int PAGE_CURRENT = 1;
+    private int PAGE_MAX = 20;
     private List<JokerCollectionEntity.ResultBean.DataBean> dataBeans = new ArrayList<>();
     private JokerCollectionAdapter adapter = null;
 
     private PopupWindow pop_window_joker = null;
     private View pop_view_joker = null;
     private int deviceH;
+
+    private ProgressDialogUtil progressDialogUtil;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -95,6 +106,11 @@ public class JokeFragment extends BaseFragment {
             switch (msg.what){
                 case WHAT_GET_JOKER:// 获取最新笑话
                     if (dataBeans != null && dataBeans.size() != 0){
+                        if (adapter != null){
+                            adapter.notifyDataSetChanged();
+                            return;
+                        }
+
                         if (adapter == null){
                             adapter = new JokerCollectionAdapter(getContext(), dataBeans);
 
@@ -106,11 +122,14 @@ public class JokeFragment extends BaseFragment {
                                 }
                             });
                         }
+
+
                         recycle_view_joker.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
                         recycle_view_joker.setAdapter(adapter);
                         recycle_view_joker.setItemAnimator(new DefaultItemAnimator());
                         recycle_view_joker.setVisibility(View.VISIBLE);
                         tv_get_joker.setVisibility(View.GONE);
+                        ptr_frame_joker.setMode(PtrFrameLayout.Mode.BOTH);
                     }
                     break;
             }
@@ -210,6 +229,8 @@ public class JokeFragment extends BaseFragment {
      */
     private void getJoker() {
 
+        progressDialogUtil.show();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_JUHE)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -220,30 +241,47 @@ public class JokeFragment extends BaseFragment {
 
         Map<String, Object> params = new HashMap<>();
         params.put("key", Constants.JUHE_JOKE_APP_KEY);
-        params.put("page", PAGE);// 默认1，最大20。超过20 则显示第20页的笑话
+        params.put("page", PAGE_CURRENT);// 默认1，最大20。超过20 则显示第20页的笑话
 //        params.put("pagesize", 2);// 默认是一页返回20条笑话
         Call<JokerCollectionEntity> call = networkInterface.getLatestJoker(params);
 
         call.enqueue(new Callback<JokerCollectionEntity>() {
             @Override
             public void onResponse(Call<JokerCollectionEntity> call, Response<JokerCollectionEntity> response) {
+                progressDialogUtil.dismiss();
                 try {
                     JokerCollectionEntity jokerCollectionEntity = response.body();
                     int error_code = jokerCollectionEntity.getError_code();
                     if (error_code == 0){
-                        if (dataBeans != null && dataBeans.size() == 0){
-                            dataBeans = jokerCollectionEntity.getResult().getData();
+
+                        if (PAGE_CURRENT == 1){
+                            ToastUtil.showToast(getContext(), "刷新成功");
+                        }else{
+                            ToastUtil.showToast(getContext(), "加载成功");
+                        }
+
+                        if (dataBeans != null){
+                            if (PAGE_CURRENT == 1){
+                                dataBeans.clear();
+                            }
+                            getMore(jokerCollectionEntity.getResult().getData());
                             Message message = handler.obtainMessage();
                             message.what = WHAT_GET_JOKER;
                             handler.sendMessage(message);
                         }
 
                     }else {
+                        if (PAGE_CURRENT > 1){
+                            PAGE_CURRENT -= 1;
+                        }
                         String reason = jokerCollectionEntity.getReason();
                         tv_get_joker.setText(reason);
                         tv_get_joker.setVisibility(View.VISIBLE);
                     }
                 }catch (Exception e){
+                    if (PAGE_CURRENT > 1){
+                        PAGE_CURRENT -= 1;
+                    }
                     e.printStackTrace();
                     tv_get_joker.setText("获取异常：" + e.getMessage());
                     tv_get_joker.setVisibility(View.VISIBLE);
@@ -254,6 +292,10 @@ public class JokeFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<JokerCollectionEntity> call, Throwable t) {
+                if (PAGE_CURRENT > 1){
+                    PAGE_CURRENT -= 1;
+                }
+                progressDialogUtil.dismiss();
                 tv_get_joker.setText("获取失败。请尝试重新获取");
                 tv_get_joker.setVisibility(View.VISIBLE);
             }
@@ -261,16 +303,27 @@ public class JokeFragment extends BaseFragment {
 
     }
 
+    private void getMore(List<JokerCollectionEntity.ResultBean.DataBean> data) {
+
+        int size = data.size();
+        for (int i = 0;i < size;i++){
+            dataBeans.add(data.get(i));
+        }
+
+    }
+
     private void initData() {
+
+        progressDialogUtil = new ProgressDialogUtil(getContext());
 
         images.add(R.drawable.xiaoyu);
         images.add(R.drawable.zha);
         images.add(R.drawable.miao);
         images.add(R.drawable.daju);
         titles.add("小语");
-        titles.add("不是渣男");
-        titles.add("FPP 猛男");
-        titles.add("大橘不胖");
+        titles.add("小俊");
+        titles.add("FPP Macho Man");
+        titles.add("大橘");
 
         // 设置图片加载器
         banner.setImageLoader(new GlideImageLoader());
@@ -308,6 +361,65 @@ public class JokeFragment extends BaseFragment {
 
     private void setListener() {
 
+        setPtrFrame();
+
+    }
+
+    /**
+     * 设置 下拉刷新和上拉加载
+     */
+    private void setPtrFrame() {
+
+        // 头部和底部的阻尼系数
+        ptr_frame_joker.setResistanceHeader(1.7f);
+        ptr_frame_joker.setResistanceFooter(1.7f);
+
+        ptr_frame_joker.setDurationToCloseHeader(2000);
+        ptr_frame_joker.setDurationToCloseFooter(2000);
+        ptr_frame_joker.setDurationToBackHeader(500);
+        ptr_frame_joker.setDurationToBackFooter(500);
+
+        ptr_frame_joker.setPinContent(true);
+        ptr_frame_joker.setPullToRefresh(false);// false 表示手指释放才会刷新，true 表示下拉刷新
+
+        // Materail 风格头部实现
+        MaterialHeader header = new MaterialHeader(getContext());
+        header.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
+        ptr_frame_joker.setHeaderView(header);
+        ptr_frame_joker.addPtrUIHandler(header);
+
+        // 经典底部布局实现
+        PtrClassicDefaultFooter footer = new PtrClassicDefaultFooter(getContext());
+        footer.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
+        ptr_frame_joker.setFooterView(footer);
+        ptr_frame_joker.addPtrUIHandler(footer);
+
+        ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
+
+        ptr_frame_joker.setPtrHandler(new PtrDefaultHandler2() {
+            @Override
+            public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
+
+                PAGE_CURRENT += 1;
+                if (PAGE_CURRENT > PAGE_MAX){
+                    ToastUtil.showToast(getContext(), "数据已经全部加载");
+                    frame.refreshComplete();
+                    return;
+                }
+
+                getJoker();
+
+                frame.refreshComplete();
+            }
+
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
+
+                PAGE_CURRENT = 1;
+                getJoker();
+                frame.refreshComplete();
+            }
+        });
 
     }
 

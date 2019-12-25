@@ -26,6 +26,8 @@
             android:layout_height="1px"/>
 
         <RelativeLayout
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:id="@+id/relative_banner_animation_setting"
             android:clickable="true"
             android:foreground="@drawable/water_foreground"
@@ -65,14 +67,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <android.support.v7.widget.RecyclerView
-            android:visibility="gone"
-            android:id="@+id/recycle_view_joker"
-            android:layout_margin="2dp"
+        <in.srain.cube.views.ptr.PtrFrameLayout
+            android:id="@+id/ptr_frame_joker"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:visibility="gone"
+                android:id="@+id/recycle_view_joker"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </in.srain.cube.views.ptr.PtrFrameLayout>
+
 
     </LinearLayout>
 

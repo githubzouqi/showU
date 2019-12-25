@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        app:mpb_indeterminateTint="@color/color_protect_eye"
+        android:id="@+id/loading_blog"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="30dp"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textStyle="bold"
+        android:id="@+id/tv_progress_message"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/color_protect_eye"
+        android:textSize="18sp"
+        android:text="加载中..."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
