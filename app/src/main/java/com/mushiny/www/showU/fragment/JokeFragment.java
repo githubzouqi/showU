@@ -58,6 +58,7 @@ import in.srain.cube.views.ptr.PtrClassicDefaultFooter;
 import in.srain.cube.views.ptr.PtrDefaultHandler2;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.header.MaterialHeader;
+import in.srain.cube.views.ptr.header.MaterialProgressDrawable;
 import in.srain.cube.views.ptr.util.PtrLocalDisplay;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -99,6 +100,8 @@ public class JokeFragment extends BaseFragment {
 
     private ProgressDialogUtil progressDialogUtil;
 
+    private int position_current = 0;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -118,6 +121,7 @@ public class JokeFragment extends BaseFragment {
                             adapter.setOnItemClick(new MyItemClickInterface() {
                                 @Override
                                 public void OnRecyclerViewItemClick(View itemView, int position) {
+                                    position_current = position;
                                     showJokerPop(dataBeans.get(position).getContent().replaceAll("&nbsp;", ""));
                                 }
                             });
@@ -145,8 +149,60 @@ public class JokeFragment extends BaseFragment {
         deviceH = new ScreenUtil(getContext()).getScreenSize(ScreenUtil.HEIGHT);
         int height = (int) (deviceH * 0.618);
         pop_view_joker = getLayoutInflater().inflate(R.layout.pop_view_joker, null);
-        TextView tv_pop_view_joker = pop_view_joker.findViewById(R.id.tv_pop_view_joker);
+        final TextView tv_pop_view_joker = pop_view_joker.findViewById(R.id.tv_pop_view_joker);
         tv_pop_view_joker.setText(joker_content);
+
+        final TextView tv_prev = pop_view_joker.findViewById(R.id.tv_prev);
+        final TextView tv_next = pop_view_joker.findViewById(R.id.tv_next);
+        if (position_current == 0){
+            tv_prev.setVisibility(View.GONE);
+            tv_next.setVisibility(View.VISIBLE);
+        }
+        if (position_current == dataBeans.size() - 1){
+            tv_prev.setVisibility(View.VISIBLE);
+            tv_next.setVisibility(View.GONE);
+        }
+
+        // 前一个 单击监听
+        tv_prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position_current -= 1;
+                if (position_current == 0){
+                    tv_prev.setVisibility(View.GONE);
+                    tv_next.setVisibility(View.VISIBLE);
+                }
+
+                if (position_current > 0 && position_current < dataBeans.size() - 1){
+                    tv_prev.setVisibility(View.VISIBLE);
+                    tv_next.setVisibility(View.VISIBLE);
+                }
+
+                String prev_content = dataBeans.get(position_current).getContent().replaceAll("&nbsp;", "");
+                tv_pop_view_joker.setText(prev_content);
+            }
+        });
+
+        // 下一个 单击监听
+        tv_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position_current += 1;
+                if (position_current == dataBeans.size() - 1){
+                    tv_prev.setVisibility(View.VISIBLE);
+                    tv_next.setVisibility(View.GONE);
+                }
+
+                if (position_current > 0 && position_current < dataBeans.size() - 1){
+                    tv_prev.setVisibility(View.VISIBLE);
+                    tv_next.setVisibility(View.VISIBLE);
+                }
+
+                String next_content = dataBeans.get(position_current).getContent().replaceAll("&nbsp;", "");
+                tv_pop_view_joker.setText(next_content);
+            }
+        });
+
         pop_window_joker = new PopupWindow(pop_view_joker, ViewGroup.LayoutParams.MATCH_PARENT, height);
         pop_window_joker.setAnimationStyle(R.style.pop_anim);
         pop_window_joker.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
@@ -359,6 +415,7 @@ public class JokeFragment extends BaseFragment {
 
     }
 
+    // 设置监听
     private void setListener() {
 
         setPtrFrame();
@@ -384,6 +441,13 @@ public class JokeFragment extends BaseFragment {
 
         // Materail 风格头部实现
         MaterialHeader header = new MaterialHeader(getContext());
+        // 设置下拉刷新头部view的颜色
+        header.setColorSchemeColors(new int[]{
+//                0xFFC93437,
+//                0xFF375BF1,
+//                0xFFF7D23E,
+                0xFF34A350
+        });
         header.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
         ptr_frame_joker.setHeaderView(header);
         ptr_frame_joker.addPtrUIHandler(header);

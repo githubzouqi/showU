@@ -10,4 +10,6 @@
     <color name="color_select">#e6e6e6</color>
     <color name="color_white">#ffffff</color>
     <color name="color_protect_eye">#c7edcc</color>
+
+    <color name="color_test">#34A350</color>
 </resources>
