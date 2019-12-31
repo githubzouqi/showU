@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.fragment.BlogFragment;
+import com.mushiny.www.showU.fragment.DiscoveryFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
+import com.mushiny.www.showU.fragment.MineFragment;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import butterknife.BindView;
@@ -40,10 +42,16 @@ public class MainActivity extends BaseActivity {
     // 底部选项控件
     @BindView(R.id.linear_one)LinearLayout linear_one;
     @BindView(R.id.linear_two)LinearLayout linear_two;
+    @BindView(R.id.linear_three)LinearLayout linear_three;
+    @BindView(R.id.linear_four)LinearLayout linear_four;
     @BindView(R.id.iv_one)ImageView iv_one;
     @BindView(R.id.iv_two)ImageView iv_two;
+    @BindView(R.id.iv_three)ImageView iv_three;
+    @BindView(R.id.iv_four)ImageView iv_four;
     @BindView(R.id.tv_one)TextView tv_one;
     @BindView(R.id.tv_two)TextView tv_two;
+    @BindView(R.id.tv_three)TextView tv_three;
+    @BindView(R.id.tv_four)TextView tv_four;
 
     private BlogFragment blogFragment;
     private JokeFragment jokeFragment;
@@ -131,7 +139,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 控件的点击事件（这里也就是tab的点击事件）
      */
-    @OnClick({R.id.linear_one, R.id.linear_two})
+    @OnClick({R.id.linear_one, R.id.linear_two, R.id.linear_three, R.id.linear_four})
     public void doClick(View view){
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -174,6 +182,22 @@ public class MainActivity extends BaseActivity {
                 show(BlogFragment.newInstance(), tag_blogF, transaction);
 
                 break;
+            case R.id.linear_three:// 发现
+
+                setTabStyle(linear_three, iv_three, tv_three);
+                setHeadTitle(TITLE_THREE);
+                show(DiscoveryFragment.newInstance(), tag_discovery, transaction);
+
+                break;
+
+            case R.id.linear_four:// 发现
+
+                setTabStyle(linear_four, iv_four, tv_four);
+                setHeadTitle(TITLE_FOUR);
+                show(MineFragment.newInstance(), tag_mine, transaction);
+
+                break;
+
         }
     }
 
@@ -227,6 +251,8 @@ public class MainActivity extends BaseActivity {
 
         setStyle(linear_one, iv_one, tv_one);
         setStyle(linear_two, iv_two, tv_two);
+        setStyle(linear_three, iv_three, tv_three);
+        setStyle(linear_four, iv_four, tv_four);
 
     }
 

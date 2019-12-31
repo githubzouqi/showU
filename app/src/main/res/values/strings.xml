@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">奇</string>
 
-    <string name="app_name_pinyin"> Qi</string>
+    <string name="app_name_pinyin">Qi</string>
 
     <!--activity_main-->
     <string name="str_my_blog">主页</string>
@@ -10,7 +10,7 @@
     <string name="str_mine">我的</string>
 
     <!--activity_launch-->
-    <string name="str_text_slogan">和平、爱、尊重 </string>
+    <string name="str_text_slogan">和平 爱 尊重 </string>
     <string name="str_chase_dream">追梦</string>
     <string name="str_copyright">Copyright © 2019 - xxxx Qi</string>
 

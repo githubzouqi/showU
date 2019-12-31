@@ -72,6 +72,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class JokeFragment extends BaseFragment {
 
+
     @BindView(R.id.banner)Banner banner;// 轮播控件
     @BindView(R.id.tv_banner_animation_setting)TextView tv_banner_animation_setting;
     @BindView(R.id.tv_get_joker)TextView tv_get_joker;
@@ -80,6 +81,7 @@ public class JokeFragment extends BaseFragment {
     @BindView(R.id.ptr_frame_joker)PtrFrameLayout ptr_frame_joker;// 支持上拉加载，下拉刷新
 
     private static final int WHAT_GET_JOKER = 0x10;
+    private static final int WHAT_AUTO_RELOAD = 0x11;
 
     private List<Integer> images = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
@@ -88,7 +90,6 @@ public class JokeFragment extends BaseFragment {
     private CharSequence items[];
     private int checkedItem = -1;
 
-    private String BASE_URL_JUHE = "http://v.juhe.cn/";
     private int PAGE_CURRENT = 1;
     private int PAGE_MAX = 20;
     private List<JokerCollectionEntity.ResultBean.DataBean> dataBeans = new ArrayList<>();
@@ -109,6 +110,8 @@ public class JokeFragment extends BaseFragment {
             switch (msg.what){
                 case WHAT_GET_JOKER:// 获取最新笑话
                     if (dataBeans != null && dataBeans.size() != 0){
+                        tv_get_joker.setVisibility(View.GONE);
+
                         if (adapter != null){
                             adapter.notifyDataSetChanged();
                             return;
@@ -132,9 +135,12 @@ public class JokeFragment extends BaseFragment {
                         recycle_view_joker.setAdapter(adapter);
                         recycle_view_joker.setItemAnimator(new DefaultItemAnimator());
                         recycle_view_joker.setVisibility(View.VISIBLE);
-                        tv_get_joker.setVisibility(View.GONE);
                         ptr_frame_joker.setMode(PtrFrameLayout.Mode.BOTH);
                     }
+                    break;
+
+                case WHAT_AUTO_RELOAD:// 自动加载数据
+                    getJoker();
                     break;
             }
         }
@@ -288,7 +294,7 @@ public class JokeFragment extends BaseFragment {
         progressDialogUtil.show();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL_JUHE)
+                .baseUrl(Constants.V_JUHE_CN)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -311,7 +317,7 @@ public class JokeFragment extends BaseFragment {
                     if (error_code == 0){
 
                         if (PAGE_CURRENT == 1){
-                            ToastUtil.showToast(getContext(), "刷新成功");
+                            ToastUtil.showToast(getContext(), "成功");
                         }else{
                             ToastUtil.showToast(getContext(), "加载成功");
                         }
@@ -377,7 +383,7 @@ public class JokeFragment extends BaseFragment {
         images.add(R.drawable.miao);
         images.add(R.drawable.daju);
         titles.add("小语");
-        titles.add("小俊");
+        titles.add("handsome one");
         titles.add("FPP Macho Man");
         titles.add("大橘");
 
@@ -419,6 +425,8 @@ public class JokeFragment extends BaseFragment {
     private void setListener() {
 
         setPtrFrame();
+
+        handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 500);
 
     }
 
