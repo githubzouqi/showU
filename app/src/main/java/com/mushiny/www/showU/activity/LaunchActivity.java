@@ -68,7 +68,7 @@ public class LaunchActivity extends Activity {
         if (currentYear == 2019){
             copyright = "Copyright © " + currentYear + " " + getResources().getString(R.string.app_name_pinyin);
         }else {
-            copyright = "Copyright © 2009 - " + currentYear + " " + getResources().getString(R.string.app_name_pinyin);
+            copyright = "Copyright © 2019 - " + currentYear + " " + getResources().getString(R.string.app_name_pinyin);
         }
         tv_text_bottom.setText(copyright);
 

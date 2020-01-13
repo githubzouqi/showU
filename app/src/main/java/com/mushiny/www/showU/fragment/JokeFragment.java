@@ -242,6 +242,7 @@ public class JokeFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_joke, container, false);
 
+        LogUtil.e("TAG","joker,onCreateView," + System.currentTimeMillis() );
         ButterKnife.bind(this, view);
 
         initData();

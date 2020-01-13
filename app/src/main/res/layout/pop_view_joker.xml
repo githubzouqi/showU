@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/color_white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
+        android:visibility="gone"
         android:scaleType="fitXY"
         android:src="@drawable/xiaoyu"
         android:layout_width="match_parent"
@@ -15,7 +17,7 @@
 
         <TextView
             android:layout_margin="10dp"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:padding="10dp"
             android:text="this is joker content"
             android:textStyle="bold"
@@ -37,10 +39,10 @@
         <TextView
             android:id="@+id/tv_prev"
             android:foreground="@drawable/water_foreground"
-            android:textColor="@color/color_white"
+            android:textColor="@color/color_black"
             android:padding="10dp"
             android:background="@drawable/circle_bg_shape"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:gravity="center"
             android:text="Prev"
             android:textStyle="bold"
@@ -51,11 +53,11 @@
         <TextView
             android:id="@+id/tv_next"
             android:foreground="@drawable/water_foreground"
-            android:textColor="@color/color_white"
+            android:textColor="@color/color_black"
             android:layout_marginTop="10dp"
             android:background="@drawable/circle_bg_shape"
             android:padding="10dp"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:text="Next"
             android:gravity="center"
             android:textStyle="bold"

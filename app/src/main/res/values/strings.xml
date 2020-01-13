@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">奇</string>
+    <string name="app_name">思与想</string>
 
-    <string name="app_name_pinyin">Qi</string>
+    <string name="app_name_pinyin">Thinking</string>
 
     <!--activity_main-->
-    <string name="str_my_blog">主页</string>
-    <string name="str_joker">开心一刻</string>
-    <string name="str_finder">发现</string>
-    <string name="str_mine">我的</string>
+    <string name="str_my_blog">Home</string>
+    <string name="str_joker">Smile</string>
+    <string name="str_finder">Discovery</string>
+    <string name="str_mine">Mine</string>
 
     <!--activity_launch-->
     <string name="str_text_slogan">和平 爱 尊重 </string>

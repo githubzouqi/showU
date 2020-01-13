@@ -32,10 +32,10 @@ import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TITLE_ONE = "主页";
-    private static final String TITLE_TWO = "开心一刻";
-    private static final String TITLE_THREE = "发现";
-    private static final String TITLE_FOUR = "我的";
+    private static final String TITLE_ONE = "Home";
+    private static final String TITLE_TWO = "Smile";
+    private static final String TITLE_THREE = "Discovery";
+    private static final String TITLE_FOUR = "Mine";
     private static final long TIME_INTERVAL = 2000;// 点击两次返回生效的间隔时间
     @BindView(R.id.tv_title)TextView tv_title;
 
@@ -133,6 +133,8 @@ public class MainActivity extends BaseActivity {
         // tag变量初始化
         tag_blogF = BlogFragment.class.getSimpleName();
         tag_jokeF = JokeFragment.class.getSimpleName();
+        tag_discovery = DiscoveryFragment.class.getSimpleName();
+        tag_mine = MineFragment.class.getSimpleName();
 
     }
 
@@ -190,7 +192,7 @@ public class MainActivity extends BaseActivity {
 
                 break;
 
-            case R.id.linear_four:// 发现
+            case R.id.linear_four:// 我的
 
                 setTabStyle(linear_four, iv_four, tv_four);
                 setHeadTitle(TITLE_FOUR);
