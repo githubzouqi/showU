@@ -3,9 +3,9 @@ package com.mushiny.www.showU.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +20,6 @@ import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.entity.NewsEntity;
 import com.mushiny.www.showU.interfaces.MyItemClickInterface;
 import com.mushiny.www.showU.interfaces.NetworkInterface;
-import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ProgressDialogUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
@@ -97,13 +96,21 @@ public class DiscoveryFragment extends BaseFragment {
 //                        return;
 //                    }
 
+
                     adapter = new NewsAdapter(getContext(), dataBeans);
 
                     adapter.setOnItemClick(new MyItemClickInterface() {
                         @Override
                         public void OnRecyclerViewItemClick(View itemView, int position) {
                             // 点击进入新闻链接页面
+                            NewsDetailFragment newsDetailFragment = NewsDetailFragment.newInstance();
 
+                            // 跳转携带数据
+                            Bundle bundle = new Bundle();
+                            bundle.putString(NewsDetailFragment.KEY_URL, dataBeans.get(position).getUrl());
+                            newsDetailFragment.setArguments(bundle);
+
+                            showFragment(getActivity(), DiscoveryFragment.this, newsDetailFragment, NewsDetailFragment.TAG);
                         }
                     });
 
@@ -192,7 +199,7 @@ public class DiscoveryFragment extends BaseFragment {
             public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
 //                getNews(CURRENT_TYPE);
 //                ToastUtil.showToast(getContext(), "type = " + CURRENT_TYPE);
-                frame.refreshComplete();
+//                frame.refreshComplete();
             }
         });
 
@@ -214,7 +221,6 @@ public class DiscoveryFragment extends BaseFragment {
     private void getNews(String type) {
 
         progressDialogUtil.show();
-        CURRENT_TYPE = type;
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.V_JUHE_CN)
@@ -240,6 +246,8 @@ public class DiscoveryFragment extends BaseFragment {
                     String reason = newsEntity.getReason();
 
                     if (error_code != 0){
+                        // 异常情况，如超出每日限制数
+                        ptr_frame_news.refreshComplete();
                         ToastUtil.showToast(getContext(), reason);
                         return;
                     }else {
@@ -286,61 +294,61 @@ public class DiscoveryFragment extends BaseFragment {
         switch (view.getId()){
             case R.id.btn_headline:// 头条
 
-                setSelectedStyle(btn_headline);
+                setSelectedStyle(btn_headline, TYPE_HEADLINE);
                 getNews(TYPE_HEADLINE);
 
                 break;
             case R.id.btn_social:// 社会
 
-                setSelectedStyle(btn_social);
+                setSelectedStyle(btn_social, TYPE_SOCIAL);
                 getNews(TYPE_SOCIAL);
 
                 break;
             case R.id.btn_domestic:// 国内
 
-                setSelectedStyle(btn_domestic);
+                setSelectedStyle(btn_domestic, TYPE_DOMESTIC);
                 getNews(TYPE_DOMESTIC);
 
                 break;
             case R.id.btn_international:// 国际
 
-                setSelectedStyle(btn_international);
+                setSelectedStyle(btn_international, TYPE_INTERNATIONAL);
                 getNews(TYPE_INTERNATIONAL);
 
                 break;
             case R.id.btn_entertainment:// 娱乐
 
-                setSelectedStyle(btn_entertainment);
+                setSelectedStyle(btn_entertainment, TYPE_ENTERTAINMENT);
                 getNews(TYPE_ENTERTAINMENT);
 
                 break;
             case R.id.btn_sports:// 体育
 
-                setSelectedStyle(btn_sports);
+                setSelectedStyle(btn_sports, TYPE_SPORTS);
                 getNews(TYPE_SPORTS);
 
                 break;
             case R.id.btn_military:// 军事
 
-                setSelectedStyle(btn_military);
+                setSelectedStyle(btn_military, TYPE_MILITARY);
                 getNews(TYPE_MILITARY);
 
                 break;
             case R.id.btn_technology:// 科技
 
-                setSelectedStyle(btn_technology);
+                setSelectedStyle(btn_technology, TYPE_TECHNOLOGY);
                 getNews(TYPE_TECHNOLOGY);
 
                 break;
             case R.id.btn_finance:// 财经
 
-                setSelectedStyle(btn_finance);
+                setSelectedStyle(btn_finance, TYPE_FINANCE);
                 getNews(TYPE_FINANCE);
 
                 break;
             case R.id.btn_fashion:// 时尚
 
-                setSelectedStyle(btn_fashion);
+                setSelectedStyle(btn_fashion, TYPE_FASHION);
                 getNews(TYPE_FASHION);
 
                 break;
@@ -351,9 +359,7 @@ public class DiscoveryFragment extends BaseFragment {
      * 选项选中 设置右侧选项样式
      * @param selected_button
      */
-    private void setSelectedStyle(Button selected_button) {
-
-        ptr_frame_news.autoRefresh();// 显示框架的下拉刷新样式，优化用户体验
+    private void setSelectedStyle(Button selected_button, String type) {
 
         defaultButtonStyle(btn_headline);
         defaultButtonStyle(btn_domestic);
@@ -368,6 +374,9 @@ public class DiscoveryFragment extends BaseFragment {
 
         selected_button.setBackgroundColor(getResources().getColor(R.color.color_white));
         selected_button.setTextColor(getResources().getColor(R.color.color_news_tab));
+
+        CURRENT_TYPE = type;
+        ptr_frame_news.autoRefresh();// 显示框架的下拉刷新样式，优化用户体验
 
     }
 

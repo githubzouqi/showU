@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.mushiny.www.showU.R;
@@ -54,12 +55,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
         if (options == null){
             options = new RequestOptions();
             options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
             options.override(WIDTH,HEIGHT);// 指定加载图片大小
+            options.diskCacheStrategy(DiskCacheStrategy.ALL);// 缓存所有：原型、转换后的
+            options.centerInside();
 //        options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
         }
@@ -94,17 +97,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
 
         if (!TextUtils.isEmpty(pic_s1)){
             holder.iv_s01.setVisibility(View.VISIBLE);
-            Glide.with(context).load(pic_s1).apply(options).into(holder.iv_s01);
+            Glide.with(context.getApplicationContext()).load(pic_s1).apply(options).into(holder.iv_s01);
         }
 
         if (!TextUtils.isEmpty(pic_s2)){
             holder.iv_s02.setVisibility(View.VISIBLE);
-            Glide.with(context).load(pic_s2).apply(options).into(holder.iv_s02);
+            Glide.with(context.getApplicationContext()).load(pic_s2).apply(options).into(holder.iv_s02);
         }
 
         if (!TextUtils.isEmpty(pic_s3)){
             holder.iv_s03.setVisibility(View.VISIBLE);
-            Glide.with(context).load(pic_s3).apply(options).into(holder.iv_s03);
+            Glide.with(context.getApplicationContext()).load(pic_s3).apply(options).into(holder.iv_s03);
         }
 
     }

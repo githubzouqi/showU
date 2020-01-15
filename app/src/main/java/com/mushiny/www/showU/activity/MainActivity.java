@@ -20,6 +20,7 @@ import com.mushiny.www.showU.fragment.BlogFragment;
 import com.mushiny.www.showU.fragment.DiscoveryFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
+import com.mushiny.www.showU.fragment.NewsDetailFragment;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import butterknife.BindView;
@@ -58,7 +59,7 @@ public class MainActivity extends BaseActivity {
 
     private Fragment fragment;
     private Fragment mCurrentFragment = null;// 记录保存当前显示的 fragment
-    private FragmentManager manager = getSupportFragmentManager();
+//    private FragmentManager manager = getSupportFragmentManager();
 
     // fragment的tag变量
     private String tag_blogF;
@@ -280,8 +281,16 @@ public class MainActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK){
-            if (manager.getBackStackEntryCount() != 0){
-                manager.popBackStack();
+            if (getBackStackEntryCount() != 0){
+//                if (mCurrentFragment instanceof DiscoveryFragment
+//                        && findFragmentByTag(NewsDetailFragment.class.getSimpleName()) != null
+//                        && (((NewsDetailFragment)findFragmentByTag(NewsDetailFragment.TAG)).canBack()) ){
+//
+//                }else {
+//                    popBack();
+//                }
+
+                popBack();
             }else {
 
                 if ((mCurrentFragment instanceof BlogFragment) && findFragmentByTag(tag_blogF) != null && !((BlogFragment)findFragmentByTag(tag_blogF)).canBack()){

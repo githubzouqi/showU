@@ -69,4 +69,11 @@ public class BaseActivity extends FragmentActivity {
     public int getBackStackEntryCount(){
         return getSupportFragmentManager().getBackStackEntryCount();
     }
+
+    /**
+     * 返回栈中的实例出栈
+     */
+    public void popBack(){
+        getSupportFragmentManager().popBackStack();
+    }
 }
