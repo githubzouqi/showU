@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,10 +34,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TITLE_ONE = "Home";
-    private static final String TITLE_TWO = "Smile";
-    private static final String TITLE_THREE = "Discovery";
-    private static final String TITLE_FOUR = "Mine";
     private static final long TIME_INTERVAL = 2000;// 点击两次返回生效的间隔时间
     @BindView(R.id.tv_title)TextView tv_title;
 
@@ -53,6 +50,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tv_two)TextView tv_two;
     @BindView(R.id.tv_three)TextView tv_three;
     @BindView(R.id.tv_four)TextView tv_four;
+
+    @BindView(R.id.linear_tab)LinearLayout linear_tab;
 
     private BlogFragment blogFragment;
     private JokeFragment jokeFragment;
@@ -78,22 +77,22 @@ public class MainActivity extends BaseActivity {
 
         initData();
 
-//        if (blogFragment == null){
-//            setHeadTitle(TITLE_ONE);
-//            blogFragment = BlogFragment.newInstance();
-//            // 加载根 fragment，第一次进入应用显示的界面
-//            loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
-//            mCurrentFragment = blogFragment;
-//        }
-
-        if (jokeFragment == null){
-            setHeadTitle(TITLE_TWO);
-            jokeFragment = JokeFragment.newInstance();
+        if (blogFragment == null){
+            setHeadTitle(getResources().getString(R.string.str_my_blog));
+            blogFragment = BlogFragment.newInstance();
             // 加载根 fragment，第一次进入应用显示的界面
-            loadRootFragment(R.id.framelayout_container, jokeFragment, tag_jokeF);
-            mCurrentFragment = jokeFragment;
-            setTabStyle(linear_two,iv_two,tv_two);
+            loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
+            mCurrentFragment = blogFragment;
         }
+
+//        if (jokeFragment == null){
+//            setHeadTitle(TITLE_TWO);
+//            jokeFragment = JokeFragment.newInstance();
+//            // 加载根 fragment，第一次进入应用显示的界面
+//            loadRootFragment(R.id.framelayout_container, jokeFragment, tag_jokeF);
+//            mCurrentFragment = jokeFragment;
+//            setTabStyle(linear_two,iv_two,tv_two);
+//        }
 
 
 
@@ -148,39 +147,19 @@ public class MainActivity extends BaseActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         switch (view.getId()){
-            case R.id.linear_two:// 笑话
+            case R.id.linear_two:// 欢笑，开心的小段落
 
                 setTabStyle(linear_two,iv_two,tv_two);
 
-                setHeadTitle(TITLE_TWO);
+                setHeadTitle(getResources().getString(R.string.str_joker));
 
-                /*
-                if (findFragmentByTag(tag_jokeF) == null){
-                    hideAllFragment(transaction);
-                    jokeFragment = JokeFragment.newInstance();
-                    // activity 添加还没有添加的 fragment
-                    transaction.add(R.id.framelayout_container, jokeFragment, tag_jokeF).commitAllowingStateLoss();
-                    mCurrentFragment = jokeFragment;
-                    return;
-                } else {
-                    // 通过添加fragment时设置的tag标记来获取已经添加过的fragment实例
-                    jokeFragment = (JokeFragment) findFragmentByTag(tag_jokeF);
-                }
-
-                // 隐藏所有fragment
-                hideAllFragment(transaction);
-                // 显示
-                transaction.show(jokeFragment).commitAllowingStateLoss();
-
-                mCurrentFragment = jokeFragment;
-                */
                 show(JokeFragment.newInstance(), tag_jokeF, transaction);
                 break;
             case R.id.linear_one:// 主页 博客
 
                 setTabStyle(linear_one,iv_one,tv_one);
 
-                setHeadTitle(TITLE_ONE);
+                setHeadTitle(getResources().getString(R.string.str_my_blog));
 
                 show(BlogFragment.newInstance(), tag_blogF, transaction);
 
@@ -188,7 +167,7 @@ public class MainActivity extends BaseActivity {
             case R.id.linear_three:// 发现
 
                 setTabStyle(linear_three, iv_three, tv_three);
-                setHeadTitle(TITLE_THREE);
+                setHeadTitle(getResources().getString(R.string.str_finder));
                 show(DiscoveryFragment.newInstance(), tag_discovery, transaction);
 
                 break;
@@ -196,7 +175,7 @@ public class MainActivity extends BaseActivity {
             case R.id.linear_four:// 我的
 
                 setTabStyle(linear_four, iv_four, tv_four);
-                setHeadTitle(TITLE_FOUR);
+                setHeadTitle(getResources().getString(R.string.str_mine));
                 show(MineFragment.newInstance(), tag_mine, transaction);
 
                 break;
@@ -277,10 +256,25 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    // 隐藏底部选项栏
+    public void goneTab(){
+        linear_tab.setVisibility(View.GONE);
+    }
+
+    // 显示底部选项栏
+    public void visibleTab(){
+        linear_tab.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK){
+
+            if (getBackStackEntryCount() == 1){
+                visibleTab();
+            }
+
             if (getBackStackEntryCount() != 0){
 //                if (mCurrentFragment instanceof DiscoveryFragment
 //                        && findFragmentByTag(NewsDetailFragment.class.getSimpleName()) != null
@@ -292,6 +286,7 @@ public class MainActivity extends BaseActivity {
 
                 popBack();
             }else {
+
 
                 if ((mCurrentFragment instanceof BlogFragment) && findFragmentByTag(tag_blogF) != null && !((BlogFragment)findFragmentByTag(tag_blogF)).canBack()){
                     exitApp(TIME_INTERVAL);

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.util.ToastUtil;
 
 /**
@@ -58,5 +59,8 @@ public class BaseFragment extends Fragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commitAllowingStateLoss();
         }
+
+        // 隐藏底部选项栏
+        ((MainActivity)getActivity()).goneTab();
     }
 }

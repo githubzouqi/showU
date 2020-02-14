@@ -61,9 +61,10 @@
         </LinearLayout>
 
         <ImageView
+            android:scaleType="centerCrop"
             android:id="@+id/iv_joker"
             android:layout_weight="0.3"
-            android:src="@drawable/xiaoyu"
+            android:src="@drawable/xiaoyu_one"
             android:layout_width="0dp"
             android:layout_height="100dp" />
 

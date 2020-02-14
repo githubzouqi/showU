@@ -6,9 +6,126 @@
     tools:context=".fragment.MineFragment">
 
     <LinearLayout
+        android:background="@color/color_bg_gray"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:padding="20dp"
+            android:background="@color/color_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:clickable="true"
+                android:foreground="@drawable/water_foreground"
+                android:id="@+id/iv_my_photo"
+                android:src="@drawable/xiaoyu_one"
+                android:scaleType="centerCrop"
+                android:layout_width="80dp"
+                android:layout_height="80dp" />
+
+            <TextView
+                android:id="@+id/tv_my_name"
+                android:textSize="24sp"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:text="小语(peace love respect)"
+                android:layout_toRightOf="@+id/iv_my_photo"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/color_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textSize="18sp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/iv_my_photo"
+                android:layout_below="@+id/tv_my_name"
+                android:text="破壳日 [2020/01/01]"
+                android:textColor="@android:color/darker_gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
+
+        <View
+            android:layout_marginTop="20dp"
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
+
+        <LinearLayout
+            android:id="@+id/linear_my_weather"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:padding="10dp"
+            android:foreground="@drawable/water_foreground"
+            android:background="@color/color_white"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/showu_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/color_black"
+                android:textSize="18sp"
+                android:text="天气"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
+
+        <LinearLayout
+            android:id="@+id/linear_my_setting"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:padding="10dp"
+            android:foreground="@drawable/water_foreground"
+            android:background="@color/color_white"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/showu_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/color_black"
+                android:textSize="18sp"
+                android:text="设置"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
 
     </LinearLayout>
 

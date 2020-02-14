@@ -4,11 +4,14 @@ import android.app.Application;
 
 import com.tencent.smtt.sdk.QbSdk;
 
+import org.litepal.LitePal;
+
 public class MyApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        LitePal.initialize(this);// 配置 LitePalApplication
         preInitX5WebCore();
     }
 

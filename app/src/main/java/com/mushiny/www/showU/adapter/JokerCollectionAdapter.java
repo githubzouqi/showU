@@ -59,7 +59,7 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
 
         holder.tv_joker_content.setText(dataBeans.get(position).getContent().replaceAll("&nbsp;",""));
         holder.tv_joker_update_time.setText(dataBeans.get(position).getUpdatetime());
-        Glide.with(context).load(R.drawable.xiaoyu).apply(options).into(holder.iv_joker);
+        Glide.with(context).load(R.drawable.xiaoyu_one).apply(options).into(holder.iv_joker);
 
     }
 

@@ -10,8 +10,9 @@
 
     <RelativeLayout
         android:background="@android:color/black"
+        android:layout_weight="0.1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp">
 
         <TextView
             android:id="@+id/tv_title"
@@ -32,158 +33,159 @@
         android:layout_height="1px"/>
 
     <FrameLayout
-        android:id="@+id/framelayout_container"
-        android:layout_weight="0.90"
         android:layout_width="match_parent"
+        android:layout_weight="0.9"
         android:layout_height="0dp">
+
+        <FrameLayout
+            android:id="@+id/framelayout_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+        <LinearLayout
+            android:background="@drawable/edittext_drawable_shape"
+            android:layout_gravity="bottom"
+            android:visibility="visible"
+            android:id="@+id/linear_tab"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:background="@color/color_select"
+                android:foreground="@drawable/water_foreground"
+                android:clickable="true"
+                android:id="@+id/linear_one"
+                android:orientation="vertical"
+                android:layout_weight="0.25"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:clickable="false"
+                    android:id="@+id/iv_one"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/selected_zhui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:clickable="false"
+                    android:id="@+id/tv_one"
+                    android:text="@string/str_my_blog"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/color_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:foreground="@drawable/water_foreground"
+                android:clickable="true"
+                android:id="@+id/linear_two"
+                android:orientation="vertical"
+                android:layout_weight="0.25"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:clickable="false"
+                    android:id="@+id/iv_two"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/showu_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:clickable="false"
+                    android:id="@+id/tv_two"
+                    android:text="@string/str_joker"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/color_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:foreground="@drawable/water_foreground"
+                android:clickable="true"
+                android:id="@+id/linear_three"
+                android:orientation="vertical"
+                android:layout_weight="0.25"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:clickable="false"
+                    android:id="@+id/iv_three"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/showu_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:clickable="false"
+                    android:id="@+id/tv_three"
+                    android:text="@string/str_finder"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/color_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:foreground="@drawable/water_foreground"
+                android:clickable="true"
+                android:id="@+id/linear_four"
+                android:orientation="vertical"
+                android:layout_weight="0.25"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:clickable="false"
+                    android:id="@+id/iv_four"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/showu_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:clickable="false"
+                    android:id="@+id/tv_four"
+                    android:text="@string/str_mine"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/color_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </FrameLayout>
-
-    <View
-        android:id="@+id/view_tab_line"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/darker_gray" />
-
-    <LinearLayout
-        android:id="@+id/linear_tab"
-        android:weightSum="1"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_weight="0.10"
-        android:layout_height="0dp">
-
-        <LinearLayout
-            android:background="@color/color_select"
-            android:foreground="@drawable/water_foreground"
-            android:clickable="true"
-            android:id="@+id/linear_one"
-            android:orientation="vertical"
-            android:layout_weight="0.25"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:clickable="false"
-                android:id="@+id/iv_one"
-                android:layout_marginTop="2dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@mipmap/selected_zhui"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
-
-            <TextView
-                android:clickable="false"
-                android:id="@+id/tv_one"
-                android:text="@string/str_my_blog"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:foreground="@drawable/water_foreground"
-            android:clickable="true"
-            android:id="@+id/linear_two"
-            android:orientation="vertical"
-            android:layout_weight="0.25"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:clickable="false"
-                android:id="@+id/iv_two"
-                android:layout_marginTop="2dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
-
-            <TextView
-                android:clickable="false"
-                android:id="@+id/tv_two"
-                android:text="@string/str_joker"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:foreground="@drawable/water_foreground"
-            android:clickable="true"
-            android:id="@+id/linear_three"
-            android:orientation="vertical"
-            android:layout_weight="0.25"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:clickable="false"
-                android:id="@+id/iv_three"
-                android:layout_marginTop="2dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
-
-            <TextView
-                android:clickable="false"
-                android:id="@+id/tv_three"
-                android:text="@string/str_finder"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:foreground="@drawable/water_foreground"
-            android:clickable="true"
-            android:id="@+id/linear_four"
-            android:orientation="vertical"
-            android:layout_weight="0.25"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:clickable="false"
-                android:id="@+id/iv_four"
-                android:layout_marginTop="2dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
-
-            <TextView
-                android:clickable="false"
-                android:id="@+id/tv_four"
-                android:text="@string/str_mine"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
 
 </LinearLayout>

@@ -17,7 +17,9 @@ public class Constants {
     // url
     public static final String URL_PATH_JOKER = "joke/content/text.php";// 笑话大全
     public static final String URL_PATH_NEWS_HEADLINE = "toutiao/index";// 新闻头条
-    public static final String URL_PATH_WEATHER_FORECAST_QUERY = "simpleWeather/query";// 根据城市查询天气
+    public static final String URL_PATH_WEATHER_FORECAST_QUERY = "simpleWeather/query";// 天气：根据城市查询天气
+    public static final String URL_PATH_WEATHER_CITY_LIST = "simpleWeather/cityList";// 天气：支持城市列表
+    public static final String URL_PATH_WEATHER_TYPES = "simpleWeather/wids";// 天气：天气种类列表
 
     // 申请的 appkey
     public static final String JUHE_JOKE_APP_KEY = "e874cd94a0c14615c100063146df6b8e";// 笑话大全 免费

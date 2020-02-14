@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="my_db"/>
+
+    <!--数据库新增表或者表结构有变化 该值需要加1-->
+    <version value="2"/>
+
+    <list>
+
+        <mapping class="com.mushiny.www.showU.table.WeatherCityTable"/>
+        <!--<mapping class="com.mushiny.www.showU.table.WeatherTypeTable"/>-->
+
+    </list>
+</litepal>

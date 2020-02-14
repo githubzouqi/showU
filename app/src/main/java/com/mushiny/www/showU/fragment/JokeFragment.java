@@ -379,14 +379,17 @@ public class JokeFragment extends BaseFragment {
 
         progressDialogUtil = new ProgressDialogUtil(getContext());
 
+        images.add(R.drawable.xiaoyu_one);
         images.add(R.drawable.xiaoyu);
         images.add(R.drawable.zha);
         images.add(R.drawable.miao);
         images.add(R.drawable.daju);
+
         titles.add("小语");
-        titles.add("handsome one");
-        titles.add("FPP Macho Man");
-        titles.add("大橘");
+        titles.add("小语");
+        titles.add("模特");
+        titles.add("思考");
+        titles.add("大橘为重");
 
         // 设置图片加载器
         banner.setImageLoader(new GlideImageLoader());
@@ -519,6 +522,7 @@ public class JokeFragment extends BaseFragment {
 //            options.override(200,200);// 指定加载图片大小
             options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
+            options.centerCrop();
 
             Glide.with(context).load(path).apply(options).into(imageView);
         }
