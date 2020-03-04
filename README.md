@@ -13,5 +13,5 @@
 - 博客页
 
 <br/>
-<img src="https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg" width="108" height="240">
+<img src="https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg" width="108*2" height="240*2">
 
