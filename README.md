@@ -12,4 +12,4 @@
 
 - 博客页
 
-![博客](https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg=108*240)
+![博客](https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg =108*240)
