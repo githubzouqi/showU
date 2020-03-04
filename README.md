@@ -12,4 +12,4 @@
 
 - 博客页
 
-![博客](https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg)
+![博客](https://github.com/githubzouqi/showU/blob/master/displayImage/boke.png)
