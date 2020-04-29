@@ -21,7 +21,7 @@ public class ProgressDialogUtil {
     private View view_progress;
 
     public ProgressDialogUtil(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         dialog = new AlertDialog.Builder(context).create();
         view_progress = LayoutInflater.from(context).inflate(R.layout.dialog_view_progress, null);
     }

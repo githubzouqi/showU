@@ -16,7 +16,7 @@ public class ScreenUtil {
     private DisplayMetrics metrics = new DisplayMetrics();
 
     public ScreenUtil(Context context) {
-        this.windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        this.windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
     }
 
     /**

@@ -24,7 +24,7 @@ public class ToastUtil {
     public static void showToast(Context context, String string) {
 
         if (toastView == null){
-            toastView = LayoutInflater.from(context).inflate(R.layout.toast_view_exit, null);
+            toastView = LayoutInflater.from(context.getApplicationContext()).inflate(R.layout.toast_view_exit, null);
         }
         ((TextView)toastView.findViewById(R.id.tv_exit_app)).setText(string);
 
