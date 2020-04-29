@@ -94,4 +94,13 @@ public class LaunchActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 移除消息
+        if (handler != null){
+            handler.removeCallbacks(null);
+        }
+    }
 }
