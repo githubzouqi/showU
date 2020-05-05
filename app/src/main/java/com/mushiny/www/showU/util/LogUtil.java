@@ -22,8 +22,12 @@ public class LogUtil {
      * 假如当前LEVEL的值为常量2（DEBUG），那么你只能打印从DEBUG（2）到ERROR（5）之间的日志信息
      * 假如你要是不想让日志信息打印出现，那么将LEVEL的值置为NOTHING即可
      */
-    public static final int LEVEL = VERBOSE;// 设置值为verbose表示所有的日志等级都是可以打印的
+    private static int LEVEL = VERBOSE;// 设置值为verbose表示所有的日志等级都是可以打印的
 //    public static final int LEVEL = NOTHING;// 项目需要正视发版运行的时候，设置值为nothing
+
+    public static void setLevel(int level){
+        LEVEL = level;
+    }
 
     // 调用Log.v()方法打印日志
     public static void v(String tag, String msg){

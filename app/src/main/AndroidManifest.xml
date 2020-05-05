@@ -3,14 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mushiny.www.showU">
 
+<!--    camera-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+<!--    storage-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+<!--    phone-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".application.MyApplication"
@@ -26,9 +32,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning|ProtectedPermissions">
         <activity android:name=".activity.MainActivity"
-            android:configChanges="screenSize|orientation|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
         <activity
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:name=".activity.LaunchActivity"
             android:theme="@style/LaunchPageTheme">
             <intent-filter>

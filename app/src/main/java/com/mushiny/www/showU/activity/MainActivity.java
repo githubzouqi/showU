@@ -22,6 +22,7 @@ import com.mushiny.www.showU.fragment.DiscoveryFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
 import com.mushiny.www.showU.fragment.NewsDetailFragment;
+import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import butterknife.BindView;
@@ -77,12 +78,16 @@ public class MainActivity extends BaseActivity {
 
         initData();
 
-        if (blogFragment == null){
+        // 确保内存重启的时候，不会再次加载根fragment，防止重叠问题的出现
+        if (findFragmentByTag(tag_blogF) == null){
+            LogUtil.e("zouqi", "第一次加载根 fragment");
             setHeadTitle(getResources().getString(R.string.str_my_blog));
             blogFragment = BlogFragment.newInstance();
             // 加载根 fragment，第一次进入应用显示的界面
             loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
             mCurrentFragment = blogFragment;
+        }else {
+            LogUtil.e("zouqi", "内存重启了");
         }
 
 //        if (jokeFragment == null){
