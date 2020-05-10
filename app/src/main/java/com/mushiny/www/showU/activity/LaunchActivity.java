@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.mushiny.www.showU.R;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -33,26 +34,37 @@ public class LaunchActivity extends Activity {
     // mac 系统选中英文词变大写：⇧ + ⌘ + u
     private static final int WHAT_NEXT = 0x10;
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler(){
+    private static Handler handler;
+
+    private static class MyHandler extends Handler{
+        WeakReference<LaunchActivity> weakReference;
+
+        public MyHandler(LaunchActivity activity){
+            weakReference = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
-                case WHAT_NEXT:
-                    next();
-                    break;
+            if (weakReference.get() != null){
+                switch (msg.what){
+                    case WHAT_NEXT:
+                        next(weakReference);
+                        break;
+                }
             }
         }
-    };
+    }
 
     /**
      * 跳转主页面
+     * @param weakReference
      */
-    private void next() {
+    private static void next(WeakReference<LaunchActivity> weakReference) {
 
-        startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+        LaunchActivity launchActivity = weakReference.get();
+        launchActivity.startActivity(new Intent(launchActivity, MainActivity.class));
 
-        this.finish();
+        launchActivity.finish();
 
     }
 
@@ -82,6 +94,7 @@ public class LaunchActivity extends Activity {
             actionBar.hide();
         }
 
+        handler = new MyHandler(this);// 创建 Handler
         handler.sendEmptyMessageDelayed(WHAT_NEXT, DELAY_TIME);
 
     }
