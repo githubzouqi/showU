@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,14 +55,17 @@ public class MineFragment extends BaseFragment {
     private static final int WHAT_PERMISSION_CAMERA = 0x40;
     private static final int WHAT_PERMISSION_STORAGE = 0x41;
 
-    private static final int REQUEST_CODE_GALLERY = 0x42;
+    private static final int REQUEST_CODE_GALLERY_CAMERA = 0x42;
     private static final int REQUEST_CODE_CROP = 0x43;
 
     private static final String SP_FILE_NAME = "MineFragment";
     private static final String SP_KEY_HEAD_ICON = "SP_KEY_HEAD_ICON";
 
     private static final String IMAGE_GALLERY_FILE_NAME = "qi_si";
+    private static final String IMAGE_CAMERA_FILE_NAME = "qi_si_camera";
+
     private Uri crop_uri = null;
+    private Uri cameraUri = null;
 
     private RequestOptions options;
 
@@ -293,17 +297,39 @@ public class MineFragment extends BaseFragment {
     // 拍照
     private void takePhoto() {
 
+        Intent cameraIntent = null;
+        cameraUri = null;
 
+        // 创建文件
+        String cameraImageName = IMAGE_CAMERA_FILE_NAME
+                + System.currentTimeMillis() + ".jpg";
+        File file_camera_photo = createFileWithPathAndName(parentPath, cameraImageName);
+
+        // Android 7 的相机拍照后图片文件的 uri 读取适配
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            cameraUri = FileProvider.getUriForFile(getContext(), "com.mushiny.www.showU.provider",
+                     file_camera_photo);
+        }else {
+            cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraUri = Uri.fromFile(file_camera_photo);
+        }
+
+        // 拍照的结果存到 cameraUri 对应的路径中
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+        startActivityForResult(cameraIntent, REQUEST_CODE_GALLERY_CAMERA);
 
     }
 
     /**
-     * 图片选择图片
+     * 图库选择图片
      */
     private void gallery() {
 
+        cameraUri = null;// 从图库选择的时候，记得将拍照的uri置为null
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE_GALLERY);
+        startActivityForResult(intent, REQUEST_CODE_GALLERY_CAMERA);
 
     }
 
@@ -312,17 +338,28 @@ public class MineFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK){
             switch (requestCode){
-                case REQUEST_CODE_GALLERY:// 图库选图裁剪
+                case REQUEST_CODE_GALLERY_CAMERA:// 图库选图裁剪
 
                     try {
-                        if(data == null){
+
+                        Uri originUri = null;
+
+                        if (cameraUri != null){
+                            originUri = cameraUri;// 拍照后图片的 uri
+                        }else if(data.getData() != null){
+                            Uri galleryUri = data.getData();// 获取图库中图片的 uri
+                            originUri = galleryUri;
+                        }else {
                             return;
                         }
 
-                        Uri uri = data.getData();
-
                         Intent intent_gallery_crop = new Intent("com.android.camera.action.CROP");
-                        intent_gallery_crop.setDataAndType(uri, "image/*");
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                            // 添加这一句表示对目标应用临时授权该 Uri 所代表的文件
+                            intent_gallery_crop.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+
+                        intent_gallery_crop.setDataAndType(originUri, "image/*");
 
                         // 设置裁剪
                         intent_gallery_crop.putExtra("crop", "true");
@@ -338,13 +375,7 @@ public class MineFragment extends BaseFragment {
                         cropNewImageName = IMAGE_GALLERY_FILE_NAME
                                 + System.currentTimeMillis() + ".jpg";
 
-                        // 第一次需要递归创建文件目录 parentPath，防止中间目录不存在的情况
-                        File file_crop_dir = new File(parentPath);
-                        if (!file_crop_dir.exists()){
-                            file_crop_dir.mkdirs();
-                        }
-
-                        File file_crop = new File(parentPath, cropNewImageName);
+                        File file_crop = createFileWithPathAndName(parentPath, cropNewImageName);
 
                         crop_uri = Uri.fromFile(file_crop);
 
@@ -392,6 +423,22 @@ public class MineFragment extends BaseFragment {
                     break;
             }
         }
+    }
+
+    /**
+     * 根据 路径和文件名称 创建文件
+     * @param parentPath
+     * @param cropNewImageName
+     * @return
+     */
+    private File createFileWithPathAndName(String parentPath,@NonNull String cropNewImageName) {
+        // 第一次需要递归创建文件目录 parentPath，防止中间目录不存在的情况
+        File file_dir = new File(parentPath);
+        if (!file_dir.exists()){
+            file_dir.mkdirs();
+        }
+        File file = new File(parentPath, cropNewImageName);
+        return file;
     }
 
     // 添加时间戳

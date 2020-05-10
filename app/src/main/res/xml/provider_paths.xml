@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--    external-path是SD卡根目录-->
+<!--    imxiaoqi 表示根目录下的文件夹 取名为 imxiaoqiV-->
+<!--    imxiaoqiV 表示虚拟目录名，可以随意取，最终Uri为 content://${清单文件中provider组件的authority属性}/imxiaoqiV/......-->
+    <external-path name="imxiaoqiV" path="imxiaoqi/"/>
+
+<!--    将SD卡共享，这是用于相册选图-->
+    <external-path name="sdcard_root" path="."/>
+
+</paths>
