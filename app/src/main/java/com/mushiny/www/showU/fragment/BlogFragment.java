@@ -83,7 +83,7 @@ public class BlogFragment extends Fragment {
             x5WebSettings = x5WebView.getSettings();
             x5WebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             x5WebSettings.setJavaScriptEnabled(true);
-            x5WebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+            x5WebSettings.setJavaScriptCanOpenWindowsAutomatically(true);// 获取当前的内核版本号
             // 加载页面适应手机屏幕
             x5WebSettings.setUseWideViewPort(true);
             x5WebSettings.setLoadWithOverviewMode(true);
@@ -136,6 +136,7 @@ public class BlogFragment extends Fragment {
 
             // 根据url加载页面
 //            x5WebView.loadUrl(Constants.URL_qq_browser_feedback);
+//            x5WebView.loadUrl("http://debugtbs.qq.com");// debug调试页面
             x5WebView.loadUrl(Constants.URL_BLOG);
         }
 

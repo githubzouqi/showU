@@ -32,6 +32,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning|ProtectedPermissions">
         <activity android:name=".activity.MainActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
         <activity
