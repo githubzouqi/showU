@@ -1,11 +1,15 @@
 package com.mushiny.www.showU.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 天气查询 支持的城市列表
  */
-public class WeatherCityListEntity {
+public class WeatherCityListEntity implements Parcelable {
 
 
     /**
@@ -86,4 +90,38 @@ public class WeatherCityListEntity {
             this.district = district;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.reason);
+        dest.writeInt(this.error_code);
+        dest.writeList(this.result);
+    }
+
+    public WeatherCityListEntity() {
+    }
+
+    protected WeatherCityListEntity(Parcel in) {
+        this.reason = in.readString();
+        this.error_code = in.readInt();
+        this.result = new ArrayList<ResultBean>();
+        in.readList(this.result, ResultBean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<WeatherCityListEntity> CREATOR = new Parcelable.Creator<WeatherCityListEntity>() {
+        @Override
+        public WeatherCityListEntity createFromParcel(Parcel source) {
+            return new WeatherCityListEntity(source);
+        }
+
+        @Override
+        public WeatherCityListEntity[] newArray(int size) {
+            return new WeatherCityListEntity[size];
+        }
+    };
 }
