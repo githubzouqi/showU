@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">思与想</string>
+    <string name="app_name">思&amp;想</string>
 
-    <string name="app_name_pinyin">Thinking</string>
+    <string name="app_name_pinyin">思&amp;想</string>
 
     <!--activity_main-->
     <string name="default_title">--</string>

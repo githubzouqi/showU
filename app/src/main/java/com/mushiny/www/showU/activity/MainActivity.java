@@ -17,12 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.fragment.BlogFragment;
 import com.mushiny.www.showU.fragment.DiscoveryFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
 import com.mushiny.www.showU.fragment.NewsDetailFragment;
 import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.SPUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import butterknife.BindView;
@@ -79,7 +81,7 @@ public class MainActivity extends BaseActivity {
         initData();
 
         // 确保内存重启的时候，不会再次加载根fragment，防止重叠问题的出现
-        if (findFragmentByTag(tag_blogF) == null){
+        if (findFragmentByTag(tag_blogF) == null && savedInstanceState == null){
             LogUtil.e("zouqi", "第一次加载根 fragment");
             setHeadTitle(getResources().getString(R.string.str_my_blog));
             blogFragment = BlogFragment.newInstance();
@@ -140,6 +142,7 @@ public class MainActivity extends BaseActivity {
         tag_jokeF = JokeFragment.class.getSimpleName();
         tag_discovery = DiscoveryFragment.class.getSimpleName();
         tag_mine = MineFragment.class.getSimpleName();
+
 
     }
 
