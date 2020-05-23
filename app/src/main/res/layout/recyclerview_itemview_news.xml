@@ -15,7 +15,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:textSize="20sp"
-        android:text="日本参议员人均申报财产为17万美元 创历史新低"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -73,14 +73,14 @@
             android:id="@+id/tv_author_name"
             android:textSize="16sp"
             android:gravity="center"
-            android:text="ETtoday新闻云"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_marginLeft="10dp"
-            android:text="2020-01-06 21:37"
+            android:text=""
             android:textColor="@android:color/darker_gray"
             android:textSize="16sp"
             android:layout_width="wrap_content"

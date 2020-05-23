@@ -31,7 +31,7 @@
                 android:textSize="24sp"
                 android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:text="小语(peace love respect)"
+                android:text="@string/default_name"
                 android:layout_toRightOf="@+id/iv_my_photo"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -45,7 +45,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_toRightOf="@+id/iv_my_photo"
                 android:layout_below="@+id/tv_my_name"
-                android:text="破壳日 [2020/01/01]"
+                android:text="@string/default_birth"
                 android:textColor="@android:color/darker_gray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -84,7 +84,7 @@
                 android:layout_marginLeft="20dp"
                 android:textColor="@color/color_black"
                 android:textSize="18sp"
-                android:text="天气"
+                android:text="@string/mine_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -116,7 +116,7 @@
                 android:layout_marginLeft="20dp"
                 android:textColor="@color/color_black"
                 android:textSize="18sp"
-                android:text="设置"
+                android:text="@string/mine_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

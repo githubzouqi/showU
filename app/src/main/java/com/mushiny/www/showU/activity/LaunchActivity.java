@@ -87,7 +87,7 @@ public class LaunchActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 //            getWindow().setStatusBarColor(Color.TRANSPARENT);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.color_protect_eye));// 设置状态栏背景色
+            getWindow().setStatusBarColor(getResources().getColor(R.color.color_black));// 设置状态栏背景色
         }
         ActionBar actionBar = getActionBar();
         if (actionBar != null){

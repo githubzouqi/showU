@@ -22,7 +22,7 @@
         android:layout_gravity="center_vertical"
         android:textColor="@color/color_protect_eye"
         android:textSize="18sp"
-        android:text="加载中..."
+        android:text="@string/default_loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

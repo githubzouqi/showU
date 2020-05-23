@@ -4,6 +4,7 @@
     <string name="app_name_pinyin">Thinking</string>
 
     <!--activity_main-->
+    <string name="default_title">--</string>
     <string name="str_my_blog">博客</string>
     <string name="str_joker">欢笑</string>
     <string name="str_finder">发现</string>
@@ -21,9 +22,45 @@
     <string name="str_banner_animation_setting">默认动画样式 - Default</string>
 
     <!--recyclerView_item_joker-->
+    <string name="str_get_joker">点击获取最新笑话</string>
     <string name="str_joker_content">小区门口修车师傅生意特好小区门口修车师傅生意特好</string>
     <string name="str_joker_update_time">2019-06-06 10:55:02</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- dialog_view_progress.xml -->
+    <string name="default_loading_text">加载中...</string>
+
+    <!--    fragment_mine.xml-->
+    <string name="default_name">姓名</string>
+    <string name="default_birth">破壳日 [----/--/--]</string>
+    <string name="mine_weather">天气</string>
+    <string name="mine_setting">设置</string>
+
+    <!--    fragment_discovery.xml-->
+    <string name="str_news_headlines">头条</string>
+    <string name="str_news_social">社会</string>
+    <string name="str_news_domestic">国内</string>
+    <string name="str_news_international">国际</string>
+    <string name="str_news_entertainment">娱乐</string>
+    <string name="str_news_sports">体育</string>
+    <string name="str_news_military">军事</string>
+    <string name="str_news_technology">科技</string>
+    <string name="str_news_finance">财经</string>
+    <string name="str_news_fashion">时尚</string>
+
+    <!--    fragment_weather.xml-->
+    <string name="str_weather_hint">请输入要查询的 城市/地区</string>
+    <string name="str_weather_search">搜索</string>
+    <string name="str_weather_PCC">省-市-县区</string>
+    <string name="str_weather_current">当前天气</string>
+    <string name="str_weather_temperature">（温度）</string>
+    <string name="str_weather_humidity">（湿度）</string>
+    <string name="str_weather_wind_direction">（风向）</string>
+    <string name="str_weather_wind_power">（风力）</string>
+    <string name="str_weather_quality">（空气质量指数）</string>
+    <string name="str_weather_last5days">最近 5 天天气</string>
+
+    <!--    pop_view_joker.xml-->
+    <string name="str_joker_up">上</string>
+    <string name="str_joker_down">下</string>
+
 </resources>

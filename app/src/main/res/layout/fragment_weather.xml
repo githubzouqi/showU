@@ -8,7 +8,7 @@
 
     <ImageView
         android:alpha="0.618"
-        android:src="@drawable/xiaoyu_one"
+        android:background="@color/color_protect_eye"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -37,7 +37,7 @@
                     android:layout_weight="0.8"
                     android:background="@drawable/edittext_drawable_shape_city"
                     android:gravity="center_vertical"
-                    android:hint="请输入要查询的 城市/地区"
+                    android:hint="@string/str_weather_hint"
                     android:inputType="text"
                     android:maxLines="1"
                     android:padding="10dp"
@@ -51,7 +51,7 @@
                     android:layout_weight="0.2"
                     android:background="@drawable/button_drawable_shape_city_search"
                     android:foreground="@drawable/water_foreground"
-                    android:text="搜索"
+                    android:text="@string/str_weather_search"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="省-市-县区"
+                    android:text="@string/str_weather_PCC"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="当前天气"
+                    android:text="@string/str_weather_current"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="（温度）"
+                    android:text="@string/str_weather_temperature"
                     android:textSize="18sp" />
 
                 <TextView
@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="（湿度）"
+                    android:text="@string/str_weather_humidity"
                     android:textSize="18sp" />
 
                 <TextView
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="（风向）"
+                    android:text="@string/str_weather_wind_direction"
                     android:textSize="18sp" />
 
                 <TextView
@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="（风力）"
+                    android:text="@string/str_weather_wind_power"
                     android:textSize="18sp" />
 
                 <TextView
@@ -145,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="（空气质量指数）"
+                    android:text="@string/str_weather_quality"
                     android:textSize="18sp" />
 
                 <View
@@ -159,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:text="最近 5 天天气"
+                    android:text="@string/str_weather_last5days"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 

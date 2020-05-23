@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/tv_future_date"
             android:gravity="center"
-            android:text="2020-02-11"
+            android:text=""
             android:padding="10dp"
             android:layout_weight="0.25"
             android:layout_width="0dp"
@@ -35,7 +35,7 @@
         <TextView
             android:id="@+id/tv_future_weather"
             android:gravity="center"
-            android:text="多云转雨夹雪"
+            android:text=""
             android:padding="10dp"
             android:layout_weight="0.25"
             android:layout_width="0dp"
@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/tv_future_direct"
             android:gravity="center"
-            android:text="东风转北风"
+            android:text=""
             android:padding="10dp"
             android:layout_weight="0.25"
             android:layout_width="0dp"
@@ -63,7 +63,7 @@
         <TextView
             android:id="@+id/tv_future_temperature"
             android:gravity="center"
-            android:text="-3/11℃"
+            android:text=""
             android:padding="10dp"
             android:layout_weight="0.25"
             android:layout_width="0dp"

@@ -60,7 +60,7 @@
             android:clickable="true"
             android:textColor="@color/color_protect_eye"
             android:id="@+id/tv_get_joker"
-            android:text="点击获取最新笑话"
+            android:text="@string/str_get_joker"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"

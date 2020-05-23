@@ -15,7 +15,7 @@
             android:id="@+id/ptr_frame_news"
             android:layout_margin="6dp"
             android:background="@color/color_white"
-            android:layout_weight="0.8"
+            android:layout_weight="0.85"
             android:layout_width="0dp"
             android:layout_height="match_parent">
 
@@ -27,137 +27,146 @@
 
         </in.srain.cube.views.ptr.PtrFrameLayout>
 
-        <LinearLayout
-            android:weightSum="1"
-            android:background="@color/color_news_tab"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp"
+
+        <ScrollView
+            android:layout_weight="0.15"
             android:layout_width="0dp"
-            android:layout_weight="0.2"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/btn_headline"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:text="头条"
-                android:textColor="@color/color_news_tab"
-                android:background="@color/color_white"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+            <LinearLayout
+                android:scrollbars="none"
+                android:weightSum="1"
+                android:background="@color/color_protect_eye"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/btn_social"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="社会"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_headline"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:text="@string/str_news_headlines"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/color_black"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_domestic"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="国内"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_social"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_social"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_international"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="国际"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_domestic"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_domestic"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_entertainment"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="娱乐"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_international"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_international"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_sports"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="体育"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_entertainment"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_entertainment"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_military"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="军事"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_sports"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_sports"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_technology"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="科技"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_military"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_military"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_finance"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="财经"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_technology"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_technology"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-            <Button
-                android:id="@+id/btn_fashion"
-                android:textColor="@color/color_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:foreground="@drawable/water_foreground"
-                android:background="@color/color_news_tab"
-                android:text="时尚"
-                android:layout_width="wrap_content"
-                android:layout_weight="0.1"
-                android:layout_height="0dp" />
+                <Button
+                    android:id="@+id/btn_finance"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_finance"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/btn_fashion"
+                    android:textColor="@color/color_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:foreground="@drawable/water_foreground"
+                    android:background="@color/color_protect_eye"
+                    android:text="@string/str_news_fashion"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0.1"
+                    android:layout_height="0dp" />
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
 
     </LinearLayout>
 

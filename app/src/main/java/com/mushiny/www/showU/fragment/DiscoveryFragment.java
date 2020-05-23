@@ -372,8 +372,8 @@ public class DiscoveryFragment extends BaseFragment {
         defaultButtonStyle(btn_finance);
         defaultButtonStyle(btn_fashion);
 
-        selected_button.setBackgroundColor(getResources().getColor(R.color.color_white));
-        selected_button.setTextColor(getResources().getColor(R.color.color_news_tab));
+        selected_button.setBackgroundColor(getResources().getColor(R.color.color_transparent));
+        selected_button.setTextColor(getResources().getColor(R.color.color_black));
 
         CURRENT_TYPE = type;
         ptr_frame_news.autoRefresh();// 显示框架的下拉刷新样式，优化用户体验
@@ -383,9 +383,18 @@ public class DiscoveryFragment extends BaseFragment {
     // 默认样式
     private void defaultButtonStyle(Button default_button) {
 
-        default_button.setBackgroundColor(getResources().getColor(R.color.color_news_tab));
+        default_button.setBackgroundColor(getResources().getColor(R.color.color_transparent));
         default_button.setTextColor(getResources().getColor(R.color.color_white));
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // 预防handler的内存泄漏
+        if (handler != null){
+            handler.removeCallbacks(null);
+            handler = null;
+        }
+    }
 }
