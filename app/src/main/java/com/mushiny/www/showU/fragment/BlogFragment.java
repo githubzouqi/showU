@@ -30,7 +30,7 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BlogFragment extends Fragment {
+public class BlogFragment extends BaseFragment {
 
     private WebView x5WebView;
     private WebSettings x5WebSettings;

@@ -3,7 +3,6 @@ package com.mushiny.www.showU.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import javax.xml.validation.Validator;
 
 /**
  * SharePreference 工具类
@@ -36,7 +35,7 @@ public class SPUtil {
         sharedPreferences.edit().putInt(key, value).apply();
     }
 
-    public int getInt(String key, int defValue){
+    public int getInt(String key, int defValue)throws ClassCastException{
         int intValue = sharedPreferences.getInt(key, defValue);
         return intValue;
     }
@@ -45,7 +44,7 @@ public class SPUtil {
         sharedPreferences.edit().putString(key, value).apply();
     }
 
-    public String getString(String key, String defValue){
+    public String getString(String key, String defValue)throws ClassCastException{
         String strValue = sharedPreferences.getString(key, defValue);
         return strValue;
     }
@@ -54,7 +53,7 @@ public class SPUtil {
         sharedPreferences.edit().putBoolean(key, value).apply();
     }
 
-    public boolean getBoolean(String key, Boolean defValue){
+    public boolean getBoolean(String key, Boolean defValue)throws ClassCastException{
         boolean boolValue = sharedPreferences.getBoolean(key, defValue);
         return boolValue;
     }
@@ -63,7 +62,7 @@ public class SPUtil {
         sharedPreferences.edit().putFloat(key, value).apply();
     }
 
-    public float getFloat(String key, float defValue){
+    public float getFloat(String key, float defValue)throws ClassCastException{
         float floatValue = sharedPreferences.getFloat(key, defValue);
         return floatValue;
     }
@@ -72,7 +71,7 @@ public class SPUtil {
         sharedPreferences.edit().putLong(key, value).apply();
     }
 
-    public long getLong(String key, long defValue){
+    public long getLong(String key, long defValue)throws ClassCastException{
         long longValue = sharedPreferences.getLong(key, defValue);
         return longValue;
     }

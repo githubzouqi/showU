@@ -396,9 +396,15 @@
     *;
 }
 
-#
+# 不混淆 Gson 相关类
 -keep class sun.misc.Unsafe { *; }
 -dontwarn sun.misc.**
+
+# 友盟统计
+-keep class com.umeng.** { *; }
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
 
 
 

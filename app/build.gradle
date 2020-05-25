@@ -29,6 +29,37 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    // 渠道风味
+    flavorDimensions 'dimensions'
+    productFlavors {
+        baidu {
+            dimension = 'dimensions'
+            signingConfig signingConfigs.release
+            multiDexEnabled = true
+        }
+    }
+
+    // 使用 占位符 优化，减少重复风味配置写法
+    productFlavors.all{
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE : name]
+    }
+
+    // 输出文件配置，格式如下：app-{版本号}-{渠道名称}.apk
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+
+                // 文件名修改
+                def fileName = "app-v${defaultConfig.versionName}-${variant.productFlavors[0].name}.apk"
+
+                // 重命名赋值
+                outputFileName = fileName
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -51,4 +82,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
     implementation 'in.srain.cube:ptr-load-more:1.0.6'
     implementation 'org.litepal.android:java:3.0.0'
+    // 友盟统计
+    implementation 'com.umeng.umsdk:analytics:8.0.0'
+    implementation 'com.umeng.umsdk:common:2.0.0'
 }
