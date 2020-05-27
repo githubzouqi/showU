@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.util.List;
 
 /**
@@ -75,5 +77,17 @@ public class BaseActivity extends FragmentActivity {
      */
     public void popBack(){
         getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

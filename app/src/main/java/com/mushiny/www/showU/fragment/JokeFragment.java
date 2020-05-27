@@ -39,6 +39,7 @@ import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.entity.JokerCollectionEntity;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ProgressDialogUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.ScreenUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.youth.banner.Banner;
@@ -294,13 +295,15 @@ public class JokeFragment extends BaseFragment {
 
         progressDialogUtil.show();
 
+        /*
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.V_JUHE_CN)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
-
         NetworkInterface networkInterface = retrofit.create(NetworkInterface.class);
+        */
+        NetworkInterface networkInterface = Retrofit2Util.create(Constants.V_JUHE_CN, NetworkInterface.class);
 
         Map<String, Object> params = new HashMap<>();
         params.put("key", Constants.JUHE_JOKE_APP_KEY);

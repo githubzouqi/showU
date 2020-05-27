@@ -35,8 +35,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.constant.Constants;
+import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.util.AppDetailSettingUtil;
 import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import java.io.File;
@@ -44,6 +47,10 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -161,6 +168,28 @@ public class MineFragment extends BaseFragment {
                 break;
 
             case R.id.linear_my_setting:// 设置
+
+                // 测试 App 更新
+                NetworkInterface networkInterface = Retrofit2Util.create(Constants.URL_APP_INFO,
+                        NetworkInterface.class);
+                Call<ResponseBody> call = networkInterface.getBaiduYunApkInfo(null);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        try {
+                            String strType = new String(response.body().bytes());
+                            LogUtil.e("TAG", strType);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
 
                 break;
 

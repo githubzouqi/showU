@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 /**
  * 启动页面
  */
-public class LaunchActivity extends Activity {
+public class LaunchActivity extends BaseActivity {
 
     @BindView(R.id.tv_text_bottom)TextView tv_text_bottom;
 

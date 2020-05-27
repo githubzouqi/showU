@@ -31,4 +31,7 @@ public interface NetworkInterface {
     @GET(Constants.URL_PATH_WEATHER_FORECAST_QUERY)
     Call<ResponseBody> getCityWeather(@QueryMap Map<String, Object> map);// 天气：根据城市查询天气
 
+    @GET("s/1_BGIguhqonNF8LrczyVijg/")
+    Call<ResponseBody> getBaiduYunApkInfo(@QueryMap Map<String, Object> map);// App 更新测试
+
 }
