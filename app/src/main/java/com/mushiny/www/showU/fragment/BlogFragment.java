@@ -177,10 +177,16 @@ public class BlogFragment extends BaseFragment {
             return false;
         }
         if (x5WebView.canGoBack()){
-            x5WebView.goBack();
+//            x5WebView.goBack();
             return true;
         }
         return false;
+    }
+
+    public void goBack(){
+        if (x5WebView != null){
+            x5WebView.goBack();
+        }
     }
 
     /**

@@ -1,10 +1,7 @@
 package com.mushiny.www.showU.activity;
 
-import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +14,6 @@ import com.mushiny.www.showU.R;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,7 +92,6 @@ public class LaunchActivity extends BaseActivity {
 
         handler = new MyHandler(this);// 创建 Handler
         handler.sendEmptyMessageDelayed(WHAT_NEXT, DELAY_TIME);
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.mushiny.www.showU.application;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.mushiny.www.showU.util.LogUtil;
 import com.tencent.smtt.sdk.QbSdk;
@@ -20,6 +21,7 @@ public class MyApplication extends Application {
         initUmeng();
 
         LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
+//        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
 
         LitePal.initialize(this);// 配置 LitePalApplication
 

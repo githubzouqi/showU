@@ -1,9 +1,11 @@
 package com.mushiny.www.showU.activity;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +26,7 @@ import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
 import com.mushiny.www.showU.fragment.NewsDetailFragment;
 import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.PermissionUtil;
 import com.mushiny.www.showU.util.SPUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
@@ -70,6 +73,7 @@ public class MainActivity extends BaseActivity {
     private String tag_mine;
 
     private long firstTime = 0;
+    private PermissionUtil permissionUtil = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,29 @@ public class MainActivity extends BaseActivity {
             actionBar.hide();
         }
 
+        // 一次性申请所有的危险权限
+        applyAllDangerousPermissions();
+
+    }
+
+    private void applyAllDangerousPermissions() {
+        permissionUtil = new PermissionUtil(this, null);
+        String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA};
+        // android 6.0以上的危险权限使用时申请
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PermissionUtil.ONCE_TIME_APPLY);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case PermissionUtil.ONCE_TIME_APPLY:
+                permissionUtil.onceTimeApplyResult(permissions, grantResults);
+                break;
+        }
     }
 
     @Override
@@ -159,7 +186,7 @@ public class MainActivity extends BaseActivity {
 
                 setTabStyle(linear_two,iv_two,tv_two);
 
-                setHeadTitle(getResources().getString(R.string.str_joker));
+                setHeadTitle(getResources().getString(R.string.str_joker_title));
 
                 show(JokeFragment.newInstance(), tag_jokeF, transaction);
                 break;
@@ -279,6 +306,7 @@ public class MainActivity extends BaseActivity {
 
         if (keyCode == KeyEvent.KEYCODE_BACK){
 
+            boolean canBack = false;
             if (getBackStackEntryCount() == 1){
                 visibleTab();
             }
@@ -296,13 +324,23 @@ public class MainActivity extends BaseActivity {
             }else {
 
 
-                if ((mCurrentFragment instanceof BlogFragment) && findFragmentByTag(tag_blogF) != null && !((BlogFragment)findFragmentByTag(tag_blogF)).canBack()){
+                canBack = ((BlogFragment)findFragmentByTag(tag_blogF)).canBack();
+
+                if ((mCurrentFragment instanceof BlogFragment) && findFragmentByTag(tag_blogF) != null
+                        && !canBack){
                     exitApp(TIME_INTERVAL);
                 }
 
                 if (!(mCurrentFragment instanceof BlogFragment)){
                     exitApp(TIME_INTERVAL);
                 }
+
+                LogUtil.e("TAG", "else canBack is :" + canBack);
+            }
+
+            // 表示 webView 可以返回
+            if (canBack){
+                ((BlogFragment)findFragmentByTag(tag_blogF)).goBack();
             }
             return true;
         }
