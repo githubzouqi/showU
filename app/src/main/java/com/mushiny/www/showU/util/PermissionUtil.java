@@ -253,7 +253,6 @@ public class PermissionUtil {
             }
         }
 
-        LogUtil.e("TAG", "notAllowedPermissionNames is :" + notAllowedPermissionNames);
         // 有拒绝使用的权限，简单提示用户并添加相关说明
         if (!divider.equals(notAllowedPermissionNames.toString().trim())){
             new AlertDialog.Builder(context)

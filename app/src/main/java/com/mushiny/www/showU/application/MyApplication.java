@@ -16,13 +16,17 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // x5内核
         QbSdk.setDownloadWithoutWifi(true);
         preInitX5WebCore();
+
+        // 友盟SDK
         initUmeng();
 
         LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
 //        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
 
+        // LitePal开源框架
         LitePal.initialize(this);// 配置 LitePalApplication
 
     }

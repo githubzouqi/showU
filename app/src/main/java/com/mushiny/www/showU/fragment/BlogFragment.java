@@ -98,6 +98,7 @@ public class BlogFragment extends BaseFragment {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView webView, String url) {
 
+                    LogUtil.e("TAG", "url is:" + url);
                     // 如果不是http或者https开头的url，那么使用手机自带的浏览器打开
                     if (!url.startsWith("http://") && !url.startsWith("https://")){
                         try {
@@ -109,9 +110,8 @@ public class BlogFragment extends BaseFragment {
                             return true;
                         }
                     }
-                    webView.loadUrl(url);
+//                    webView.loadUrl(url);
                     return false;
-
 //                    return super.shouldOverrideUrlLoading(webView, s);
                 }
 

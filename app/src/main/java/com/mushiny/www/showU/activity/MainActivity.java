@@ -323,6 +323,7 @@ public class MainActivity extends BaseActivity {
                 popBack();
             }else {
 
+                LogUtil.e("TAG", "getBackStackEntryCount() = " + getBackStackEntryCount());
 
                 canBack = ((BlogFragment)findFragmentByTag(tag_blogF)).canBack();
 
