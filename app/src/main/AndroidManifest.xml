@@ -36,13 +36,13 @@
         <meta-data android:value="5ecb3237167eddb80a000a7f" android:name="UMENG_APPKEY"/>
         <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
 
-        <activity android:name=".activity.MainActivity"
+        <activity android:name="com.mushiny.www.showU.activity.MainActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="orientation|screenSize|keyboardHidden">
         </activity>
         <activity
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:name=".activity.LaunchActivity"
+            android:name="com.mushiny.www.showU.activity.LaunchActivity"
             android:theme="@style/LaunchPageTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <provider
             android:authorities="com.mushiny.www.showU.provider"
             android:exported="false"

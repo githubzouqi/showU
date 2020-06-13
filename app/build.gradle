@@ -3,12 +3,20 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            storeFile file('G:\\projects\\github\\showU\\showU.keystore')
+            storeFile file('./hello.keystore')
             storePassword 'imxiaoqi'
-            keyAlias = 'showU'
+            keyAlias 'zouqi'
+            keyPassword 'imxiaoqi'
+        }
+
+        debug {
+            storeFile file('.\\hello.keystore')
+            storePassword 'imxiaoqi'
+            keyAlias 'zouqi'
             keyPassword 'imxiaoqi'
         }
     }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.mushiny.www.showU"
@@ -20,13 +28,17 @@ android {
 //        ndk {
 //            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
 //        }
-        multiDexEnabled = true
+//        multiDexEnabled = true
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
         }
     }
 
@@ -35,8 +47,9 @@ android {
     productFlavors {
         baidu {
             dimension = 'dimensions'
-            signingConfig signingConfigs.release
+
             multiDexEnabled = true
+            signingConfig signingConfigs.release
         }
     }
 
@@ -66,6 +79,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.youth.banner:banner:1.4.10'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -85,4 +100,13 @@ dependencies {
     // 友盟统计
     implementation 'com.umeng.umsdk:analytics:8.0.0'
     implementation 'com.umeng.umsdk:common:2.0.0'
+    // 分享核心库
+//    implementation 'com.umeng.umsdk:share-core:7.0.2'
+//    implementation 'com.umeng.umsdk:share-board:7.0.2'
+    // 三方分享平台库
+//    implementation 'com.umeng.umsdk:share-qq:7.0.2'
+//    implementation 'com.umeng.umsdk:share-wx:7.0.2'
+//    implementation 'com.umeng.umsdk:share-sina:7.0.2'
+    // flycoTabLayout 依赖
+    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 }

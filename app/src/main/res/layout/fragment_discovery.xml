@@ -3,170 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.DiscoveryFragment">
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:weightSum="1"
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="match_parent">
 
-        <in.srain.cube.views.ptr.PtrFrameLayout
-            android:id="@+id/ptr_frame_news"
-            android:layout_margin="6dp"
-            android:background="@color/color_white"
-            android:layout_weight="0.85"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_news"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
+        <com.flyco.tablayout.SlidingTabLayout
+            android:padding="10dp"
+            android:id="@+id/slidingTabLayout"
+            app:tl_indicator_width="12dp"
+            app:tl_textUnselectColor="@android:color/darker_gray"
+            app:tl_tab_padding="5dp"
+            app:tl_textSelectColor="@color/color_black"
+            app:tl_textBold="SELECT"
+            app:tl_textsize="16sp"
+            app:tl_indicator_height="2dp"
+            app:tl_indicator_color="@color/color_black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        </in.srain.cube.views.ptr.PtrFrameLayout>
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
 
-
-        <ScrollView
-            android:layout_weight="0.15"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:scrollbars="none"
-                android:weightSum="1"
-                android:background="@color/color_protect_eye"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:id="@+id/btn_headline"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:text="@string/str_news_headlines"
-                    android:background="@android:color/transparent"
-                    android:textColor="@color/color_black"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_social"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_social"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_domestic"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_domestic"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_international"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_international"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_entertainment"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_entertainment"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_sports"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_sports"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_military"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_military"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_technology"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_technology"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_finance"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_finance"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-                <Button
-                    android:id="@+id/btn_fashion"
-                    android:textColor="@color/color_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:foreground="@drawable/water_foreground"
-                    android:background="@color/color_protect_eye"
-                    android:text="@string/str_news_fashion"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="0.1"
-                    android:layout_height="0dp" />
-
-
-            </LinearLayout>
-
-        </ScrollView>
-
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_discovery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

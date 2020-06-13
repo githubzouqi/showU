@@ -406,5 +406,8 @@
    public <init> (org.json.JSONObject);
 }
 
+# FlycoTabLayout 依赖
+-keep class com.flyco.tablayout.** { *; }
+
 
 

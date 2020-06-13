@@ -1,7 +1,6 @@
 package com.mushiny.www.showU.application;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.mushiny.www.showU.util.LogUtil;
 import com.tencent.smtt.sdk.QbSdk;
@@ -49,6 +48,15 @@ public class MyApplication extends Application {
 
         // 选用 AUTO 页面采集模式
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
+
+        // 设置三方分享平台的 appkey
+        // - 微信
+//        PlatformConfig.setWeixin("wxdc1e388c3822c80b", "3baf1193c85774b3fd9d18447d76cab0");
+        // - qq
+//        PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
+        // - 新浪微博
+//        PlatformConfig.setSinaWeibo("3921700954", "04b48b094faeb16683c32669824ebdad",
+//                "http://sns.whalecloud.com");
     }
 
     /**

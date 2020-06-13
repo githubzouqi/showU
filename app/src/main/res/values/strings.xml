@@ -31,12 +31,12 @@
     <string name="default_loading_text">加载中...</string>
 
     <!--    fragment_mine.xml-->
-    <string name="default_name">姓名</string>
-    <string name="default_birth">破壳日 [----/--/--]</string>
+    <string name="default_name">邹奇</string>
+    <string name="default_birth">破壳日 [1994/09/23]</string>
     <string name="mine_weather">天气</string>
     <string name="mine_setting">设置</string>
 
-    <!--    fragment_discovery.xml-->
+    <!--    fragment_news.xml-->
     <string name="str_news_headlines">头条</string>
     <string name="str_news_social">社会</string>
     <string name="str_news_domestic">国内</string>
@@ -63,5 +63,7 @@
     <!--    pop_view_joker.xml-->
     <string name="str_joker_up">上</string>
     <string name="str_joker_down">下</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

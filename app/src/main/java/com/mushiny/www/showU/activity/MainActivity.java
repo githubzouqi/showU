@@ -7,27 +7,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mushiny.www.showU.R;
-import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.fragment.BlogFragment;
 import com.mushiny.www.showU.fragment.DiscoveryFragment;
+import com.mushiny.www.showU.fragment.NewsFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
-import com.mushiny.www.showU.fragment.NewsDetailFragment;
+import com.mushiny.www.showU.interfaces.TitleListener;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PermissionUtil;
-import com.mushiny.www.showU.util.SPUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import butterknife.BindView;
@@ -69,8 +65,9 @@ public class MainActivity extends BaseActivity {
     // fragment的tag变量
     private String tag_blogF;
     private String tag_jokeF;
-    private String tag_discovery;
+    private String tag_news;
     private String tag_mine;
+    private String tag_discovery;
 
     private long firstTime = 0;
     private PermissionUtil permissionUtil = null;
@@ -167,8 +164,9 @@ public class MainActivity extends BaseActivity {
         // tag变量初始化
         tag_blogF = BlogFragment.class.getSimpleName();
         tag_jokeF = JokeFragment.class.getSimpleName();
-        tag_discovery = DiscoveryFragment.class.getSimpleName();
+        tag_news = NewsFragment.class.getSimpleName();
         tag_mine = MineFragment.class.getSimpleName();
+        tag_discovery = DiscoveryFragment.class.getSimpleName();
 
 
     }
@@ -202,8 +200,16 @@ public class MainActivity extends BaseActivity {
             case R.id.linear_three:// 发现
 
                 setTabStyle(linear_three, iv_three, tv_three);
-                setHeadTitle(getResources().getString(R.string.str_finder));
-                show(DiscoveryFragment.newInstance(), tag_discovery, transaction);
+                setHeadTitle(getResources().getString(R.string.str_finder) + "-头条");
+                DiscoveryFragment discoveryFragment = DiscoveryFragment.newInstance();
+                discoveryFragment.setHeadTitleListener(new TitleListener() {
+                    @Override
+                    public void getTitle(String title) {
+                        setHeadTitle(getResources().getString(R.string.str_finder) +
+                                "-" + title);
+                    }
+                });
+                show(discoveryFragment, tag_discovery, transaction);
 
                 break;
 
