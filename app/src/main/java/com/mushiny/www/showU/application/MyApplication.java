@@ -6,6 +6,7 @@ import com.mushiny.www.showU.util.LogUtil;
 import com.tencent.smtt.sdk.QbSdk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.PlatformConfig;
 
 import org.litepal.LitePal;
 
@@ -51,7 +52,7 @@ public class MyApplication extends Application {
 
         // 设置三方分享平台的 appkey
         // - 微信
-//        PlatformConfig.setWeixin("wxdc1e388c3822c80b", "3baf1193c85774b3fd9d18447d76cab0");
+        PlatformConfig.setWeixin("wx389b6e93bcb187e6", "f50b08011cfe098d4430614dfb322160");
         // - qq
 //        PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
         // - 新浪微博

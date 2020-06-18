@@ -3,16 +3,20 @@ package com.mushiny.www.showU.activity;
 import android.Manifest;
 import android.app.ActionBar;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mushiny.www.showU.R;
@@ -40,20 +44,21 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.tv_title)TextView tv_title;
 
     // 底部选项控件
-    @BindView(R.id.linear_one)LinearLayout linear_one;
-    @BindView(R.id.linear_two)LinearLayout linear_two;
-    @BindView(R.id.linear_three)LinearLayout linear_three;
-    @BindView(R.id.linear_four)LinearLayout linear_four;
-    @BindView(R.id.iv_one)ImageView iv_one;
-    @BindView(R.id.iv_two)ImageView iv_two;
-    @BindView(R.id.iv_three)ImageView iv_three;
-    @BindView(R.id.iv_four)ImageView iv_four;
-    @BindView(R.id.tv_one)TextView tv_one;
-    @BindView(R.id.tv_two)TextView tv_two;
-    @BindView(R.id.tv_three)TextView tv_three;
-    @BindView(R.id.tv_four)TextView tv_four;
+    @BindView(R.id.linear_one) LinearLayout linear_one;
+    @BindView(R.id.linear_two) LinearLayout linear_two;
+    @BindView(R.id.linear_three) LinearLayout linear_three;
+    @BindView(R.id.linear_four) LinearLayout linear_four;
+    @BindView(R.id.iv_one) ImageView iv_one;
+    @BindView(R.id.iv_two) ImageView iv_two;
+    @BindView(R.id.iv_three) ImageView iv_three;
+    @BindView(R.id.iv_four) ImageView iv_four;
+    @BindView(R.id.tv_one) TextView tv_one;
+    @BindView(R.id.tv_two) TextView tv_two;
+    @BindView(R.id.tv_three) TextView tv_three;
+    @BindView(R.id.tv_four) TextView tv_four;
 
     @BindView(R.id.linear_tab)LinearLayout linear_tab;
+    @BindView(R.id.relative_layout_title) RelativeLayout relative_layout_title;
 
     private BlogFragment blogFragment;
     private JokeFragment jokeFragment;
@@ -76,7 +81,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);// tbs服务 - 视频为了避免闪屏和透明问题
         ButterKnife.bind(this);// 控件绑定
 
         initData();
@@ -89,6 +94,7 @@ public class MainActivity extends BaseActivity {
             // 加载根 fragment，第一次进入应用显示的界面
             loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
             mCurrentFragment = blogFragment;
+            setTabStyle(linear_one,iv_one,tv_one);
         }else {
             LogUtil.e("zouqi", "内存重启了");
         }
@@ -102,12 +108,12 @@ public class MainActivity extends BaseActivity {
 //            setTabStyle(linear_two,iv_two,tv_two);
 //        }
 
-
+        relative_layout_title.setBackgroundColor(getResources().getColor(R.color.color_other));
 
         // 透明化状态栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.BLACK);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.color_other));
         }
 
         ActionBar actionBar = getActionBar();
@@ -167,7 +173,6 @@ public class MainActivity extends BaseActivity {
         tag_news = NewsFragment.class.getSimpleName();
         tag_mine = MineFragment.class.getSimpleName();
         tag_discovery = DiscoveryFragment.class.getSimpleName();
-
 
     }
 
@@ -263,7 +268,9 @@ public class MainActivity extends BaseActivity {
 
         linearLayout.setBackgroundColor(getResources().getColor(R.color.color_select));
         imageView.setImageResource(R.mipmap.selected_zhui);
-        textView.setTextColor(getResources().getColor(R.color.color_white));
+        textView.setTextColor(getResources().getColor(R.color.color_other));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
 
     }
 
@@ -282,7 +289,9 @@ public class MainActivity extends BaseActivity {
     private void setStyle(LinearLayout linearLayout, ImageView imageView, TextView textView) {
         linearLayout.setBackgroundColor(getResources().getColor(R.color.color_white));
         imageView.setImageResource(R.mipmap.showu_icon);
-        textView.setTextColor(getResources().getColor(R.color.color_black));
+        textView.setTextColor(getResources().getColor(R.color.color_other));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        textView.setTypeface(Typeface.DEFAULT);
     }
 
     /**

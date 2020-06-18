@@ -16,7 +16,8 @@ public class ScreenUtil {
     private DisplayMetrics metrics = new DisplayMetrics();
 
     public ScreenUtil(Context context) {
-        this.windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        this.windowManager = (WindowManager) context.getApplicationContext()
+                .getSystemService(Context.WINDOW_SERVICE);
     }
 
     /**
@@ -59,7 +60,8 @@ public class ScreenUtil {
      * @return true 平板、false 手机
      */
     private static boolean isTabletDevice(Context context) {
-        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        return (context.getResources().getConfiguration().screenLayout & Configuration
+                .SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
 }

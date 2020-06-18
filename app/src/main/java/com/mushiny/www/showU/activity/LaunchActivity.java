@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -25,7 +26,7 @@ public class LaunchActivity extends BaseActivity {
 
     @BindView(R.id.tv_text_bottom)TextView tv_text_bottom;
 
-    private static final int DELAY_TIME = 3000;
+    private static final int DELAY_TIME = 1500;
 
     // mac 系统选中英文词变大写：⇧ + ⌘ + u
     private static final int WHAT_NEXT = 0x10;
@@ -83,7 +84,10 @@ public class LaunchActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 //            getWindow().setStatusBarColor(Color.TRANSPARENT);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.color_black));// 设置状态栏背景色
+            getWindow().setStatusBarColor(getResources().getColor(R.color.color_white));// 设置状态栏背景色
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         ActionBar actionBar = getActionBar();
         if (actionBar != null){

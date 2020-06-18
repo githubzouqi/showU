@@ -6,27 +6,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.BlogFragment">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/linear_webview_parent"
-            android:orientation="vertical"
+        <in.srain.cube.views.ptr.PtrFrameLayout
+            android:id="@+id/ptr_frame_blog"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+                <LinearLayout
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/linear_webview_parent"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </LinearLayout>
+        </in.srain.cube.views.ptr.PtrFrameLayout>
 
-        </LinearLayout>
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            app:mpb_indeterminateTint="@color/color_protect_eye"
-            android:id="@+id/loading_blog"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
 
 
 

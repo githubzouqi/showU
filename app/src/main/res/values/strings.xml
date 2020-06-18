@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">hello</string>
+    <string name="app_name">UHello</string>
 
     <string name="app_name_pinyin">HELLO</string>
 
     <!--activity_main-->
-    <string name="default_title">--</string>
+    <string name="default_title">hello</string>
     <string name="str_my_blog">博客</string>
     <string name="str_joker">欢笑</string>
     <string name="str_joker_title">欢声笑语</string>
@@ -12,7 +12,7 @@
     <string name="str_mine">我</string>
 
     <!--activity_launch-->
-    <string name="str_text_slogan">和平 爱 尊重 </string>
+    <string name="str_text_slogan">hello | 你好 </string>
     <string name="str_chase_dream">追梦</string>
     <string name="str_copyright">Copyright © 2019 - xxxx Qi</string>
 
@@ -34,7 +34,8 @@
     <string name="default_name">邹奇</string>
     <string name="default_birth">破壳日 [1994/09/23]</string>
     <string name="mine_weather">天气</string>
-    <string name="mine_setting">设置</string>
+    <string name="mine_rubbish_sort">垃圾分类</string>
+    <string name="mine_setting">分享</string>
 
     <!--    fragment_news.xml-->
     <string name="str_news_headlines">头条</string>

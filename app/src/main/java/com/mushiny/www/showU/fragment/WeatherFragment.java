@@ -1,6 +1,5 @@
 package com.mushiny.www.showU.fragment;
 
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,15 +10,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.adapter.FutureWeatherAdapter;
 import com.mushiny.www.showU.constant.Constants;
@@ -28,14 +27,12 @@ import com.mushiny.www.showU.entity.WeatherCityListEntity;
 import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.table.WeatherCityTable;
 import com.mushiny.www.showU.table.WeatherTypeTable;
-import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.SoftInputUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.litepal.LitePal;
-import org.litepal.LitePalDB;
-import org.litepal.crud.LitePalSupport;
 import org.litepal.crud.callback.SaveCallback;
 
 import java.util.ArrayList;
@@ -124,9 +121,11 @@ public class WeatherFragment extends BaseFragment {
 
         try {
 
-            JSONObject object_realtime = objectCityWeather.getJSONObject("result").getJSONObject("realtime");
+            JSONObject object_realtime = objectCityWeather.getJSONObject("result")
+                    .getJSONObject("realtime");
             String realtime_info = object_realtime.optString("info");
-            String realtime_temperature = object_realtime.optString("temperature") + "℃" + "（温度）";
+            String realtime_temperature = object_realtime.optString("temperature") + "℃"
+                    + "（温度）";
             String realtime_humidity = object_realtime.optString("humidity") + "（湿度）";
             String realtime_direct = object_realtime.optString("direct") + "（风向）";
             String realtime_power = object_realtime.optString("power") + "（风力）";
@@ -141,7 +140,8 @@ public class WeatherFragment extends BaseFragment {
             tv_realtime_aqi.setText(realtime_aqi);
 
             // 最近5天天气
-            JSONArray array_future = objectCityWeather.getJSONObject("result").getJSONArray("future");
+            JSONArray array_future = objectCityWeather.getJSONObject("result")
+                    .getJSONArray("future");
             future5WeatherList.clear();
             for (int i = 0;i < array_future.length();i++){
                 JSONObject object = array_future.getJSONObject(i);
@@ -160,7 +160,8 @@ public class WeatherFragment extends BaseFragment {
             }
 
             adapter = new FutureWeatherAdapter(getContext(), future5WeatherList);
-            recycler_view_weather.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+            recycler_view_weather.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.VERTICAL, false));
             recycler_view_weather.setAdapter(adapter);
             recycler_view_weather.setItemAnimator(new DefaultItemAnimator());
 
@@ -364,6 +365,19 @@ public class WeatherFragment extends BaseFragment {
     // 设置监听
     private void setListeners() {
 
+        // editText 设置输入法搜索动作监听
+        et_city_name.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView tv, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    searchCityWeather();
+                    SoftInputUtil.hideKeyboard(et_city_name);
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     // 控件单击事件绑定
@@ -373,52 +387,57 @@ public class WeatherFragment extends BaseFragment {
         switch (view.getId()){
             case R.id.btn_city_search:// 搜索城市天气
 
-                str_search_content = et_city_name.getText().toString().trim();
-                if (TextUtils.isEmpty(str_search_content)){
-                    ToastUtil.showToast(getContext(), "请输入要查询的 城市/地区");
-                    return;
-                }
-
-                if (cityDataIsExist()){
-
-
-                    String param = "%"+ str_search_content.substring(0,2) +"%";
-                    search_city_data = LitePal.where("province LIKE ? or city LIKE ? or district LIKE ?", param, param, param).find(WeatherCityTable.class);
-
-                    if (search_city_data.size() == 0){
-                        ToastUtil.showToast(getContext(), "请填写正确的省份，城市或者地区名称");
-                        return;
-                    }
-
-                    int length = search_city_data.size();
-                    cityItems = new CharSequence[length];
-                    for (int i = 0;i < length;i++){
-                        cityItems[i] = search_city_data.get(i).getProvince() + "-" + search_city_data.get(i).getCity()
-                                + "-" + search_city_data.get(i).getDistrict();
-                    }
-
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("请选择要查询的 城市/地区")
-                            .setIcon(R.mipmap.showu_icon)
-                            .setItems(cityItems, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    tv_search_city.setText(cityItems[which]);
-                                    city = search_city_data.get(which).getDistrict_id();
-                                    et_city_name.setText("");
-                                    et_city_name.clearFocus();
-                                    dialog.dismiss();
-
-                                    getWeather(city);
-                                }
-                            }).create().show();
-
-                }
+                searchCityWeather();
+                SoftInputUtil.hideKeyboard(et_city_name);
 
                 break;
         }
 
+    }
+
+    // 搜索城市天气
+    private void searchCityWeather() {
+        str_search_content = et_city_name.getText().toString().trim();
+        if (TextUtils.isEmpty(str_search_content) || str_search_content.length() < 2){
+            ToastUtil.showToast(getContext(), "请输入要查询的 城市/地区");
+            return;
+        }
+
+        if (cityDataIsExist()){
+            String param = "%"+ str_search_content.substring(0,2) +"%";
+            search_city_data = LitePal.where("province LIKE ? or city LIKE ? or district LIKE ?", param, param, param).find(WeatherCityTable.class);
+
+            if (search_city_data.size() == 0){
+                ToastUtil.showToast(getContext(), "请填写正确的省份，城市或者地区名称");
+                return;
+            }
+
+            int length = search_city_data.size();
+            cityItems = new CharSequence[length];
+            for (int i = 0;i < length;i++){
+                cityItems[i] = search_city_data.get(i).getProvince() + "-" +
+                        search_city_data.get(i).getCity()
+                        + "-" + search_city_data.get(i).getDistrict();
+            }
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("请选择要查询的 城市/地区")
+                    .setIcon(R.mipmap.app_icon)
+                    .setItems(cityItems, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            tv_search_city.setText(cityItems[which]);
+                            city = search_city_data.get(which).getDistrict_id();
+                            et_city_name.setText("");
+                            et_city_name.clearFocus();
+                            dialog.dismiss();
+
+                            getWeather(city);
+                        }
+                    }).create().show();
+
+        }
     }
 
     /**
@@ -556,7 +575,8 @@ public class WeatherFragment extends BaseFragment {
         Call<WeatherCityListEntity> call = networkInterface.getCities(param);
         call.enqueue(new Callback<WeatherCityListEntity>() {
             @Override
-            public void onResponse(Call<WeatherCityListEntity> call, Response<WeatherCityListEntity> response) {
+            public void onResponse(Call<WeatherCityListEntity> call, Response<WeatherCityListEntity>
+                    response) {
                 loading_data.setVisibility(View.GONE);
 
                 try {
@@ -592,4 +612,11 @@ public class WeatherFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
 }

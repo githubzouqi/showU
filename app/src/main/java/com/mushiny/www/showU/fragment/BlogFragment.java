@@ -2,29 +2,46 @@ package com.mushiny.www.showU.fragment;
 
 
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.PtrUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
 import com.tencent.smtt.export.external.interfaces.SslError;
 import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
+import com.tencent.smtt.export.external.interfaces.WebResourceError;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import org.xml.sax.ext.DefaultHandler2;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrDefaultHandler2;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
@@ -35,9 +52,13 @@ public class BlogFragment extends BaseFragment {
     private WebView x5WebView;
     private WebSettings x5WebSettings;
     private boolean hidden = false;// 主页该值默认为false，因为是打开app后显示的第一个页面
+    private int x5WebViewScrollY = 0;
 
-    @BindView(R.id.loading_blog)MaterialProgressBar loading_blog;
     @BindView(R.id.linear_webview_parent)LinearLayout linear_webview_parent;// x5 webView 父布局
+    @BindView(R.id.ptr_frame_blog)PtrFrameLayout ptr_frame_blog;
+
+    private int width = 300;
+    private int height = 300;
 
     public static BlogFragment newInstance(){
         return new BlogFragment();
@@ -55,10 +76,24 @@ public class BlogFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         initData();
+        setPtrFrame();
 
         loadWebPage();
 
         return view;
+    }
+
+    /**
+     * 刷新加载设置
+     */
+    private void setPtrFrame() {
+
+        PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_frame_blog);
+        PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_frame_blog, PtrUtil.DEFAULT_COLOR);
+        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_blog);
+        ptr_frame_blog.setMode(PtrFrameLayout.Mode.REFRESH);
+        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
+
     }
 
     // 加载主页
@@ -70,7 +105,8 @@ public class BlogFragment extends BaseFragment {
                 ix5WebViewExtension.setScrollBarFadingEnabled(false);
             }
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.
+                    LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             x5WebView.setLayoutParams(params);
             linear_webview_parent.addView(x5WebView);
 
@@ -98,7 +134,7 @@ public class BlogFragment extends BaseFragment {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView webView, String url) {
 
-                    LogUtil.e("TAG", "url is:" + url);
+                    LogUtil.e("TAG", "shouldOverrideUrlLoading url is:" + url);
                     // 如果不是http或者https开头的url，那么使用手机自带的浏览器打开
                     if (!url.startsWith("http://") && !url.startsWith("https://")){
                         try {
@@ -116,22 +152,67 @@ public class BlogFragment extends BaseFragment {
                 }
 
                 @Override
-                public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
-                    super.onReceivedSslError(webView, sslErrorHandler, sslError);
+                public void onLoadResource(WebView webView, String s) {
+                    super.onLoadResource(webView, s);
+//                    int h = linear_webview_parent.getMeasuredHeight();
+//                    if (h == height){
+//                        ViewGroup.LayoutParams params_load = x5WebView.getLayoutParams();
+//                        params_load.height = ViewGroup.LayoutParams.MATCH_PARENT;
+//                        x5WebView.setLayoutParams(params_load);
+//                    }
+                }
+
+                @Override
+                public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest,
+                                            WebResourceError webResourceError) {
+                    super.onReceivedError(webView, webResourceRequest, webResourceError);
+                    // 当没网络 加载失败 设置webView固定高度 优化体验
+//                    ViewGroup.LayoutParams params_error = x5WebView.getLayoutParams();
+//                    params.height = height;
+//                    x5WebView.setLayoutParams(params_error);
+                    ptr_frame_blog.refreshComplete();
                 }
             });
 
             // 设置 WebChromeClient
             x5WebView.setWebChromeClient(new WebChromeClient(){
                 @Override
-                public void onProgressChanged(WebView webView, int i) {
+                public void onProgressChanged(final WebView webView, int i) {
                     super.onProgressChanged(webView, i);
                     // 页面加载完，隐藏进度提示
                     if (i == 100){
-                        loading_blog.setVisibility(View.GONE);
+                        ptr_frame_blog.refreshComplete();
+                        ptr_frame_blog.setPtrHandler(new PtrHandler() {
+                            @Override
+                            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content,
+                                                             View header) {
+                                if (x5WebViewScrollY == 0){
+                                    return true;
+                                }
+                                return false;
+                            }
+
+                            @Override
+                            public void onRefreshBegin(PtrFrameLayout frame) {
+                                x5WebView.reload();
+                            }
+                        });
+
+                        // webView 滑动判断
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            x5WebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                                @Override
+                                public void onScrollChange(View v, int scrollX, int scrollY,
+                                                           int oldScrollX, int oldScrollY) {
+                                    x5WebViewScrollY = scrollY;
+                                }
+                            });
+                        }
+
                     }
 
                 }
+
             });
 
             // 根据url加载页面
@@ -148,6 +229,11 @@ public class BlogFragment extends BaseFragment {
         if (x5WebView == null){
             x5WebView = new WebView(getContext().getApplicationContext());
         }
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        // 获取屏幕宽高 px
+        width = displayMetrics.widthPixels;
+        height = displayMetrics.heightPixels;
 
     }
 

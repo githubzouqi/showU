@@ -191,8 +191,6 @@ public class DiscoveryFragment extends BaseFragment {
             // 设置 slidingTabLayout 第一个tab内容的字体大小与加粗
             slidingTabLayout.setCurrentTab(0);
             slidingTabLayout.getTitleView(0).setTypeface(Typeface.DEFAULT_BOLD);
-            slidingTabLayout.getTitleView(0).setTextColor(getResources().getColor(R.color.
-                    color_black));
             slidingTabLayout.getTitleView(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         }
 

@@ -41,6 +41,11 @@ import com.mushiny.www.showU.util.AppDetailSettingUtil;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.ToastUtil;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.shareboard.ShareBoardConfig;
 
 import java.io.File;
 
@@ -119,7 +124,7 @@ public class MineFragment extends BaseFragment {
 
         if (options == null){
             options = new RequestOptions();
-            options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
+            options.placeholder(R.mipmap.app_icon);// 设置占位图
 //            options.override(160,160)// 指定加载图片大小
             options.diskCacheStrategy(DiskCacheStrategy.ALL);// 缓存所有：原型、转换后的
             options.centerCrop();
@@ -147,7 +152,8 @@ public class MineFragment extends BaseFragment {
 //                addTimestamp();
                 Glide.with(getContext()).load(photoFile).apply(options).into(iv_my_photo);
             }else {
-                Glide.with(getContext()).load(R.mipmap.ic_launcher_round).apply(options).into(iv_my_photo);
+                Glide.with(getContext()).load(R.mipmap.ic_launcher_round).apply(options)
+                        .into(iv_my_photo);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -155,7 +161,8 @@ public class MineFragment extends BaseFragment {
         }
     }
 
-    @OnClick({R.id.linear_my_weather, R.id.linear_my_setting, R.id.iv_my_photo})
+    @OnClick({R.id.linear_my_weather, R.id.linear_my_share, R.id.iv_my_photo,
+            R.id.linear_my_rubbish_sort})
     public void doClick(View view){
         switch (view.getId()){
 
@@ -163,33 +170,47 @@ public class MineFragment extends BaseFragment {
 
                 WeatherFragment weatherFragment = WeatherFragment.newInstance();
 
-                showFragment(getActivity(), MineFragment.this, weatherFragment, WeatherFragment.TAG);
+                showFragment(getActivity(), MineFragment.this, weatherFragment,
+                        WeatherFragment.TAG);
 
                 break;
 
-            case R.id.linear_my_setting:// 设置
+            case R.id.linear_my_share:// 分享
 
-                // 测试 App 更新
-                NetworkInterface networkInterface = Retrofit2Util.create(Constants.URL_APP_INFO,
-                        NetworkInterface.class);
-                Call<ResponseBody> call = networkInterface.getBaiduYunApkInfo(null);
-                call.enqueue(new Callback<ResponseBody>() {
+                // 微信分享
+                UMShareListener umShareListener = new UMShareListener() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                        try {
-                            String strType = new String(response.body().bytes());
-                            LogUtil.e("TAG", strType);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+                    public void onStart(SHARE_MEDIA share_media) {
+                        LogUtil.e("TAG", "分享回调 onStart");
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        t.printStackTrace();
+                    public void onResult(SHARE_MEDIA share_media) {
+                        LogUtil.e("TAG", "分享回调 onResult");
                     }
-                });
+
+                    @Override
+                    public void onError(SHARE_MEDIA share_media, Throwable throwable) {
+                        LogUtil.e("TAG", "分享回调 onError ：" + throwable.getMessage());
+                    }
+
+                    @Override
+                    public void onCancel(SHARE_MEDIA share_media) {
+                        LogUtil.e("TAG", "分享回调 onCancel");
+                    }
+                };
+
+                ShareBoardConfig config = new ShareBoardConfig();//新建ShareBoardConfig
+                config.setShareboardPostion(ShareBoardConfig.SHAREBOARD_POSITION_CENTER);//设置位置
+                config.setMenuItemBackgroundShape(ShareBoardConfig.BG_SHAPE_CIRCULAR);
+                config.setCancelButtonVisibility(true);
+
+                UMImage umImage = new UMImage(getActivity(), R.mipmap.app_icon);
+
+                new ShareAction(getActivity()).withText("UHello").setDisplayList(SHARE_MEDIA.WEIXIN,
+                        SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.WEIXIN_FAVORITE)
+                        .withMedia(umImage).setCallback(umShareListener).open(config);
+
 
                 break;
 
@@ -210,6 +231,10 @@ public class MineFragment extends BaseFragment {
                             }
                         }).setCancelable(true).create().show();
 
+                break;
+            case R.id.linear_my_rubbish_sort:// 垃圾分类
+
+                ToastUtil.showToast(getContext(), "敬请期待");
                 break;
         }
     }

@@ -129,96 +129,69 @@
 -keep class com.tencent.smtt.export.external.**{
     *;
 }
-
 -keep class com.tencent.tbs.video.interfaces.IUserStateChangedListener {
 	*;
 }
-
 -keep class com.tencent.smtt.sdk.CacheManager {
 	public *;
 }
-
 -keep class com.tencent.smtt.sdk.CookieManager {
 	public *;
 }
-
 -keep class com.tencent.smtt.sdk.WebHistoryItem {
 	public *;
 }
-
 -keep class com.tencent.smtt.sdk.WebViewDatabase {
 	public *;
 }
-
 -keep class com.tencent.smtt.sdk.WebBackForwardList {
 	public *;
 }
-
 -keep public class com.tencent.smtt.sdk.WebView {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebView$HitTestResult {
 	public static final <fields>;
 	public java.lang.String getExtra();
 	public int getType();
 }
-
 -keep public class com.tencent.smtt.sdk.WebView$WebViewTransport {
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebView$PictureListener {
 	public <fields>;
 	public <methods>;
 }
-
-
--keepattributes InnerClasses
-
 -keep public enum com.tencent.smtt.sdk.WebSettings$** {
     *;
 }
-
 -keep public enum com.tencent.smtt.sdk.QbSdk$** {
     *;
 }
-
 -keep public class com.tencent.smtt.sdk.WebSettings {
     public *;
 }
-
-
--keepattributes Signature
 -keep public class com.tencent.smtt.sdk.ValueCallback {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebViewClient {
 	public <fields>;
 	public <methods>;
 }
-
--keep public class com.tencent.smtt.sdk.DownloadListener {
-	public <fields>;
-	public <methods>;
-}
-
 -keep public class com.tencent.smtt.sdk.WebChromeClient {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebChromeClient$FileChooserParams {
 	public <fields>;
 	public <methods>;
 }
-
 -keep class com.tencent.smtt.sdk.SystemWebChromeClient{
 	public *;
 }
+
 # 1. extension interfaces should be apparent
 -keep public class com.tencent.smtt.export.external.extension.interfaces.* {
 	public protected *;
@@ -228,65 +201,49 @@
 -keep public class com.tencent.smtt.export.external.interfaces.* {
 	public protected *;
 }
-
 -keep public class com.tencent.smtt.sdk.WebViewCallbackClient {
 	public protected *;
 }
-
 -keep public class com.tencent.smtt.sdk.WebStorage$QuotaUpdater {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebIconDatabase {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.WebStorage {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.DownloadListener {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.QbSdk {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.QbSdk$PreInitCallback {
 	public <fields>;
 	public <methods>;
 }
--keep public class com.tencent.smtt.sdk.CookieSyncManager {
-	public <fields>;
-	public <methods>;
-}
-
 -keep public class com.tencent.smtt.sdk.Tbs* {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.utils.LogFileUtils {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.utils.TbsLog {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.utils.TbsLogClient {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.CookieSyncManager {
 	public <fields>;
 	public <methods>;
@@ -297,22 +254,18 @@
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGamePlayerClient* {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGamePlayerClientExtension {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGamePlayerService* {
 	public <fields>;
 	public <methods>;
 }
-
 -keep public class com.tencent.smtt.utils.Apn {
 	public <fields>;
 	public <methods>;
@@ -322,16 +275,13 @@
 }
 # end
 
-
 -keep public class com.tencent.smtt.export.external.extension.proxy.ProxyWebViewClientExtension {
 	public <fields>;
 	public <methods>;
 }
-
 -keep class MTT.ThirdAppInfoNew {
 	*;
 }
-
 -keep class com.tencent.mtt.MttTraceEvent {
 	*;
 }
@@ -340,20 +290,16 @@
 -keep public class com.tencent.smtt.gamesdk.* {
 	public protected *;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGameBooter {
         public <fields>;
         public <methods>;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGameBaseActivity {
 	public protected *;
 }
-
 -keep public class com.tencent.smtt.sdk.TBSGameBaseActivityProxy {
 	public protected *;
 }
-
 -keep public class com.tencent.smtt.gamesdk.internal.TBSGameServiceClient {
 	public *;
 }
@@ -409,5 +355,80 @@
 # FlycoTabLayout 依赖
 -keep class com.flyco.tablayout.** { *; }
 
+# 友盟分享 - 参考官方混淆文档
+-dontshrink
+-dontwarn com.google.android.maps.**
+-dontwarn android.webkit.WebView
+-dontwarn com.umeng.**
+-dontwarn com.tencent.weibo.sdk.**
+-dontwarn com.facebook.**
+-keep public class javax.**
+-keep public class android.webkit.**
+-keep enum com.facebook.**
+-keepattributes Exceptions,InnerClasses,Signature
 
+-keep public interface com.facebook.**
+-keep public interface com.tencent.**
+-keep public interface com.umeng.socialize.**
+-keep public interface com.umeng.socialize.sensor.**
+-keep public interface com.umeng.scrshot.**
 
+-keep public class com.umeng.socialize.* {*;}
+
+-keep class com.facebook.**
+-keep class com.facebook.** { *; }
+-keep class com.umeng.scrshot.**
+-keep public class com.tencent.** {*;}
+-keep class com.umeng.socialize.sensor.**
+-keep class com.umeng.socialize.handler.**
+-keep class com.umeng.socialize.handler.*
+-keep class com.umeng.weixin.handler.**
+-keep class com.umeng.weixin.handler.*
+-keep class com.umeng.qq.handler.**
+-keep class com.umeng.qq.handler.*
+-keep class UMMoreHandler{*;}
+-keep class com.tencent.mm.sdk.modelmsg.WXMediaMessage {*;}
+-keep class com.tencent.mm.sdk.modelmsg.** implements com.tencent.mm.sdk.modelmsg.WXMediaMessage$IMediaObject {*;}
+-keep class im.yixin.sdk.api.YXMessage {*;}
+-keep class im.yixin.sdk.api.** implements im.yixin.sdk.api.YXMessage$YXMessageData{*;}
+-keep class com.tencent.mm.opensdk.** {
+   *;
+}
+-keep class com.tencent.wxop.** {
+   *;
+}
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
+-keep class com.twitter.** { *; }
+-keep class com.tencent.** {*;}
+-dontwarn com.tencent.**
+-keep class com.kakao.** {*;}
+-dontwarn com.kakao.**
+-keep public class com.umeng.com.umeng.soexample.R$*{
+    public static final int *;
+}
+-keep public class com.linkedin.android.mobilesdk.R$*{
+    public static final int *;
+}
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+-keep class com.tencent.open.TDialog$*
+-keep class com.tencent.open.TDialog$* {*;}
+-keep class com.tencent.open.PKDialog
+-keep class com.tencent.open.PKDialog {*;}
+-keep class com.tencent.open.PKDialog$*
+-keep class com.tencent.open.PKDialog$* {*;}
+-keep class com.umeng.socialize.impl.ImageImpl {*;}
+-keep class com.sina.** {*;}
+-dontwarn com.sina.**
+-keep class  com.alipay.share.sdk.** {
+   *;
+}
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+-keep class com.linkedin.** { *; }
+-keep class com.android.dingtalk.share.ddsharemodule.** { *; }

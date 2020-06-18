@@ -8,11 +8,11 @@
 
     <ImageView
         android:alpha="0.618"
-        android:background="@color/color_protect_eye"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -31,6 +31,7 @@
                 android:weightSum="1">
 
                 <EditText
+                    android:imeOptions="actionSearch"
                     android:id="@+id/et_city_name"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
@@ -169,13 +170,13 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_weather"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp" />
 
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:layout_gravity="center"

@@ -1,5 +1,7 @@
 package com.mushiny.www.showU.constant;
 
+import okhttp3.OkHttpClient;
+
 /**
  * 常量类
  */
@@ -26,8 +28,11 @@ public class Constants {
     public static final String JUHE_NEWS_HEADLINE_APP_KEY = "eb9ffd0189e54e6980ee79401c9f286d";// 新闻头条 免费
     public static final String JUHE_WEATHER_FORECAST_APP_KEY = "13d213edb1f4bff460b9e75e77a5973e";// 天气预报 免费
 
-    // app 更新
-    public static final String URL_APP_INFO = "https://pan.baidu.com/";
-    public static final String URL_APP_INFO_AUTH_CODE = "i25t";
+    // RollToolsApi，开放易用的接口服务
+    public static final String ROLL_TOOLS_API_BASE_URL = "https://www.mxnzp.com/api";
+    public static final String ROLL_TOOLS_API_APP_ID = "app_id";
+    public static final String ROLL_TOOLS_API_APP_SECRET = "app_secret";
+    public static final String ROLL_TOOLS_API_APP_ID_VALUE = "qrfhjhlqzfomrjth";
+    public static final String ROLL_TOOLS_API_APP_SECRET_VALUE = "S21VTGswNUhnMTFtV0lMY2pJUEF1dz09";
 
 }

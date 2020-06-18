@@ -12,6 +12,8 @@ import java.util.Map;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.QueryMap;
 
 public interface NetworkInterface {
@@ -31,7 +33,10 @@ public interface NetworkInterface {
     @GET(Constants.URL_PATH_WEATHER_FORECAST_QUERY)
     Call<ResponseBody> getCityWeather(@QueryMap Map<String, Object> map);// 天气：根据城市查询天气
 
-    @GET("s/1_BGIguhqonNF8LrczyVijg/")
-    Call<ResponseBody> getBaiduYunApkInfo(@QueryMap Map<String, Object> map);// App 更新测试
+    @Headers({Constants.ROLL_TOOLS_API_APP_ID + ":" + Constants.ROLL_TOOLS_API_APP_ID_VALUE,
+    Constants.ROLL_TOOLS_API_APP_SECRET + ":" + Constants.ROLL_TOOLS_API_APP_SECRET_VALUE})
+    @GET("/rubbish/type")// ?name=西瓜
+    Call<ResponseBody> getRubbishType(@QueryMap Map<String, Object> map);// 垃圾分类查询
+
 
 }

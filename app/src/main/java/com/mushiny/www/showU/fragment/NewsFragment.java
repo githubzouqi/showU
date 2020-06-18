@@ -22,6 +22,7 @@ import com.mushiny.www.showU.interfaces.MyItemClickInterface;
 import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ProgressDialogUtil;
+import com.mushiny.www.showU.util.PtrUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -101,7 +102,6 @@ public class NewsFragment extends BaseFragment {
 
                     // 自动刷新取消显示
                     ptr_frame_news.refreshComplete();
-                    ptr_frame_news.setMode(PtrFrameLayout.Mode.REFRESH);
                     ptr_frame_news.setPtrHandler(new PtrDefaultHandler2() {
                         @Override
                         public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
@@ -152,6 +152,7 @@ public class NewsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.e("TAG", "onResume = " + news_type);
         lazyLoad();
     }
 
@@ -185,44 +186,12 @@ public class NewsFragment extends BaseFragment {
      */
     private void setPtrFrame() {
 
-        // 头部和底部的阻尼系数
-        ptr_frame_news.setResistanceHeader(1.7f);
-        ptr_frame_news.setResistanceFooter(1.7f);
-
-        ptr_frame_news.setDurationToCloseHeader(1500);
-        ptr_frame_news.setDurationToCloseFooter(500);
-        ptr_frame_news.setDurationToBackHeader(500);
-        ptr_frame_news.setDurationToBackFooter(500);
-
-        ptr_frame_news.setPinContent(true);
-        ptr_frame_news.setPullToRefresh(false);// false 表示手指释放才会刷新，true 表示下拉刷新
-
-        // Materail 风格头部实现
-        MaterialHeader header = new MaterialHeader(getContext());
-        // 设置下拉刷新头部view的颜色
-        header.setColorSchemeColors(new int[]{
-//                0xFFC93437,
-//                0xFF375BF1,
-//                0xFFF7D23E,
-                0xFF34A350
-        });
-        header.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
-        ptr_frame_news.setHeaderView(header);
-        ptr_frame_news.addPtrUIHandler(header);
-
-        // 经典底部布局实现
-        PtrClassicDefaultFooter footer = new PtrClassicDefaultFooter(getContext());
-        footer.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
-        ptr_frame_news.setFooterView(footer);
-        ptr_frame_news.addPtrUIHandler(footer);
-
-        ptr_frame_news.setMode(PtrFrameLayout.Mode.NONE);// 支持下拉刷新
-
-        // 第一次进入界面 自动刷新
-        ptr_frame_news.post(new Runnable() {
-            @Override
-            public void run() { ptr_frame_news.autoRefresh(); }
-        });
+        PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_frame_news);
+        PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_frame_news, PtrUtil
+                .DEFAULT_COLOR);
+        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
+        ptr_frame_news.setMode(PtrFrameLayout.Mode.REFRESH);// 设置模式
+        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
 
     }
 
@@ -308,6 +277,7 @@ public class NewsFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        LogUtil.e("TAG", "setUserVisibleHint = " + news_type);
         if (isVisibleToUser){
             isVisible = true;
             lazyLoad();
