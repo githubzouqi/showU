@@ -2,47 +2,41 @@ package com.mushiny.www.showU.fragment;
 
 
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PtrUtil;
+import com.mushiny.www.showU.util.SoftInputUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
-import com.tencent.smtt.export.external.interfaces.SslError;
-import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
-import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
-import org.xml.sax.ext.DefaultHandler2;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import in.srain.cube.views.ptr.PtrDefaultHandler;
-import in.srain.cube.views.ptr.PtrDefaultHandler2;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,9 +47,12 @@ public class BlogFragment extends BaseFragment {
     private WebSettings x5WebSettings;
     private boolean hidden = false;// 主页该值默认为false，因为是打开app后显示的第一个页面
     private int x5WebViewScrollY = 0;
+    private String loadUrl;
 
     @BindView(R.id.linear_webview_parent)LinearLayout linear_webview_parent;// x5 webView 父布局
     @BindView(R.id.ptr_frame_blog)PtrFrameLayout ptr_frame_blog;
+    @BindView(R.id.et_url)EditText et_url;
+    @BindView(R.id.linear_url)LinearLayout linear_url;
 
     private int width = 300;
     private int height = 300;
@@ -68,19 +65,50 @@ public class BlogFragment extends BaseFragment {
         // Required empty public constructor
     }
 
+    private View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_blog, container, false);
+        if (view == null && savedInstanceState == null){
+            view = inflater.inflate(R.layout.fragment_blog, container, false);
+        }
         ButterKnife.bind(this, view);
 
         initData();
         setPtrFrame();
 
         loadWebPage();
+        setListener();
 
         return view;
+    }
+
+    /**
+     * 设置监听
+     */
+    private void setListener() {
+        et_url.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                    String str = v.getText().toString().trim();
+                    if (!TextUtils.isEmpty(str)){
+                        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
+                        loadUrl = str;
+                        clearX5WebView(false);
+                    }else {
+                        ToastUtil.showToast(getContext(), getResources().getString(R.string
+                                .str_main_url_hint));
+                    }
+                    SoftInputUtil.hideKeyboard(et_url);
+                    et_url.clearFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -181,6 +209,17 @@ public class BlogFragment extends BaseFragment {
                     super.onProgressChanged(webView, i);
                     // 页面加载完，隐藏进度提示
                     if (i == 100){
+                        // 二级页面，隐藏底部栏
+                        if(x5WebView.canGoBack()){
+                            ((MainActivity)getActivity()).goneTab();
+                            ptr_frame_blog.setMode(PtrFrameLayout.Mode.NONE);
+                            linear_url.setVisibility(View.GONE);
+                        }else {
+                            ((MainActivity)getActivity()).visibleTab();
+                            ptr_frame_blog.setMode(PtrFrameLayout.Mode.REFRESH);
+                            linear_url.setVisibility(View.VISIBLE);
+                        }
+
                         ptr_frame_blog.refreshComplete();
                         ptr_frame_blog.setPtrHandler(new PtrHandler() {
                             @Override
@@ -204,6 +243,8 @@ public class BlogFragment extends BaseFragment {
                                 @Override
                                 public void onScrollChange(View v, int scrollX, int scrollY,
                                                            int oldScrollX, int oldScrollY) {
+//                                    LogUtil.e("TAG", "scrollY = " + scrollY
+//                                    + ", oldScrollY = " + oldScrollY);
                                     x5WebViewScrollY = scrollY;
                                 }
                             });
@@ -213,12 +254,18 @@ public class BlogFragment extends BaseFragment {
 
                 }
 
+                @Override
+                public void onReceivedTitle(WebView webView, String title) {
+                    super.onReceivedTitle(webView, title);
+                    ((MainActivity)getActivity()).setTitle(title);
+                }
             });
 
             // 根据url加载页面
 //            x5WebView.loadUrl(Constants.URL_qq_browser_feedback);
 //            x5WebView.loadUrl("http://debugtbs.qq.com");// debug调试页面
-            x5WebView.loadUrl(Constants.URL_BLOG);
+//            x5WebView.loadUrl(Constants.URL_BLOG);
+            x5WebView.loadUrl(loadUrl);
         }
 
     }
@@ -234,6 +281,8 @@ public class BlogFragment extends BaseFragment {
         // 获取屏幕宽高 px
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;
+
+        loadUrl = Constants.URL_BAI_DU;
 
     }
 
@@ -299,19 +348,26 @@ public class BlogFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         if (x5WebView != null){
-            clearX5WebView();
+            clearX5WebView(true);
         }
     }
 
-    private void clearX5WebView() {
+    private void clearX5WebView(boolean isExit) {
         if (x5WebView != null){
             x5WebView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
             x5WebView.clearHistory();
             x5WebView.clearCache(true);// 清除缓存
-
-            ((ViewGroup)x5WebView.getParent()).removeView(x5WebView);
             x5WebView.destroy();
+            ((ViewGroup)x5WebView.getParent()).removeView(x5WebView);
             x5WebView = null;
+        }
+        if (!isExit){
+//            LogUtil.e("TAG", "clearX5WebView, loadUrl = " + loadUrl);
+            // x5的webview创建
+            if (x5WebView == null){
+                x5WebView = new WebView(getContext().getApplicationContext());
+            }
+            loadWebPage();
         }
     }
 }

@@ -14,6 +14,7 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -316,6 +317,11 @@ public class MainActivity extends BaseActivity {
         linear_tab.setVisibility(View.VISIBLE);
     }
 
+    // 设置标题内容
+    public void setTitle(String title){
+        setHeadTitle(title);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -339,8 +345,8 @@ public class MainActivity extends BaseActivity {
             }else {
 
                 LogUtil.e("TAG", "getBackStackEntryCount() = " + getBackStackEntryCount());
-
                 canBack = ((BlogFragment)findFragmentByTag(tag_blogF)).canBack();
+                LogUtil.e("TAG", "else canBack is :" + canBack);
 
                 if ((mCurrentFragment instanceof BlogFragment) && findFragmentByTag(tag_blogF) != null
                         && !canBack){
@@ -351,7 +357,7 @@ public class MainActivity extends BaseActivity {
                     exitApp(TIME_INTERVAL);
                 }
 
-                LogUtil.e("TAG", "else canBack is :" + canBack);
+
             }
 
             // 表示 webView 可以返回

@@ -5,11 +5,13 @@
 
     <!--activity_main-->
     <string name="default_title">hello</string>
-    <string name="str_my_blog">博客</string>
+    <string name="str_my_blog">主页</string>
     <string name="str_joker">欢笑</string>
     <string name="str_joker_title">欢声笑语</string>
     <string name="str_finder">发现</string>
     <string name="str_mine">我</string>
+    <string name="str_main_url_hint">请输入网址</string>
+    <string name="str_main_more">更多推荐</string>
 
     <!--activity_launch-->
     <string name="str_text_slogan">hello | 你好 </string>

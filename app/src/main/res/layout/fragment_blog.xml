@@ -12,11 +12,60 @@
             android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:nestedScrollingEnabled="false"
-                    android:id="@+id/linear_webview_parent"
+                    android:background="@color/color_white"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/linear_url"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="1">
+
+                                <EditText
+                                    android:imeOptions="actionSearch"
+                                    android:id="@+id/et_url"
+                                    android:layout_width="0dp"
+                                    android:layout_height="40dp"
+                                    android:layout_weight="0.8"
+                                    android:background="@drawable/edittext_drawable_shape_city"
+                                    android:gravity="center_vertical"
+                                    android:hint="@string/str_main_url_hint"
+                                    android:inputType="text"
+                                    android:maxLines="1"
+                                    android:padding="10dp"
+                                    android:textColor="@color/color_black"
+                                    android:textSize="18sp" />
+
+                                <Button
+                                    android:id="@+id/btn_url"
+                                    android:layout_width="0dp"
+                                    android:layout_height="40dp"
+                                    android:layout_weight="0.2"
+                                    android:background="@drawable/button_drawable_shape_city_search"
+                                    android:foreground="@drawable/water_foreground"
+                                    android:text="@string/str_main_more"
+                                    android:textColor="@color/color_other"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:nestedScrollingEnabled="false"
+                            android:id="@+id/linear_webview_parent"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                        </LinearLayout>
+
                 </LinearLayout>
         </in.srain.cube.views.ptr.PtrFrameLayout>
 
