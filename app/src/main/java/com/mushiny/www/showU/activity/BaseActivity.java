@@ -38,7 +38,8 @@ public class BaseActivity extends FragmentActivity {
      */
     public void loadRootFragment(int containerId, @NonNull Fragment rootFragment, String tag){
 
-        getSupportFragmentManager().beginTransaction().add(containerId, rootFragment, tag).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().add(containerId, rootFragment, tag)
+                .commitAllowingStateLoss();
 
     }
 

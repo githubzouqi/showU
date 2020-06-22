@@ -12,6 +12,7 @@
     <string name="str_mine">我</string>
     <string name="str_main_url_hint">请输入网址</string>
     <string name="str_main_more">更多推荐</string>
+    <string name="str_main_url_illegal">输入网址格式不正确</string>
 
     <!--activity_launch-->
     <string name="str_text_slogan">hello | 你好 </string>
@@ -25,8 +26,9 @@
     <string name="str_banner_animation_setting">默认动画样式 - Default</string>
 
     <!--recyclerView_item_joker-->
-    <string name="str_get_joker">点击获取最新笑话</string>
-    <string name="str_joker_content">小区门口修车师傅生意特好小区门口修车师傅生意特好</string>
+    <string name="str_get_joker">点击重新获取</string>
+    <string name="str_joker_content">小区门口修车师傅生意特好小区门口修车师傅生意特好小区门口修车师傅生意特
+        好小区门口修车师傅生意特好小区门口修车师傅生意特好小区门口修车师傅生意特好</string>
     <string name="str_joker_update_time">2019-06-06 10:55:02</string>
 
     <!-- dialog_view_progress.xml -->

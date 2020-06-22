@@ -12,12 +12,7 @@ public class ScreenUtil {
     public static final String WIDTH = "width";// 宽度常量
     public static final String HEIGHT = "height";// 高度常量
 
-    private WindowManager windowManager;
-    private DisplayMetrics metrics = new DisplayMetrics();
-
-    public ScreenUtil(Context context) {
-        this.windowManager = (WindowManager) context.getApplicationContext()
-                .getSystemService(Context.WINDOW_SERVICE);
+    public ScreenUtil() {
     }
 
     /**
@@ -25,16 +20,17 @@ public class ScreenUtil {
      * @param s 宽或高类型
      * @return
      */
-    public int getScreenSize(String s) {
+    public int getScreenSize(String s, Context context) {
         // 获取显示度量，该显示度量描述了显示的大小和密度
-        windowManager.getDefaultDisplay().getMetrics(metrics);
+//        windowManager.getDefaultDisplay().getMetrics(metrics);
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int w_or_h = 0;
         switch (s){
             case WIDTH://宽度
-                w_or_h = metrics.widthPixels;
+                w_or_h = displayMetrics.widthPixels;
                 break;
             case HEIGHT:// 高度
-                w_or_h = metrics.heightPixels;
+                w_or_h = displayMetrics.heightPixels;
                 break;
         }
         return w_or_h;// 返回手机屏幕的宽度或者高度

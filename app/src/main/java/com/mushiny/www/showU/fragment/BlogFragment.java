@@ -1,6 +1,8 @@
 package com.mushiny.www.showU.fragment;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -22,6 +24,7 @@ import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PtrUtil;
+import com.mushiny.www.showU.util.RegexUtil;
 import com.mushiny.www.showU.util.SoftInputUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
@@ -31,10 +34,15 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
+import com.umeng.analytics.MobclickAgent;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
@@ -46,7 +54,6 @@ public class BlogFragment extends BaseFragment {
     private WebView x5WebView;
     private WebSettings x5WebSettings;
     private boolean hidden = false;// 主页该值默认为false，因为是打开app后显示的第一个页面
-    private int x5WebViewScrollY = 0;
     private String loadUrl;
 
     @BindView(R.id.linear_webview_parent)LinearLayout linear_webview_parent;// x5 webView 父布局
@@ -54,8 +61,22 @@ public class BlogFragment extends BaseFragment {
     @BindView(R.id.et_url)EditText et_url;
     @BindView(R.id.linear_url)LinearLayout linear_url;
 
+    // 设备宽高
     private int width = 300;
     private int height = 300;
+    private CharSequence[] items;
+
+    private String baiDu = "百度一下";// https://www.baidu.com/
+    private String csdn = "CSDN 博客";// https://www.csdn.net/
+    private String jianShu = "简书";// https://www.jianshu.com/
+    private String bilibili = "哔哩哔哩"; // https://www.bilibili.com/
+    private String douYu = "斗鱼"; // https://www.douyu.com/
+    private String huYa = "虎牙"; // https://www.huya.com/
+    private String wanAndroid = "玩Android"; // https://www.wanandroid.com/
+    private String imxiaoqi = "邹奇"; // https://blog.csdn.net/csdnzouqi
+    private List<Object[]> recommendList;
+
+    private String top_title = "主页";
 
     public static BlogFragment newInstance(){
         return new BlogFragment();
@@ -95,14 +116,23 @@ public class BlogFragment extends BaseFragment {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH){
                     String str = v.getText().toString().trim();
                     if (!TextUtils.isEmpty(str)){
-                        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
-                        loadUrl = str;
-                        clearX5WebView(false);
+
+                        if (RegexUtil.match(str, RegexUtil.PATTERN_URL)){
+                            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
+                            loadUrl = str;
+                            clearX5WebView(false);
+                        }else {
+                            ToastUtil.showToast(getContext(), getResources().getString(R.string
+                                    .str_main_url_illegal));
+                        }
+
+
                     }else {
                         ToastUtil.showToast(getContext(), getResources().getString(R.string
                                 .str_main_url_hint));
                     }
                     SoftInputUtil.hideKeyboard(et_url);
+                    et_url.setText("");
                     et_url.clearFocus();
                     return true;
                 }
@@ -171,7 +201,6 @@ public class BlogFragment extends BaseFragment {
                             return true;
                         }catch (Exception e){
                             e.printStackTrace();
-                            return true;
                         }
                     }
 //                    webView.loadUrl(url);
@@ -182,6 +211,7 @@ public class BlogFragment extends BaseFragment {
                 @Override
                 public void onLoadResource(WebView webView, String s) {
                     super.onLoadResource(webView, s);
+//                    LogUtil.e("TAG", "onLoadResource s = " + s);
 //                    int h = linear_webview_parent.getMeasuredHeight();
 //                    if (h == height){
 //                        ViewGroup.LayoutParams params_load = x5WebView.getLayoutParams();
@@ -198,12 +228,24 @@ public class BlogFragment extends BaseFragment {
 //                    ViewGroup.LayoutParams params_error = x5WebView.getLayoutParams();
 //                    params.height = height;
 //                    x5WebView.setLayoutParams(params_error);
+//                    loadUrl = Constants.URL_BAI_DU;
+//                    clearX5WebView(false);
+//                        new AlertDialog.Builder(getContext()).setTitle(webResourceError.getDescription())
+//                            .setIcon(R.mipmap.app_icon).setMessage("加载异常，百度已加载")
+//                            .setCancelable(false).setPositiveButton("我知道了", new
+//                            DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    }).create().show();
                     ptr_frame_blog.refreshComplete();
                 }
             });
 
             // 设置 WebChromeClient
             x5WebView.setWebChromeClient(new WebChromeClient(){
+
                 @Override
                 public void onProgressChanged(final WebView webView, int i) {
                     super.onProgressChanged(webView, i);
@@ -221,34 +263,6 @@ public class BlogFragment extends BaseFragment {
                         }
 
                         ptr_frame_blog.refreshComplete();
-                        ptr_frame_blog.setPtrHandler(new PtrHandler() {
-                            @Override
-                            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content,
-                                                             View header) {
-                                if (x5WebViewScrollY == 0){
-                                    return true;
-                                }
-                                return false;
-                            }
-
-                            @Override
-                            public void onRefreshBegin(PtrFrameLayout frame) {
-                                x5WebView.reload();
-                            }
-                        });
-
-                        // webView 滑动判断
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            x5WebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                                @Override
-                                public void onScrollChange(View v, int scrollX, int scrollY,
-                                                           int oldScrollX, int oldScrollY) {
-//                                    LogUtil.e("TAG", "scrollY = " + scrollY
-//                                    + ", oldScrollY = " + oldScrollY);
-                                    x5WebViewScrollY = scrollY;
-                                }
-                            });
-                        }
 
                     }
 
@@ -257,7 +271,8 @@ public class BlogFragment extends BaseFragment {
                 @Override
                 public void onReceivedTitle(WebView webView, String title) {
                     super.onReceivedTitle(webView, title);
-                    ((MainActivity)getActivity()).setTitle(title);
+                    baseTitle = title;
+                    setTopTitle();
                 }
             });
 
@@ -284,6 +299,23 @@ public class BlogFragment extends BaseFragment {
 
         loadUrl = Constants.URL_BAI_DU;
 
+        // 更多推荐
+        recommendList = new ArrayList<>();
+        recommendList.add(new Object[]{baiDu, "https://www.baidu.com/"});
+        recommendList.add(new Object[]{csdn, "https://www.csdn.net/"});
+        recommendList.add(new Object[]{jianShu, "https://www.jianshu.com/"});
+        recommendList.add(new Object[]{wanAndroid, "https://www.wanandroid.com/"});
+        recommendList.add(new Object[]{bilibili, "https://www.bilibili.com/"});
+        recommendList.add(new Object[]{douYu, "https://www.douyu.com/"});
+        recommendList.add(new Object[]{huYa, "https://www.huya.com/"});
+        recommendList.add(new Object[]{imxiaoqi, "https://blog.csdn.net/csdnzouqi"});
+
+        items = new CharSequence[recommendList.size()];
+        for (int j = 0;j < recommendList.size();j++){
+            items[j] = String.valueOf(recommendList.get(j)[0]);
+        }
+
+
     }
 
     @Override
@@ -295,12 +327,6 @@ public class BlogFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         this.hidden = hidden;
-//        ToastUtil.showToast(getContext(),"主页 hidden = " + hidden);
-        if (hidden){
-
-        }else {
-
-        }
     }
 
     /**
@@ -328,20 +354,25 @@ public class BlogFragment extends BaseFragment {
      * 控件单击事件监听
      * @param
      */
-//    @OnClick({R.id.btn_imxiaoqi})
-//    public void doClick(View view){
-//        switch (view.getId()){
-//            case R.id.btn_imxiaoqi:
-//
-//                if (BlogFragment.this.isAdded()){
-//                    LogUtil.e("TAG", " BlogFragment is added!");
-//                }else {
-//                    LogUtil.e("TAG", " BlogFragment is not added!");
-//                }
-//
-//                break;
-//        }
-//    }
+    @OnClick({R.id.btn_url})
+    public void doClick(View view){
+        switch (view.getId()){
+            case R.id.btn_url:// 更多推荐
+                new AlertDialog.Builder(getContext())
+                        .setTitle(getResources().getString(R.string.str_main_more))
+                        .setIcon(R.mipmap.more_recommend)
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String url = String.valueOf(recommendList.get(which)[1]);
+                                loadUrl = url;
+                                clearX5WebView(false);
+                                dialog.dismiss();
+                            }
+                        }).create().show();
+                break;
+        }
+    }
 
 
     @Override
@@ -370,4 +401,15 @@ public class BlogFragment extends BaseFragment {
             loadWebPage();
         }
     }
+
+    /**
+     * 重新加载页面
+     */
+    public void reload() {
+        if (x5WebView != null){
+            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
+            x5WebView.reload();
+        }
+    }
+
 }

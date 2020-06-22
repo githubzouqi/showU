@@ -108,6 +108,7 @@
 -keep class com.youth.banner.**
 
 # butterKnife 依赖
+-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
 -keep class **$$ViewBinder { *; }

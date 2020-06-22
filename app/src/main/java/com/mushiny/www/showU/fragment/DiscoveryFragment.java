@@ -129,9 +129,8 @@ public class DiscoveryFragment extends BaseFragment {
                         slidingTabLayout.getTitleView(i).setTypeface(Typeface.DEFAULT);
                     }
                 }
-                if (titleListener != null){
-                    titleListener.getTitle(titles[position]);
-                }
+                baseTitle = slidingTabLayout.getTitleView(position).getText().toString();
+                setTopTitle();
             }
 
             @Override
@@ -194,6 +193,9 @@ public class DiscoveryFragment extends BaseFragment {
             slidingTabLayout.getTitleView(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         }
 
+        baseTitle = slidingTabLayout.getTitleView(0).getText().toString();
+        setTopTitle();
+
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter{
@@ -215,5 +217,10 @@ public class DiscoveryFragment extends BaseFragment {
             return newsFragments.size();
         }
 
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
     }
 }

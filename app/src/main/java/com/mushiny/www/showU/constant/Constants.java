@@ -30,7 +30,7 @@ public class Constants {
     public static final String JUHE_WEATHER_FORECAST_APP_KEY = "13d213edb1f4bff460b9e75e77a5973e";// 天气预报 免费
 
     // RollToolsApi，开放易用的接口服务
-    public static final String ROLL_TOOLS_API_BASE_URL = "https://www.mxnzp.com/api";
+    public static final String ROLL_TOOLS_API_BASE_URL = "https://www.mxnzp.com/api/";
     public static final String ROLL_TOOLS_API_APP_ID = "app_id";
     public static final String ROLL_TOOLS_API_APP_SECRET = "app_secret";
     public static final String ROLL_TOOLS_API_APP_ID_VALUE = "qrfhjhlqzfomrjth";

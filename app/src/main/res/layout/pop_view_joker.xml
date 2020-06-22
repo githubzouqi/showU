@@ -7,7 +7,6 @@
     <ImageView
         android:visibility="gone"
         android:scaleType="fitXY"
-        android:src="@drawable/xiaoyu"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -39,9 +38,9 @@
         <TextView
             android:id="@+id/tv_prev"
             android:foreground="@drawable/water_foreground"
-            android:textColor="@color/color_protect_eye"
+            android:textColor="@color/color_other"
             android:padding="10dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:gravity="center"
             android:text="@string/str_joker_up"
             android:textStyle="bold"
@@ -52,10 +51,10 @@
         <TextView
             android:id="@+id/tv_next"
             android:foreground="@drawable/water_foreground"
-            android:textColor="@color/color_protect_eye"
+            android:textColor="@color/color_other"
             android:layout_marginTop="10dp"
             android:padding="10dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:text="@string/str_joker_down"
             android:gravity="center"
             android:textStyle="bold"

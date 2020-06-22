@@ -120,6 +120,9 @@ public class MineFragment extends BaseFragment {
     // 初始化数据
     private void initData() {
 
+        baseTitle = getResources().getString(R.string.str_mine);
+        setTopTitle();
+
         parentPath = Environment.getExternalStorageDirectory() + "/imxiaoqi";
 
         if (options == null){
@@ -152,12 +155,12 @@ public class MineFragment extends BaseFragment {
 //                addTimestamp();
                 Glide.with(getContext()).load(photoFile).apply(options).into(iv_my_photo);
             }else {
-                Glide.with(getContext()).load(R.mipmap.ic_launcher_round).apply(options)
+                Glide.with(getContext()).load(R.mipmap.app_icon).apply(options)
                         .into(iv_my_photo);
             }
         }catch (Exception e){
             e.printStackTrace();
-            Glide.with(getContext()).load(R.mipmap.ic_launcher_round).apply(options).into(iv_my_photo);
+            Glide.with(getContext()).load(R.mipmap.app_icon).apply(options).into(iv_my_photo);
         }
     }
 
@@ -502,5 +505,8 @@ public class MineFragment extends BaseFragment {
         }
     }
 
-
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+    }
 }

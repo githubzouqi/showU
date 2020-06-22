@@ -22,11 +22,11 @@ import java.util.List;
 public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollectionAdapter.MyViewHolder> {
 
     private Context context;
-    private List<JokerCollectionEntity.ResultBean.DataBean> dataBeans;
+    private List<JokerCollectionEntity.DataBean> dataBeans;
     private LayoutInflater inflater;
     private MyItemClickInterface itemClickInterface;
 
-    public JokerCollectionAdapter(Context context, List<JokerCollectionEntity.ResultBean.DataBean> dataBeans) {
+    public JokerCollectionAdapter(Context context, List<JokerCollectionEntity.DataBean> dataBeans) {
         this.context = context;
         this.dataBeans = dataBeans;
         this.inflater = LayoutInflater.from(context);
@@ -43,7 +43,8 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = inflater.inflate(R.layout.recyclerview_itemview_joker, viewGroup, false);
+        View view = inflater.inflate(R.layout.recyclerview_itemview_joker, viewGroup,
+                false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
@@ -57,9 +58,10 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
         options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
 
-        holder.tv_joker_content.setText(dataBeans.get(position).getContent().replaceAll("&nbsp;",""));
-        holder.tv_joker_update_time.setText(dataBeans.get(position).getUpdatetime());
-        Glide.with(context).load(R.drawable.xiaoyu_one).apply(options).into(holder.iv_joker);
+        holder.tv_joker_content.setText(dataBeans.get(position).getContent()
+                .replaceAll("&nbsp;",""));
+        holder.tv_joker_update_time.setText(dataBeans.get(position).getUpdateTime());
+        Glide.with(context).load(R.mipmap.app_icon).apply(options).into(holder.iv_joker);
 
     }
 

@@ -18,6 +18,8 @@ import retrofit2.http.QueryMap;
 
 public interface NetworkInterface {
 
+    /* 聚合数据 */
+
     @GET(Constants.URL_PATH_JOKER)
     Call<JokerCollectionEntity> getLatestJoker(@QueryMap Map<String, Object> map);// 笑话大全
 
@@ -33,10 +35,17 @@ public interface NetworkInterface {
     @GET(Constants.URL_PATH_WEATHER_FORECAST_QUERY)
     Call<ResponseBody> getCityWeather(@QueryMap Map<String, Object> map);// 天气：根据城市查询天气
 
-    @Headers({Constants.ROLL_TOOLS_API_APP_ID + ":" + Constants.ROLL_TOOLS_API_APP_ID_VALUE,
-    Constants.ROLL_TOOLS_API_APP_SECRET + ":" + Constants.ROLL_TOOLS_API_APP_SECRET_VALUE})
-    @GET("/rubbish/type")// ?name=西瓜
+    /* ------ */
+
+    /* RollToolsApi，开放易用的接口服务 */
+
+    @GET("rubbish/type")// ?name=西瓜
     Call<ResponseBody> getRubbishType(@QueryMap Map<String, Object> map);// 垃圾分类查询
 
+    @GET("jokes/list/random")
+    Call<JokerCollectionEntity> getRandomJokers();// 随机笑话
+
+    @GET("image/girl/list/random")
+    Call<ResponseBody> getRandomGirl();// 随机福利图片
 
 }

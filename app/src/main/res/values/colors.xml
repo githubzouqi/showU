@@ -13,6 +13,7 @@
     <color name="color_protect_eye">#c7edcc</color>
     <color name="color_news_tab">#44BB44</color>
     <color name="color_transparent">#00000000</color>
+    <color name="color_red">#FF0000</color>
 
     <color name="color_test">#34A350</color>
 </resources>

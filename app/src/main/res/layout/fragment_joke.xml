@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.JokeFragment">
 
     <LinearLayout
@@ -12,14 +13,20 @@
         android:orientation="vertical">
 
         <com.youth.banner.Banner
-            android:layout_margin="10dp"
+            app:title_background="@android:color/transparent"
             android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="10dp"
+            app:banner_default_image="@mipmap/app_icon"
+            app:title_textcolor="@color/color_other">
 
         </com.youth.banner.Banner>
 
         <View
+            android:visibility="gone"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="2dp"
@@ -28,6 +35,7 @@
             android:layout_height="1px"/>
 
         <RelativeLayout
+            android:visibility="gone"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:id="@+id/relative_banner_animation_setting"
@@ -51,6 +59,7 @@
         </RelativeLayout>
 
         <View
+            android:visibility="gone"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@android:color/darker_gray"
@@ -58,11 +67,11 @@
             android:layout_height="1px"/>
 
         <TextView
-            android:visibility="visible"
+            android:visibility="gone"
             android:padding="10dp"
             android:layout_marginTop="20dp"
             android:clickable="true"
-            android:textColor="@color/color_protect_eye"
+            android:textColor="@color/color_red"
             android:id="@+id/tv_get_joker"
             android:text="@string/str_get_joker"
             android:textSize="18sp"
@@ -90,4 +99,39 @@
 
     </LinearLayout>
 
-</FrameLayout>
+    <ImageView
+        android:clickable="true"
+        android:id="@+id/iv_another"
+        android:foreground="@drawable/water_foreground"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/refresh"
+        android:layout_width="24dp"
+        android:layout_height="24dp"/>
+
+    <ImageView
+        android:clickable="true"
+        android:layout_below="@+id/iv_another"
+        android:id="@+id/iv_pause"
+        android:foreground="@drawable/water_foreground"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/pause"
+        android:layout_width="24dp"
+        android:layout_height="24dp"/>
+
+    <ImageView
+        android:clickable="true"
+        android:layout_below="@+id/iv_pause"
+        android:id="@+id/iv_start"
+        android:foreground="@drawable/water_foreground"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/start"
+        android:layout_width="24dp"
+        android:layout_height="24dp"/>
+
+</RelativeLayout>

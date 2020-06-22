@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -31,6 +32,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.gson.JsonObject;
+import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.interfaces.MyItemClickInterface;
 import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.R;
@@ -39,14 +42,21 @@ import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.entity.JokerCollectionEntity;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ProgressDialogUtil;
+import com.mushiny.www.showU.util.PtrUtil;
 import com.mushiny.www.showU.util.Retrofit2Util;
+import com.mushiny.www.showU.util.ScaleUtil;
 import com.mushiny.www.showU.util.ScreenUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +71,7 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.header.MaterialHeader;
 import in.srain.cube.views.ptr.header.MaterialProgressDrawable;
 import in.srain.cube.views.ptr.util.PtrLocalDisplay;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -84,25 +95,21 @@ public class JokeFragment extends BaseFragment {
     private static final int WHAT_GET_JOKER = 0x10;
     private static final int WHAT_AUTO_RELOAD = 0x11;
 
-    private List<Integer> images = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
 
     private List<Class<? extends ViewPager.PageTransformer>> animations = new ArrayList<>();
     private CharSequence items[];
     private int checkedItem = -1;
 
-    private int PAGE_CURRENT = 1;
-    private int PAGE_MAX = 20;
-    private List<JokerCollectionEntity.ResultBean.DataBean> dataBeans = new ArrayList<>();
+    private List<JokerCollectionEntity.DataBean> dataBeans = new ArrayList<>();
     private JokerCollectionAdapter adapter = null;
 
     private PopupWindow pop_window_joker = null;
     private View pop_view_joker = null;
     private int deviceH;
 
-    private ProgressDialogUtil progressDialogUtil;
-
-    private int position_current = 0;
+    private int deviceW = 400;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -115,6 +122,7 @@ public class JokeFragment extends BaseFragment {
 
                         if (adapter != null){
                             adapter.notifyDataSetChanged();
+                            ToastUtil.showToast(getContext(), "刷新成功");
                             return;
                         }
 
@@ -122,21 +130,37 @@ public class JokeFragment extends BaseFragment {
                             adapter = new JokerCollectionAdapter(getContext(), dataBeans);
 
                             // 设置recyclerview的item点击事件监听
+                            /*
                             adapter.setOnItemClick(new MyItemClickInterface() {
                                 @Override
                                 public void OnRecyclerViewItemClick(View itemView, int position) {
                                     position_current = position;
-                                    showJokerPop(dataBeans.get(position).getContent().replaceAll("&nbsp;", ""));
+                                    showJokerPop(dataBeans.get(position).getContent()
+                                            .replaceAll("&nbsp;", ""));
                                 }
                             });
+                            */
                         }
 
 
-                        recycle_view_joker.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                        recycle_view_joker.setLayoutManager(new LinearLayoutManager(getContext(),
+                                LinearLayoutManager.VERTICAL, false));
                         recycle_view_joker.setAdapter(adapter);
                         recycle_view_joker.setItemAnimator(new DefaultItemAnimator());
                         recycle_view_joker.setVisibility(View.VISIBLE);
-                        ptr_frame_joker.setMode(PtrFrameLayout.Mode.BOTH);
+                        ToastUtil.showToast(getContext(), "获取成功");
+                        ptr_frame_joker.setPtrHandler(new PtrDefaultHandler2() {
+                            @Override
+                            public void onLoadMoreBegin(PtrFrameLayout frame) {
+
+                            }
+
+                            @Override
+                            public void onRefreshBegin(PtrFrameLayout frame) {
+                                // 下拉刷新
+                                getJoker();
+                            }
+                        });
                     }
                     break;
 
@@ -153,7 +177,6 @@ public class JokeFragment extends BaseFragment {
      */
     private void showJokerPop(String joker_content) {
 
-        deviceH = new ScreenUtil(getContext()).getScreenSize(ScreenUtil.HEIGHT);
         int height = (int) (deviceH * 0.618);
         pop_view_joker = getLayoutInflater().inflate(R.layout.pop_view_joker, null);
         final TextView tv_pop_view_joker = pop_view_joker.findViewById(R.id.tv_pop_view_joker);
@@ -161,32 +184,11 @@ public class JokeFragment extends BaseFragment {
 
         final TextView tv_prev = pop_view_joker.findViewById(R.id.tv_prev);
         final TextView tv_next = pop_view_joker.findViewById(R.id.tv_next);
-        if (position_current == 0){
-            tv_prev.setVisibility(View.GONE);
-            tv_next.setVisibility(View.VISIBLE);
-        }
-        if (position_current == dataBeans.size() - 1){
-            tv_prev.setVisibility(View.VISIBLE);
-            tv_next.setVisibility(View.GONE);
-        }
 
         // 前一个 单击监听
         tv_prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                position_current -= 1;
-                if (position_current == 0){
-                    tv_prev.setVisibility(View.GONE);
-                    tv_next.setVisibility(View.VISIBLE);
-                }
-
-                if (position_current > 0 && position_current < dataBeans.size() - 1){
-                    tv_prev.setVisibility(View.VISIBLE);
-                    tv_next.setVisibility(View.VISIBLE);
-                }
-
-                String prev_content = dataBeans.get(position_current).getContent().replaceAll("&nbsp;", "");
-                tv_pop_view_joker.setText(prev_content);
             }
         });
 
@@ -194,19 +196,6 @@ public class JokeFragment extends BaseFragment {
         tv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                position_current += 1;
-                if (position_current == dataBeans.size() - 1){
-                    tv_prev.setVisibility(View.VISIBLE);
-                    tv_next.setVisibility(View.GONE);
-                }
-
-                if (position_current > 0 && position_current < dataBeans.size() - 1){
-                    tv_prev.setVisibility(View.VISIBLE);
-                    tv_next.setVisibility(View.VISIBLE);
-                }
-
-                String next_content = dataBeans.get(position_current).getContent().replaceAll("&nbsp;", "");
-                tv_pop_view_joker.setText(next_content);
             }
         });
 
@@ -236,14 +225,13 @@ public class JokeFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-
+    private View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_joke, container, false);
-
-        LogUtil.e("TAG","joker,onCreateView," + System.currentTimeMillis() );
+        if (view == null && savedInstanceState == null){
+            view = inflater.inflate(R.layout.fragment_joke, container, false);
+        }
         ButterKnife.bind(this, view);
 
         initData();
@@ -256,7 +244,8 @@ public class JokeFragment extends BaseFragment {
      * 点击事件
      * @param view
      */
-    @OnClick({R.id.relative_banner_animation_setting, R.id.tv_get_joker})
+    @OnClick({R.id.relative_banner_animation_setting, R.id.tv_get_joker, R.id.iv_another,
+    R.id.iv_pause, R.id.iv_start})
     public void doClick(View view){
         switch (view.getId()){
             case R.id.relative_banner_animation_setting:// 动画设置
@@ -282,127 +271,83 @@ public class JokeFragment extends BaseFragment {
                 break;
             case R.id.tv_get_joker:// 获取最新笑话
 
+                PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
                 getJoker();
 
+                break;
+            case R.id.iv_another:// 刷新换一组
+                if (banner != null){
+                    banner.stopAutoPlay();
+                    getBannerPic();
+                }
+                break;
+            case R.id.iv_pause:// 轮播暂停 banner
+                if (banner != null){
+                    banner.stopAutoPlay();
+                    ToastUtil.showToast(getContext(), "轮播暂停成功");
+                }
+                break;
+            case R.id.iv_start:// 轮播启动 banner
+
+                if (banner != null){
+                    banner.startAutoPlay();
+                    ToastUtil.showToast(getContext(), "轮播开启成功");
+                }
                 break;
         }
     }
 
     /**
-     * 接口调用获取最新数据
+     * 获取随机笑话
      */
     private void getJoker() {
 
-        progressDialogUtil.show();
-
-        /*
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.V_JUHE_CN)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        NetworkInterface networkInterface = retrofit.create(NetworkInterface.class);
-        */
-        NetworkInterface networkInterface = Retrofit2Util.create(Constants.V_JUHE_CN, NetworkInterface.class);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("key", Constants.JUHE_JOKE_APP_KEY);
-        params.put("page", PAGE_CURRENT);// 默认1，最大20。超过20 则显示第20页的笑话
-//        params.put("pagesize", 2);// 默认是一页返回20条笑话
-        Call<JokerCollectionEntity> call = networkInterface.getLatestJoker(params);
-
+        NetworkInterface networkInterface = Retrofit2Util
+                .createWithROLLHeader(NetworkInterface.class);
+        Call<JokerCollectionEntity> call = networkInterface.getRandomJokers();
         call.enqueue(new Callback<JokerCollectionEntity>() {
             @Override
-            public void onResponse(Call<JokerCollectionEntity> call, Response<JokerCollectionEntity> response) {
-                progressDialogUtil.dismiss();
-                try {
-                    JokerCollectionEntity jokerCollectionEntity = response.body();
-                    int error_code = jokerCollectionEntity.getError_code();
-                    if (error_code == 0){
+            public void onResponse(Call<JokerCollectionEntity> call,
+                                   Response<JokerCollectionEntity> response) {
 
-                        if (PAGE_CURRENT == 1){
-                            ToastUtil.showToast(getContext(), "成功");
-                        }else{
-                            ToastUtil.showToast(getContext(), "加载成功");
-                        }
-
-                        if (dataBeans != null){
-                            if (PAGE_CURRENT == 1){
-                                dataBeans.clear();
-                            }
-                            getMore(jokerCollectionEntity.getResult().getData());
-                            Message message = handler.obtainMessage();
-                            message.what = WHAT_GET_JOKER;
-                            handler.sendMessage(message);
-                        }
-
-                    }else {
-                        if (PAGE_CURRENT > 1){
-                            PAGE_CURRENT -= 1;
-                        }
-                        String reason = jokerCollectionEntity.getReason();
-                        tv_get_joker.setText(reason);
-                        tv_get_joker.setVisibility(View.VISIBLE);
-                    }
-                }catch (Exception e){
-                    if (PAGE_CURRENT > 1){
-                        PAGE_CURRENT -= 1;
-                    }
-                    e.printStackTrace();
-                    tv_get_joker.setText("获取异常：" + e.getMessage());
-                    tv_get_joker.setVisibility(View.VISIBLE);
+                JokerCollectionEntity entity = response.body();
+                List<JokerCollectionEntity.DataBean> data = entity.getData();
+                if (dataBeans.size() != 0){
+                    dataBeans.clear();
                 }
-
-
+                for (int i = 0;i < data.size();i++){
+                    dataBeans.add(data.get(i));
+                }
+                handler.sendEmptyMessage(WHAT_GET_JOKER);
+                ptr_frame_joker.refreshComplete();
             }
 
             @Override
             public void onFailure(Call<JokerCollectionEntity> call, Throwable t) {
-                if (PAGE_CURRENT > 1){
-                    PAGE_CURRENT -= 1;
-                }
-                progressDialogUtil.dismiss();
-                tv_get_joker.setText("获取失败。请尝试重新获取");
                 tv_get_joker.setVisibility(View.VISIBLE);
+                tv_get_joker.setText(getResources().getString(R.string.str_get_joker));
+                ptr_frame_joker.refreshComplete();
+                ToastUtil.showToast(getContext(), "获取失败：" + t.getMessage());
             }
         });
 
-    }
-
-    private void getMore(List<JokerCollectionEntity.ResultBean.DataBean> data) {
-
-        int size = data.size();
-        for (int i = 0;i < size;i++){
-            dataBeans.add(data.get(i));
-        }
 
     }
 
     private void initData() {
 
-        progressDialogUtil = new ProgressDialogUtil(getContext());
+        baseTitle = getResources().getString(R.string.str_joker_title);
+        setTopTitle();
+        // 设备宽高
+        deviceW = getResources().getDisplayMetrics().widthPixels;
+        deviceH = new ScreenUtil().getScreenSize(ScreenUtil.HEIGHT, getContext());
+        // 设置banner大小
+        LinearLayout.LayoutParams bp = (LinearLayout.LayoutParams) banner.getLayoutParams();
+        bp.width = deviceW - ScaleUtil.dip2px(getContext(), 20);
+        bp.height = (int) ((deviceW - ScaleUtil.dip2px(getContext(), 20)) * (0.618f));
+        banner.setLayoutParams(bp);
 
-        images.add(R.drawable.xiaoyu_one);
-        images.add(R.drawable.xiaoyu);
-        images.add(R.drawable.zha);
-        images.add(R.drawable.miao);
-        images.add(R.drawable.daju);
-
-        titles.add("小语");
-        titles.add("小语");
-        titles.add("模特");
-        titles.add("思考");
-        titles.add("大橘为重");
-
-        // 设置图片加载器
-        banner.setImageLoader(new GlideImageLoader());
-        banner.setImages(images);
-        banner.setIndicatorGravity(BannerConfig.CENTER);
-        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
-        banner.setBannerTitles(titles);
-        banner.setBannerAnimation(Transformer.Default);
-
-        banner.start();
+        getBannerPic();
 
         items = new CharSequence[]{"Accordion", "BackgroundToForeground","CubeIn","CubeOut"
         ,"Default","DepthPage","FlipHorizontal","FlipVertical","ForegroundToBackground",
@@ -428,6 +373,68 @@ public class JokeFragment extends BaseFragment {
 
     }
 
+    /**
+     * 获取轮播图片
+     */
+    private void getBannerPic() {
+        images.clear();
+        titles.clear();
+
+        NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
+        Call<ResponseBody> call = anInterface.getRandomGirl();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String s = new String(response.body().bytes());
+                    JSONObject obj = new JSONObject(s);
+                    JSONArray array = obj.getJSONArray("data");
+                    int length = array.length();
+                    for (int i = 0;i < length;i++){
+                        String imageUrl = array.getJSONObject(i).optString("imageUrl");
+                        images.add(imageUrl);
+                        titles.add("UHello");
+                    }
+                    setBanner();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                images.add("http://pics1.baidu.com/feed/" +
+                        "bf096b63f6246b60a6338e6292dd064a510fa296.jpeg?" +
+                        "token=fc9beda1f65bbe6d13aff6fc3b338a19&s=13528C6C81945C6E1D0E52500300D0DB");
+                titles.add("UHello");
+                setBanner();
+                ToastUtil.showToast(getContext(), "图片获取失败 :" + t.getMessage());
+            }
+        });
+
+
+    }
+
+    /**
+     * Banner 图片设置
+     */
+    private void setBanner(){
+        // 设置图片加载器
+        banner.setImageLoader(new GlideImageLoader());
+        banner.setImages(images);
+        banner.setIndicatorGravity(BannerConfig.CENTER);
+        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
+        banner.setBannerTitles(titles);
+        banner.setBannerAnimation(Transformer.CubeOut);
+        banner.start();
+        banner.setOnBannerListener(new OnBannerListener() {
+            @Override
+            public void OnBannerClick(int position) {
+                ToastUtil.showToast(getContext(), titles.get(position));
+            }
+        });
+    }
+
     // 设置监听
     private void setListener() {
 
@@ -442,64 +449,13 @@ public class JokeFragment extends BaseFragment {
      */
     private void setPtrFrame() {
 
-        // 头部和底部的阻尼系数
-        ptr_frame_joker.setResistanceHeader(1.7f);
-        ptr_frame_joker.setResistanceFooter(1.7f);
+        PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_frame_joker);
+        PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_frame_joker,
+                PtrUtil.DEFAULT_COLOR);
+//        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_joker);
 
-        ptr_frame_joker.setDurationToCloseHeader(2000);
-        ptr_frame_joker.setDurationToCloseFooter(2000);
-        ptr_frame_joker.setDurationToBackHeader(500);
-        ptr_frame_joker.setDurationToBackFooter(500);
-
-        ptr_frame_joker.setPinContent(true);
-        ptr_frame_joker.setPullToRefresh(false);// false 表示手指释放才会刷新，true 表示下拉刷新
-
-        // Materail 风格头部实现
-        MaterialHeader header = new MaterialHeader(getContext());
-        // 设置下拉刷新头部view的颜色
-        header.setColorSchemeColors(new int[]{
-//                0xFFC93437,
-//                0xFF375BF1,
-//                0xFFF7D23E,
-                0xFF34A350
-        });
-        header.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
-        ptr_frame_joker.setHeaderView(header);
-        ptr_frame_joker.addPtrUIHandler(header);
-
-        // 经典底部布局实现
-        PtrClassicDefaultFooter footer = new PtrClassicDefaultFooter(getContext());
-        footer.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
-        ptr_frame_joker.setFooterView(footer);
-        ptr_frame_joker.addPtrUIHandler(footer);
-
-        ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
-
-        ptr_frame_joker.setPtrHandler(new PtrDefaultHandler2() {
-            @Override
-            public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
-
-                PAGE_CURRENT += 1;
-                if (PAGE_CURRENT > PAGE_MAX){
-                    ToastUtil.showToast(getContext(), "数据已经全部加载");
-                    frame.refreshComplete();
-                    return;
-                }
-
-                getJoker();
-
-                frame.refreshComplete();
-            }
-
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
-
-                PAGE_CURRENT = 1;
-                getJoker();
-                frame.refreshComplete();
-            }
-        });
-
+        ptr_frame_joker.setMode(PtrFrameLayout.Mode.REFRESH);
+        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
     }
 
     /**
@@ -517,16 +473,17 @@ public class JokeFragment extends BaseFragment {
      */
     public class GlideImageLoader extends ImageLoader{
 
+        private static final long serialVersionUID = 174520926963593401L;
+
         @Override
-        public void displayImage(Context context, Object path, ImageView imageView) {
+        public void displayImage(Context context, final Object path, ImageView imageView) {
 
             RequestOptions options = new RequestOptions();
-            options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
-//            options.override(200,200);// 指定加载图片大小
+//            options.placeholder(R.mipmap.app_icon);// 设置占位图
+            options.override(deviceW,deviceW);// 指定加载图片大小
             options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
             options.centerCrop();
-
             Glide.with(context).load(path).apply(options).into(imageView);
         }
     }
@@ -543,6 +500,15 @@ public class JokeFragment extends BaseFragment {
             if (banner != null){
                 banner.stopAutoPlay();
             }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
         }
     }
 }

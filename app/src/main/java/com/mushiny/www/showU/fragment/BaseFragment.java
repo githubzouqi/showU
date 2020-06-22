@@ -28,6 +28,8 @@ public class BaseFragment extends Fragment {
     // 是否可见
     private boolean isVisible;
 
+    protected String baseTitle = "UHello";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +88,7 @@ public class BaseFragment extends Fragment {
         if (!hidden){
             isVisible = true;// 用户可见
             MobclickAgent.onPageStart(getClass().getName());
+            setTopTitle();
         }else {
             isVisible = false;
             MobclickAgent.onPageEnd(getClass().getName());
@@ -112,4 +115,12 @@ public class BaseFragment extends Fragment {
         // 隐藏底部选项栏
         ((MainActivity)getActivity()).goneTab();
     }
+
+    /**
+     * 标题内容设置
+     */
+    public void setTopTitle(){
+        ((MainActivity)getActivity()).setTitle(baseTitle);
+    }
+
 }

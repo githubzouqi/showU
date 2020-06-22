@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.fragment.BaseFragment;
 import com.mushiny.www.showU.fragment.BlogFragment;
 import com.mushiny.www.showU.fragment.DiscoveryFragment;
 import com.mushiny.www.showU.fragment.NewsFragment;
@@ -60,6 +61,7 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.linear_tab)LinearLayout linear_tab;
     @BindView(R.id.relative_layout_title) RelativeLayout relative_layout_title;
+    @BindView(R.id.iv_title_refresh)ImageView iv_title_refresh;
 
     private BlogFragment blogFragment;
     private JokeFragment jokeFragment;
@@ -95,6 +97,7 @@ public class MainActivity extends BaseActivity {
             // 加载根 fragment，第一次进入应用显示的界面
             loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
             mCurrentFragment = blogFragment;
+            iv_title_refresh.setVisibility(View.VISIBLE);
             setTabStyle(linear_one,iv_one,tv_one);
         }else {
             LogUtil.e("zouqi", "内存重启了");
@@ -180,7 +183,8 @@ public class MainActivity extends BaseActivity {
     /**
      * 控件的点击事件（这里也就是tab的点击事件）
      */
-    @OnClick({R.id.linear_one, R.id.linear_two, R.id.linear_three, R.id.linear_four})
+    @OnClick({R.id.linear_one, R.id.linear_two, R.id.linear_three, R.id.linear_four,
+            R.id.iv_title_refresh})
     public void doClick(View view){
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -189,32 +193,18 @@ public class MainActivity extends BaseActivity {
             case R.id.linear_two:// 欢笑，开心的小段落
 
                 setTabStyle(linear_two,iv_two,tv_two);
-
-                setHeadTitle(getResources().getString(R.string.str_joker_title));
-
                 show(JokeFragment.newInstance(), tag_jokeF, transaction);
+
                 break;
             case R.id.linear_one:// 主页 博客
 
                 setTabStyle(linear_one,iv_one,tv_one);
-
-                setHeadTitle(getResources().getString(R.string.str_my_blog));
-
                 show(BlogFragment.newInstance(), tag_blogF, transaction);
-
                 break;
             case R.id.linear_three:// 发现
 
                 setTabStyle(linear_three, iv_three, tv_three);
-                setHeadTitle(getResources().getString(R.string.str_finder) + "-头条");
                 DiscoveryFragment discoveryFragment = DiscoveryFragment.newInstance();
-                discoveryFragment.setHeadTitleListener(new TitleListener() {
-                    @Override
-                    public void getTitle(String title) {
-                        setHeadTitle(getResources().getString(R.string.str_finder) +
-                                "-" + title);
-                    }
-                });
                 show(discoveryFragment, tag_discovery, transaction);
 
                 break;
@@ -222,9 +212,14 @@ public class MainActivity extends BaseActivity {
             case R.id.linear_four:// 我的
 
                 setTabStyle(linear_four, iv_four, tv_four);
-                setHeadTitle(getResources().getString(R.string.str_mine));
                 show(MineFragment.newInstance(), tag_mine, transaction);
 
+                break;
+
+            case R.id.iv_title_refresh:// 主页 - 刷新
+                if (mCurrentFragment instanceof BlogFragment){
+                    ((BlogFragment)mCurrentFragment).reload();
+                }
                 break;
 
         }
@@ -237,6 +232,12 @@ public class MainActivity extends BaseActivity {
      * @param transaction
      */
     private void show(Fragment fragment, String tag, FragmentTransaction transaction) {
+
+        if (fragment instanceof BlogFragment){
+            iv_title_refresh.setVisibility(View.VISIBLE);
+        }else {
+            iv_title_refresh.setVisibility(View.GONE);
+        }
 
         if (findFragmentByTag(tag) == null){
             hideAllFragment(transaction);
@@ -289,7 +290,7 @@ public class MainActivity extends BaseActivity {
 
     private void setStyle(LinearLayout linearLayout, ImageView imageView, TextView textView) {
         linearLayout.setBackgroundColor(getResources().getColor(R.color.color_white));
-        imageView.setImageResource(R.mipmap.showu_icon);
+        imageView.setImageResource(R.mipmap.app_icon);
         textView.setTextColor(getResources().getColor(R.color.color_other));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         textView.setTypeface(Typeface.DEFAULT);
