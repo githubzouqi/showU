@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.adapter.NewsAdapter;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.entity.NewsEntity;
@@ -23,6 +25,7 @@ import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.ProgressDialogUtil;
 import com.mushiny.www.showU.util.PtrUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -52,28 +55,38 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewsFragment extends BaseFragment {
 
     private static final int WHAT_GET_NEWS = 0x30;
-    private static final String NEWS_TYPE = "news_type";// 新闻类型 key
+    private static final String TYPE_ID = "TYPE_ID";// 新闻类型 id
+    private static final String TYPE_NAME = "TYPE_NAME";
 
     @BindView(R.id.recycler_view_news)RecyclerView recycler_view_news;
     @BindView(R.id.ptr_frame_news)PtrFrameLayout ptr_frame_news;
 
-    private List<NewsEntity.ResultBean.DataBean> dataBeans = new ArrayList<>();// 保存新闻实体
+    private List<NewsEntity.DataBean> dataBeans = new ArrayList<>();// 保存新闻实体
     private NewsAdapter adapter = null;
 
-    private String news_type = "top";
+    private String typeId = "510"; // 510 - 科技
+    private String typeName = "UHello";
+    private int page = 1;// 从1开始
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case WHAT_GET_NEWS:// 新闻信息
+                case WHAT_GET_NEWS:// 新闻信息列表
 
-//                    if (adapter != null && dataBeans.size() != 0){
-//                        adapter.notifyDataSetChanged();
-//                        ToastUtil.showToast(getContext(), "刷新成功");
-//                        return;
-//                    }
+                    // 自动刷新取消显示
+                    ptr_frame_news.refreshComplete();
+
+                    if (adapter != null && dataBeans.size() != 0){
+                        adapter.notifyDataSetChanged();
+                        if (page == 1){
+                            ToastUtil.showToast(getContext(), "刷新成功");
+                        }else {
+                            ToastUtil.showToast(getContext(), "加载成功");
+                        }
+                        return;
+                    }
 
 
                     adapter = new NewsAdapter(getContext(), dataBeans);
@@ -81,15 +94,23 @@ public class NewsFragment extends BaseFragment {
                     adapter.setOnItemClick(new MyItemClickInterface() {
                         @Override
                         public void OnRecyclerViewItemClick(View itemView, int position) {
+
                             // 点击进入新闻链接页面
-                            NewsDetailFragment newsDetailFragment = NewsDetailFragment.newInstance();
+                            String newsId = dataBeans.get(position).getNewsId();
+                            String imgUrl = "";
+                            if (dataBeans.get(position).getImgList() != null){
+                                imgUrl = dataBeans.get(position).getImgList().get(0);
+                            }
+                            String source = dataBeans.get(position).getSource();
+                            String postTime = dataBeans.get(position).getPostTime();
+                            if (TextUtils.isEmpty(source)){
+                                source = "UHello";
+                            }
+                            String title = dataBeans.get(position).getTitle();
+                            String source_time = source + "  " + postTime;
 
-                            // 跳转携带数据
-                            Bundle bundle = new Bundle();
-                            bundle.putString(NewsDetailFragment.KEY_URL, dataBeans.get(position).
-                                    getUrl());
-                            newsDetailFragment.setArguments(bundle);
-
+                            NewsDetailFragment newsDetailFragment = NewsDetailFragment
+                                    .newInstance(newsId, title, source_time, imgUrl);
                             showFragment(getActivity(), NewsFragment.this,
                                     newsDetailFragment, NewsDetailFragment.TAG);
                         }
@@ -99,17 +120,22 @@ public class NewsFragment extends BaseFragment {
                             LinearLayoutManager.VERTICAL, false));
                     recycler_view_news.setAdapter(adapter);
                     recycler_view_news.setItemAnimator(new DefaultItemAnimator());
+                    ptr_frame_news.setMode(PtrFrameLayout.Mode.BOTH);
 
-                    // 自动刷新取消显示
-                    ptr_frame_news.refreshComplete();
                     ptr_frame_news.setPtrHandler(new PtrDefaultHandler2() {
                         @Override
                         public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
+                            page += 1;
+                            getNews(typeId);
+                            LogUtil.e("TAG", "onLoadMoreBegin - " + typeId);
                         }
 
                         @Override
                         public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
-                            getNews(news_type);
+                            dataBeans.clear();
+                            page = 1;
+                            getNews(typeId);
+                            LogUtil.e("TAG", "onRefreshBegin - " + typeId);
                         }
                     });
 
@@ -122,10 +148,17 @@ public class NewsFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    public static NewsFragment newInstance(String news_type){
+    /**
+     * 单例携带数据写法
+     * @param type_Id 对应id
+     * @param typeName tab名称
+     * @return
+     */
+    public static NewsFragment newInstance(String type_Id, String typeName){
         NewsFragment newsFragment = new NewsFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(NEWS_TYPE, news_type);
+        bundle.putString(TYPE_ID, type_Id);
+        bundle.putString(TYPE_NAME, typeName);
         newsFragment.setArguments(bundle);
         return newsFragment;
     }
@@ -133,10 +166,14 @@ public class NewsFragment extends BaseFragment {
     private boolean isViewCreated = false;
     private boolean isVisible = false;
 
+    private View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_news, container, false);
+        if (view == null){
+            view = inflater.inflate(R.layout.fragment_news, container, false);
+        }
 
         ButterKnife.bind(this, view);
 
@@ -152,7 +189,7 @@ public class NewsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtil.e("TAG", "onResume = " + news_type);
+        LogUtil.e("TAG", "onResume = " + typeId);
         lazyLoad();
     }
 
@@ -178,7 +215,8 @@ public class NewsFragment extends BaseFragment {
      *
      */
     private void loadData() {
-        getNews(news_type);
+        getNews(typeId);
+        LogUtil.e("TAG", "loadData - " + typeId);
     }
 
     /**
@@ -191,59 +229,62 @@ public class NewsFragment extends BaseFragment {
                 .DEFAULT_COLOR);
         PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
         ptr_frame_news.setMode(PtrFrameLayout.Mode.REFRESH);// 设置模式
-        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
+        // 对用户可见且view已经初始化完成才自动刷新
+        if (isViewCreated && isVisible){
+            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
+        }
 
     }
 
     /**
-     * 获取新闻头条
-     * @param type 新闻类型
+     * 免费最新新闻
+     * @param type_Id 新闻类型 id
      */
-    private void getNews(String type) {
+    private void getNews(String type_Id) {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.V_JUHE_CN)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-
-        NetworkInterface networkInterface = retrofit.create(NetworkInterface.class);
+        NetworkInterface networkInterface = Retrofit2Util
+                .createWithROLLHeader(NetworkInterface.class);
 
         final Map<String, Object> params = new HashMap<>();
-        params.put("type", type);
-        params.put("key", Constants.JUHE_NEWS_HEADLINE_APP_KEY);
+        params.put("typeId", type_Id);
+        params.put("page", page);
 
-        Call<NewsEntity> call = networkInterface.getNews(params);
+        Call<NewsEntity> call = networkInterface.getNewsList(params);
         call.enqueue(new Callback<NewsEntity>() {
             @Override
             public void onResponse(Call<NewsEntity> call, Response<NewsEntity> response) {
-
                 try {
                     NewsEntity newsEntity = response.body();
-                    int error_code = newsEntity.getError_code();
-                    String reason = newsEntity.getReason();
+                    int code = newsEntity.getCode();
+                    String msg = newsEntity.getMsg();
 
-                    if (error_code != 0){
-                        // 异常情况，如超出每日限制数
+                    if (code != 1){
+                        // 请求失败
                         ptr_frame_news.refreshComplete();
-                        ToastUtil.showToast(getContext(), reason);
+                        ToastUtil.showToast(getContext(), msg);
                         return;
                     }else {
                         // 获取信息成功
-                        dataBeans.clear();
-                        List<NewsEntity.ResultBean.DataBean> beans = newsEntity.getResult().
-                                getData();
+                        List<NewsEntity.DataBean> beans = newsEntity.getData();
+                        // 刷新操作 - 相关数据进行重置
+                        if (page == 1){
+                            dataBeans.clear();
+                            adapter = null;
+                        }
+
                         for (int i = 0;i < beans.size();i++){
                             dataBeans.add(beans.get(i));
                         }
+
                         Message message = handler.obtainMessage();
                         message.what = WHAT_GET_NEWS;
                         handler.sendMessage(message);
+                        ToastUtil.showToast(getContext(), "新闻获取成功");
                     }
 
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(), "异常 - " + e.getMessage());
+                    ToastUtil.showToast(getContext(), "异常:" + e.getMessage());
                 }
             }
 
@@ -265,8 +306,13 @@ public class NewsFragment extends BaseFragment {
     private void initData() {
 
         if (getArguments() != null) {
-            news_type = getArguments().getString(NEWS_TYPE, "top");
+            typeId = getArguments().getString(TYPE_ID, "510");
+            typeName = getArguments().getString(TYPE_NAME, "UHello");
         }
+
+        // 设置顶部标题
+        baseTitle = typeName;
+        setTopTitle();
 
     }
 
@@ -277,7 +323,7 @@ public class NewsFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtil.e("TAG", "setUserVisibleHint = " + news_type);
+        LogUtil.e("TAG", "setUserVisibleHint = " + typeId);
         if (isVisibleToUser){
             isVisible = true;
             lazyLoad();
@@ -288,9 +334,8 @@ public class NewsFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        page = 1;
         super.onDestroyView();
-        adapter = null;
-        dataBeans.clear();
     }
 
     @Override

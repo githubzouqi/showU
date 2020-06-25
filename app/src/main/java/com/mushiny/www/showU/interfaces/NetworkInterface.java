@@ -18,8 +18,7 @@ import retrofit2.http.QueryMap;
 
 public interface NetworkInterface {
 
-    /* 聚合数据 */
-
+    /* -聚合数据- */
     @GET(Constants.URL_PATH_JOKER)
     Call<JokerCollectionEntity> getLatestJoker(@QueryMap Map<String, Object> map);// 笑话大全
 
@@ -34,11 +33,9 @@ public interface NetworkInterface {
 
     @GET(Constants.URL_PATH_WEATHER_FORECAST_QUERY)
     Call<ResponseBody> getCityWeather(@QueryMap Map<String, Object> map);// 天气：根据城市查询天气
+    /* -聚合数据- */
 
-    /* ------ */
-
-    /* RollToolsApi，开放易用的接口服务 */
-
+    /* -RollToolsApi，开放易用的接口服务- */
     @GET("rubbish/type")// ?name=西瓜
     Call<ResponseBody> getRubbishType(@QueryMap Map<String, Object> map);// 垃圾分类查询
 
@@ -47,5 +44,16 @@ public interface NetworkInterface {
 
     @GET("image/girl/list/random")
     Call<ResponseBody> getRandomGirl();// 随机福利图片
+
+    @GET("news/types")
+    Call<ResponseBody> getNewsType();// 免费最新新闻 - 获取所有新闻类型列表
+
+    // 免费最新新闻 - 根据新闻类型获取新闻列表
+    @GET("news/list") // ?typeId=510&page=1
+    Call<NewsEntity> getNewsList(@QueryMap Map<String, Object> map);
+
+    @GET("news/details") // ?newsId=FFSC6SPV00097U7H
+    Call<ResponseBody> getNewsDetail(@QueryMap Map<String, Object> map);// 免费最新新闻 - 详情
+    /* -RollToolsApi，开放易用的接口服务- */
 
 }

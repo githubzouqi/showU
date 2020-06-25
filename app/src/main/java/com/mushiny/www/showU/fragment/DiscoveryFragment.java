@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -22,14 +23,27 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.JsonArray;
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.interfaces.TitleListener;
+import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
+import com.mushiny.www.showU.util.ToastUtil;
+import com.umeng.commonsdk.debug.E;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * 发现页
@@ -53,6 +67,8 @@ public class DiscoveryFragment extends BaseFragment {
     private ArrayList<CustomTabEntity> tabEntitys = new ArrayList<>();
     private List<NewsFragment> newsFragments = new ArrayList<>();
     private String[] titles;
+
+    private List<Object[]> newList = new ArrayList<>();// 保存新闻类型列表
 
     public DiscoveryFragment() {
         // Required empty public constructor
@@ -95,7 +111,7 @@ public class DiscoveryFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (view == null && savedInstanceState == null){
+        if (view == null){
             view = inflater.inflate(R.layout.fragment_discovery, container, false);
         }
         ButterKnife.bind(this, view);// 控件绑定
@@ -146,33 +162,50 @@ public class DiscoveryFragment extends BaseFragment {
      */
     private void initData() {
 
-        tabEntitys.add(new TabEntity("头条"));
-        tabEntitys.add(new TabEntity("社会"));
-        tabEntitys.add(new TabEntity("国内"));
-        tabEntitys.add(new TabEntity("国际"));
-        tabEntitys.add(new TabEntity("娱乐"));
-        tabEntitys.add(new TabEntity("体育"));
-        tabEntitys.add(new TabEntity("军事"));
-        tabEntitys.add(new TabEntity("科技"));
-        tabEntitys.add(new TabEntity("财经"));
-        tabEntitys.add(new TabEntity("时尚"));
+        // 获取新闻类型列表
+        final NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
+        Call<ResponseBody> call = anInterface.getNewsType();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
 
-        List<String> params = new ArrayList<>();
-        params.add(TYPE_HEADLINE);
-        params.add(TYPE_SOCIAL);
-        params.add(TYPE_DOMESTIC);
-        params.add(TYPE_INTERNATIONAL);
-        params.add(TYPE_ENTERTAINMENT);
-        params.add(TYPE_SPORTS);
-        params.add(TYPE_MILITARY);
-        params.add(TYPE_TECHNOLOGY);
-        params.add(TYPE_FINANCE);
-        params.add(TYPE_FASHION);
+                    JSONObject obj = new JSONObject(new String(response.body().bytes()));
+                    JSONArray array = obj.getJSONArray("data");
+                    int length = array.length();
+                    for (int i = 0;i < length;i++){
+                        int typeId = array.getJSONObject(i).optInt("typeId");
+                        String typeName = array.getJSONObject(i).optString("typeName");
+                        newList.add(new Object[]{typeId, typeName});
+                    }
 
-        for (int i = 0;i < tabEntitys.size();i++){
-            String news_type = params.get(i);
-            NewsFragment newsFragment = NewsFragment.newInstance(news_type);
-            newsFragments.add(newsFragment);
+                    setTabs();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    ToastUtil.showToast(getContext(), "获取失败：" + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                ToastUtil.showToast(getContext(), "获取失败：" + t.getMessage());
+            }
+        });
+
+    }
+
+    /**
+     * 设置 tab
+     */
+    private void setTabs() {
+        for (int i = 0;i < newList.size();i++){
+            String typeId = String.valueOf(newList.get(i)[0]);
+            String typeName = String.valueOf(newList.get(i)[1]);
+            if (!TextUtils.isEmpty(typeName) && !typeName.contains("视频")){
+                tabEntitys.add(new TabEntity(typeName));
+                NewsFragment newsFragment = NewsFragment.newInstance(typeId, typeName);
+                newsFragments.add(newsFragment);
+            }
         }
 
         if (newsFragments.size() != 0) {
@@ -193,9 +226,9 @@ public class DiscoveryFragment extends BaseFragment {
             slidingTabLayout.getTitleView(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         }
 
+        // 设置标题栏内容
         baseTitle = slidingTabLayout.getTitleView(0).getText().toString();
         setTopTitle();
-
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter{
@@ -223,4 +256,5 @@ public class DiscoveryFragment extends BaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
     }
+
 }

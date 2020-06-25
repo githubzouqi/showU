@@ -4,155 +4,113 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 新闻头条
+ * 新闻类型 - 新闻列表
  */
 public class NewsEntity implements Serializable {
 
-    private String reason;// 返回说明
-    private ResultBean result;
-    private int error_code;// 0 表示成功，非 0 值表示错误
+    private static final long serialVersionUID = -3761368026437740705L;
 
-    public String getReason() {
-        return reason;
+    private int code;
+    private String msg;
+    private List<DataBean> data;
+
+    public int getCode() {
+        return code;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public ResultBean getResult() {
-        return result;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setResult(ResultBean result) {
-        this.result = result;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public int getError_code() {
-        return error_code;
+    public List<DataBean> getData() {
+        return data;
     }
 
-    public void setError_code(int error_code) {
-        this.error_code = error_code;
+    public void setData(List<DataBean> data) {
+        this.data = data;
     }
 
-    public static class ResultBean implements Serializable{
+    public static class DataBean {
+        /**
+         * title : 为什么满大街都是手机专卖店，没人买也不会倒闭？其实里面水很深
+         * imgList : ["http://bjnewsrec-cv.ws.126.net/three918a834a953j00qb51z10013c000hs00alc.jpg"]
+         * source : 针灸匠小嫚
+         * newsId : FDT460KJ0517N88S
+         * digest :
+         * postTime : 2020-05-30 17:49:50
+         * videoList : null
+         */
 
-        private String stat;
-        private List<DataBean> data;
+        private String title;
+        private String source;
+        private String newsId;
+        private String digest;
+        private String postTime;
+        private Object videoList;
+        private List<String> imgList;
 
-        public String getStat() {
-            return stat;
+        public String getTitle() {
+            return title;
         }
 
-        public void setStat(String stat) {
-            this.stat = stat;
+        public void setTitle(String title) {
+            this.title = title;
         }
 
-        public List<DataBean> getData() {
-            return data;
+        public String getSource() {
+            return source;
         }
 
-        public void setData(List<DataBean> data) {
-            this.data = data;
+        public void setSource(String source) {
+            this.source = source;
         }
 
-        public static class DataBean implements Serializable{
-            /**
-             * uniquekey : 55c02075a094ff5cbd8ec7209ff617f7
-             * title : 日本参议员人均申报财产为17万美元 创历史新低
-             * date : 2020-01-06 21:37
-             * category : 国际
-             * author_name : 环球网
-             * url : http://mini.eastday.com/mobile/200106213708835.html
-             * thumbnail_pic_s : http://00imgmini.eastday.com/mobile/20200106/20200106213708_642c0ba65c63853c707eb47149ce5edc_1_mwpm_03200403.jpg
-             * thumbnail_pic_s02 : http://08imgmini.eastday.com/mobile/20200106/20200106213516_09365c5c05d6a26d6197f7d5f692d04a_1_mwpm_03200403.jpg
-             * thumbnail_pic_s03 : http://08imgmini.eastday.com/mobile/20200106/20200106213516_09365c5c05d6a26d6197f7d5f692d04a_2_mwpm_03200403.jpg
-             */
+        public String getNewsId() {
+            return newsId;
+        }
 
-            private String uniquekey;
-            private String title;// 标题
-            private String date;// 日期
-            private String category;// 标签
-            private String author_name;// 作者名
-            private String url;// 新闻访问链接
+        public void setNewsId(String newsId) {
+            this.newsId = newsId;
+        }
 
-            // 图片
-            private String thumbnail_pic_s;
-            private String thumbnail_pic_s02;
-            private String thumbnail_pic_s03;
+        public String getDigest() {
+            return digest;
+        }
 
-            public String getUniquekey() {
-                return uniquekey;
-            }
+        public void setDigest(String digest) {
+            this.digest = digest;
+        }
 
-            public void setUniquekey(String uniquekey) {
-                this.uniquekey = uniquekey;
-            }
+        public String getPostTime() {
+            return postTime;
+        }
 
-            public String getTitle() {
-                return title;
-            }
+        public void setPostTime(String postTime) {
+            this.postTime = postTime;
+        }
 
-            public void setTitle(String title) {
-                this.title = title;
-            }
+        public Object getVideoList() {
+            return videoList;
+        }
 
-            public String getDate() {
-                return date;
-            }
+        public void setVideoList(Object videoList) {
+            this.videoList = videoList;
+        }
 
-            public void setDate(String date) {
-                this.date = date;
-            }
+        public List<String> getImgList() {
+            return imgList;
+        }
 
-            public String getCategory() {
-                return category;
-            }
-
-            public void setCategory(String category) {
-                this.category = category;
-            }
-
-            public String getAuthor_name() {
-                return author_name;
-            }
-
-            public void setAuthor_name(String author_name) {
-                this.author_name = author_name;
-            }
-
-            public String getUrl() {
-                return url;
-            }
-
-            public void setUrl(String url) {
-                this.url = url;
-            }
-
-            public String getThumbnail_pic_s() {
-                return thumbnail_pic_s;
-            }
-
-            public void setThumbnail_pic_s(String thumbnail_pic_s) {
-                this.thumbnail_pic_s = thumbnail_pic_s;
-            }
-
-            public String getThumbnail_pic_s02() {
-                return thumbnail_pic_s02;
-            }
-
-            public void setThumbnail_pic_s02(String thumbnail_pic_s02) {
-                this.thumbnail_pic_s02 = thumbnail_pic_s02;
-            }
-
-            public String getThumbnail_pic_s03() {
-                return thumbnail_pic_s03;
-            }
-
-            public void setThumbnail_pic_s03(String thumbnail_pic_s03) {
-                this.thumbnail_pic_s03 = thumbnail_pic_s03;
-            }
+        public void setImgList(List<String> imgList) {
+            this.imgList = imgList;
         }
     }
 }

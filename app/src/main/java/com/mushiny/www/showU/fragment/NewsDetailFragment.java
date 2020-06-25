@@ -1,17 +1,45 @@
 package com.mushiny.www.showU.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LevelListDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.constant.Constants;
+import com.mushiny.www.showU.interfaces.NetworkInterface;
+import com.mushiny.www.showU.util.LogUtil;
+import com.mushiny.www.showU.util.PtrUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
+import com.mushiny.www.showU.util.ScaleUtil;
+import com.mushiny.www.showU.util.ScreenUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
 import com.tencent.smtt.export.external.interfaces.SslError;
@@ -20,171 +48,350 @@ import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
+import com.umeng.commonsdk.debug.E;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.srain.cube.views.ptr.PtrFrameLayout;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Url;
 
 /**
  * 新闻详情页面
  */
 public class NewsDetailFragment extends BaseFragment {
 
-    private WebView x5WebView;
-    private WebSettings x5WebSettings;
 
-    @BindView(R.id.linear_new_detail)LinearLayout linear_new_detail;// x5 webView 父布局
-    @BindView(R.id.loading_new_detail)MaterialProgressBar loading_new_detail;
+    @BindView(R.id.linear_new_detail)LinearLayout linear_new_detail;
+    @BindView(R.id.tv_new_detail) TextView tv_new_detail;
+    @BindView(R.id.tv_detail_title) TextView tv_detail_title;
+    @BindView(R.id.tv_detail_source_time) TextView tv_detail_source_time;
+    @BindView(R.id.iv_detail) ImageView iv_detail;
+    @BindView(R.id.ptr_detail) PtrFrameLayout ptr_detail;
 
-    public final static String KEY_URL = "url";
+    private final static int WHAT_LOAD_HTML_TEXT = 0x80;
+
+    private static final String TITLE = "TITLE";
+    private static final String SOURCE_TIME = "SOURCE_TIME";
+    private static final String IMGURL = "IMGURL";
+    public final static String NEWS_ID = "NEWS_ID";
+
     public final static String TAG = NewsDetailFragment.class.getSimpleName();
 
-    private String url = "http://www.baidu.com";
+    private String title = "";
+    private String  source_time= "";
+    private String imgUrl = "";
+    private String newsId = "";
+    private List<String[]> images= new ArrayList<>();// 图片集合
+
+    private RequestOptions options;
+    private int w = 300;
+    private int h = 300;
 
     public NewsDetailFragment() {
         // Required empty public constructor
     }
 
-    // 单例
-    public static NewsDetailFragment newInstance(){
-        return new NewsDetailFragment();
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case WHAT_LOAD_HTML_TEXT:
+
+                    CharSequence content = (CharSequence) msg.obj;
+                    if (!TextUtils.isEmpty(content)){
+                        tv_new_detail.setText(content);
+                        ptr_detail.refreshComplete();
+//                        ptr_detail.setMode(PtrFrameLayout.Mode.NONE);
+                    }
+
+                    break;
+            }
+        }
+    };
+
+
+    /**
+     * 单例携带数据
+     * @param newsId 具体新闻id
+     * @param title 新闻标题
+     * @param source_time 来源和时间
+     * @param imgUrl 图片url 可能为空
+     * @return
+     */
+    public static NewsDetailFragment newInstance(String newsId, String title, String source_time,
+                                                 String imgUrl){
+        NewsDetailFragment detailFragment = new NewsDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(NewsDetailFragment.NEWS_ID, newsId);
+        bundle.putString(NewsDetailFragment.TITLE, title);
+        bundle.putString(NewsDetailFragment.SOURCE_TIME, source_time);
+        bundle.putString(NewsDetailFragment.IMGURL, imgUrl);
+        detailFragment.setArguments(bundle);
+        return detailFragment;
     }
+
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_news_detail, container, false);
+        if (view == null){
+            view = inflater.inflate(R.layout.fragment_news_detail, container, false);
+        }
         ButterKnife.bind(this, view);
 
         initData();
-        loadWebPage();
+        setPtrFrame();
 
         return view;
     }
 
-    private void initData() {
+    /**
+     * 刷新加载设置
+     */
+    private void setPtrFrame() {
 
-        Bundle bundle = getArguments();
-        url = bundle.getString(NewsDetailFragment.KEY_URL);
-
-        // x5的webview创建
-        if (x5WebView == null){
-            x5WebView = new WebView(getContext().getApplicationContext());
-        }
-
-    }
-
-    private void loadWebPage() {
-
-//        ToastUtil.showToast(getContext(), "url = " + url);
-
-        if (x5WebView != null){
-            IX5WebViewExtension ix5WebViewExtension = x5WebView.getX5WebViewExtension();
-            if (ix5WebViewExtension != null){
-                ix5WebViewExtension.setScrollBarFadingEnabled(false);
-            }
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            x5WebView.setLayoutParams(params);
-            linear_new_detail.addView(x5WebView);
-
-            // x5 webView 设置
-            x5WebView.clearCache(true);
-            x5WebView.clearHistory();
-            x5WebView.clearFormData();
-
-            // x5 webSettings 设置
-            x5WebSettings = x5WebView.getSettings();
-            x5WebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-            x5WebSettings.setJavaScriptEnabled(true);
-            x5WebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-            // 加载页面适应手机屏幕
-            x5WebSettings.setUseWideViewPort(true);
-            x5WebSettings.setLoadWithOverviewMode(true);
-            x5WebSettings.setBuiltInZoomControls(true);
-            x5WebSettings.setLoadsImagesAutomatically(true);
-            x5WebSettings.setDefaultTextEncodingName("utf-8");
-            x5WebSettings.setSavePassword(false);
-            x5WebSettings.setDomStorageEnabled(true);
-
-            // 设置 WebViewClient
-            x5WebView.setWebViewClient(new WebViewClient(){
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView webView, String url) {
-
-                    // 如果不是http或者https开头的url，那么使用手机自带的浏览器打开
-                    if (!url.startsWith("http://") && !url.startsWith("https://")){
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            startActivity(intent);
-                            return true;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            return true;
-                        }
-                    }
-                    webView.loadUrl(url);
-                    return false;
-
-//                    return super.shouldOverrideUrlLoading(webView, s);
-                }
-
-                @Override
-                public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
-                    super.onReceivedSslError(webView, sslErrorHandler, sslError);
-                }
-            });
-
-            // 设置 WebChromeClient
-            x5WebView.setWebChromeClient(new WebChromeClient(){
-                @Override
-                public void onProgressChanged(WebView webView, int i) {
-                    super.onProgressChanged(webView, i);
-                    // 页面加载完，隐藏进度提示
-                    if (i == 100){
-                        loading_new_detail.setVisibility(View.GONE);
-                    }
-
-                }
-            });
-
-            // 根据url加载页面
-//            x5WebView.loadUrl(Constants.URL_qq_browser_feedback);
-            x5WebView.loadUrl(url);
-        }
+        PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_detail);
+        PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_detail, PtrUtil.DEFAULT_COLOR);
+        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_detail);
+        ptr_detail.setMode(PtrFrameLayout.Mode.REFRESH);
+        PtrUtil.newInstance(getContext()).autoRefresh(ptr_detail);
 
     }
 
     /**
-     * 网页是否可以后退
-     * @return
+     * 数据初始化
      */
-    public boolean canBack(){
-        if (x5WebView.canGoBack()){
-            x5WebView.goBack();
-            return true;
+    private void initData() {
+
+        Bundle bundle = getArguments();
+        newsId = bundle.getString(NewsDetailFragment.NEWS_ID, "");
+
+        title = bundle.getString(NewsDetailFragment.TITLE, "");
+        source_time = bundle.getString(NewsDetailFragment.SOURCE_TIME, "");
+        imgUrl = bundle.getString(NewsDetailFragment.IMGURL, "");
+
+        w = new ScreenUtil().getScreenSize(ScreenUtil.WIDTH, getContext())
+                - ScaleUtil.dip2px(getContext(), 20);
+        h = (int) (w * (0.618f));
+
+        if (options == null){
+            options = new RequestOptions();
+            options.placeholder(R.mipmap.app_icon);// 设置占位图
+            options.error(R.mipmap.load_error);// 加载失败占位图
+            options.override(w,h);// 指定加载图片大小
+            options.fitCenter();
+            options.diskCacheStrategy(DiskCacheStrategy.ALL);// 缓存所有：原型、转换后的
+//        options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
+//            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
         }
-        return false;
+
+        baseTitle = title;
+        setTopTitle();
+
     }
 
-    private void clearX5WebView() {
-        if (x5WebView != null){
-            x5WebView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
-            x5WebView.clearHistory();
-            x5WebView.clearCache(true);// 清除缓存
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
+    }
 
-            ((ViewGroup)x5WebView.getParent()).removeView(x5WebView);
-            x5WebView.destroy();
-            x5WebView = null;
+    /**
+     * 加载新闻详情数据
+     */
+    private void loadData() {
+
+        NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
+        final Map<String, Object> param = new HashMap<>();
+        param.put("newsId", newsId);
+        LogUtil.e("TAG", "newsId = " + newsId);
+        Call<ResponseBody> call = anInterface.getNewsDetail(param);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                try {
+
+                    JSONObject obj = new JSONObject(new String(response.body().bytes()));
+                    if (obj.optInt("code") == 0){
+                        tv_detail_title.setText(title);
+                        tv_detail_source_time.setText(source_time);
+
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) iv_detail
+                                .getLayoutParams();
+                        params.width = w;
+                        params.height = h;
+                        iv_detail.setLayoutParams(params);
+                        Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
+                                .into(iv_detail);
+                        iv_detail.setVisibility(View.VISIBLE);
+
+                        ptr_detail.refreshComplete();
+                        ToastUtil.showToast(getContext(), obj.optString("msg"));
+                        return;
+                    }
+                    JSONObject objData = obj.getJSONObject("data");
+                    String content = objData.optString("content");
+
+                    String title = objData.optString("title");
+                    String source_time = objData.optString("source") + "  " +
+                            objData.optString("ptime");
+                    tv_detail_title.setText(title);
+                    tv_detail_source_time.setText(source_time);
+
+                    JSONArray arrayImages = objData.getJSONArray("images");
+                    // 图片集合
+                    if (arrayImages != null && arrayImages.length() > 0){
+                        for (int i = 0;i < arrayImages.length();i++){
+                            String position = arrayImages.getJSONObject(i)
+                                    .optString("position");
+                            String imgSrc = arrayImages.getJSONObject(i)
+                                    .optString("imgSrc");
+                            String size = arrayImages.getJSONObject(i)
+                                    .optString("size");
+                            images.add(new String[]{position, imgSrc, size});
+                        }
+
+                        content = replaceContent(content);
+                    }
+
+                    setHtmlContent(content);
+
+
+                }catch (Exception e){
+                    ptr_detail.refreshComplete();
+                    e.printStackTrace();
+                    ToastUtil.showToast(getContext(),"详情数据解析异常：" + e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                ptr_detail.refreshComplete();
+                ToastUtil.showToast(getContext(),"详情获取异常：" + t.getMessage());
+            }
+        });
+
+    }
+
+    /**
+     * 往 html 富文本中替换 <!--IMG#0--> 为 <img src=""/> 图片
+     * @param content
+     * @return
+     */
+    private String replaceContent(String content) {
+        for (int i = 0;i < images.size();i++){
+            String position = images.get(i)[0];// "<!--IMG#0-->"
+            // "http://dingyue.ws.126.net/2020/0602/eb5636c8j00qba7vb001vd000s600l4p.jpg"
+            String imgSrc = images.get(i)[1];
+            String size = images.get(i)[2];// "1014*760"
+
+            String htmlImg = "<img src=\"" + imgSrc + "\"/>";
+//            LogUtil.e("TAG", "htmlImg = " + htmlImg);
+            content = content.replace(position, htmlImg);
+        }
+
+        return content;
+    }
+
+    /**
+     * 设置 html 富文本内容
+     * @param content
+     */
+    private void setHtmlContent(final String content) {
+
+        new Thread(){
+            @Override
+            public void run() {
+                final Html.ImageGetter getter = new Html.ImageGetter() {
+                    @Override
+                    public Drawable getDrawable(String source) {
+                        Drawable drawable = null;
+                        URL url = null;
+                        try {
+                            url = new URL(source);
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setDoInput(true);
+                            connection.connect();
+                            InputStream inputStream = connection.getInputStream();
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            drawable = new BitmapDrawable(getResources(), bitmap);
+                            LogUtil.e("TAG", "Html.ImageGetter url = " + url);
+                            inputStream.close();
+                            if (drawable != null) {
+                                int w = 400;
+                                int h = 400;
+                                for (int i = 0;i < images.size();i++){
+                                    String imgSrc = images.get(i)[1];
+                                    String size = images.get(i)[2];
+                                    String[] arr = size.split(Pattern.quote("*"));
+                                    LogUtil.e("TAG", "imgSrc " + i + " = " + imgSrc);
+                                    if (url.toString().equals(imgSrc)){
+                                        w = Integer.parseInt(arr[0]);
+                                        h = Integer.parseInt(arr[1]);
+                                    }
+                                }
+                                LogUtil.e("TAG", "w,h = " + w + "," + h);
+                                drawable.setBounds(0, 0, w, h);
+                            } else if (drawable == null) {
+                                return null;
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            return null;
+                        }
+                        return drawable;
+                    }
+                };
+
+                CharSequence charSequence = Html.fromHtml(content, getter, null);
+                Message message = handler.obtainMessage();
+                message.what = WHAT_LOAD_HTML_TEXT;
+                message.obj = charSequence;
+                handler.sendMessage(message);
+
+            }
+        }.start();
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (x5WebView != null){
-            clearX5WebView();
-        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
     }
 }

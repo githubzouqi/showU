@@ -3,6 +3,8 @@ package com.mushiny.www.showU.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +60,10 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
         options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
 
-        holder.tv_joker_content.setText(dataBeans.get(position).getContent()
-                .replaceAll("&nbsp;",""));
+        holder.tv_joker_content.setText(Html.fromHtml(dataBeans.get(position).getContent()));
         holder.tv_joker_update_time.setText(dataBeans.get(position).getUpdateTime());
-        Glide.with(context).load(R.mipmap.app_icon).apply(options).into(holder.iv_joker);
+        Glide.with(context).asGif()
+                .load(R.drawable.joker_image).apply(options).into(holder.iv_joker);
 
     }
 
@@ -84,14 +86,14 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
             iv_joker = itemView.findViewById(R.id.iv_joker);
             linear_item_joker = itemView.findViewById(R.id.linear_item_joker);
 
-            linear_item_joker.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (itemClickInterface != null){
-                        itemClickInterface.OnRecyclerViewItemClick(itemView, getAdapterPosition());
-                    }
-                }
-            });
+//            linear_item_joker.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (itemClickInterface != null){
+//                        itemClickInterface.OnRecyclerViewItemClick(itemView, getAdapterPosition());
+//                    }
+//                }
+//            });
 
         }
     }

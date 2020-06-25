@@ -1,21 +1,21 @@
 <resources>
-    <string name="app_name">UHello</string>
+    <string name="app_name">你好</string>
 
-    <string name="app_name_pinyin">HELLO</string>
+    <string name="app_name_pinyin">UHello</string>
 
     <!--activity_main-->
-    <string name="default_title">hello</string>
+    <string name="default_title">UHello</string>
     <string name="str_my_blog">主页</string>
     <string name="str_joker">欢笑</string>
     <string name="str_joker_title">欢声笑语</string>
     <string name="str_finder">发现</string>
-    <string name="str_mine">我</string>
+    <string name="str_mine">工具</string>
     <string name="str_main_url_hint">请输入网址</string>
     <string name="str_main_more">更多推荐</string>
     <string name="str_main_url_illegal">输入网址格式不正确</string>
 
     <!--activity_launch-->
-    <string name="str_text_slogan">hello | 你好 </string>
+    <string name="str_text_slogan">UHello | 你好 </string>
     <string name="str_chase_dream">追梦</string>
     <string name="str_copyright">Copyright © 2019 - xxxx Qi</string>
 
@@ -35,7 +35,7 @@
     <string name="default_loading_text">加载中...</string>
 
     <!--    fragment_mine.xml-->
-    <string name="default_name">邹奇</string>
+    <string name="default_name">UHello</string>
     <string name="default_birth">破壳日 [1994/09/23]</string>
     <string name="mine_weather">天气</string>
     <string name="mine_rubbish_sort">垃圾分类</string>
@@ -70,5 +70,9 @@
     <string name="str_joker_down">下</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="str_new_list_title">为什么满大街都是手机专卖店，没人买也不会倒闭？其实里面水很深</string>
+    <string name="str_new_list_source_time">商业八卦见闻  2020-06-22 15:05:47</string>
+    <string name="str_support_refresh_hint">下拉可刷新</string>
 
 </resources>

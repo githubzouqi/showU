@@ -98,12 +98,15 @@ public class BaseFragment extends Fragment {
     /**
      * 从 Fragment A 跳转到另一个 Fragment B
      */
-    public void showFragment(FragmentActivity fragmentActivity, Fragment current, Fragment next, String tag){
-        FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
+    public void showFragment(FragmentActivity fragmentActivity, Fragment current, Fragment next,
+                             String tag){
+        FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager()
+                .beginTransaction();
 
         if (next.isAdded()){
             // 正常情况下是不会执行到该段代码的，不排除特殊情况，为严谨加上
-            transaction.hide(current).show(next).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            transaction.hide(current).show(next).addToBackStack(null)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commitAllowingStateLoss();
         }else {
             transaction.hide(current).add(R.id.framelayout_container, next, tag)

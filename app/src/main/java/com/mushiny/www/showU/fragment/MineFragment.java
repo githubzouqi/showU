@@ -97,11 +97,15 @@ public class MineFragment extends BaseFragment {
         return new MineFragment();
     }
 
+    private View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+        if (view == null){
+            view = inflater.inflate(R.layout.fragment_mine, container, false);
+        }
 
         ButterKnife.bind(this, view);
 
@@ -136,8 +140,7 @@ public class MineFragment extends BaseFragment {
 
         }
 
-        sharedPreferences = getContext().getSharedPreferences(SP_FILE_NAME,
-                Context.MODE_PRIVATE);
+        sharedPreferences = getContext().getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE);
 
         loadMyPhoto();
 

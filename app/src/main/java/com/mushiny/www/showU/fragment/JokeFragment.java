@@ -91,6 +91,7 @@ public class JokeFragment extends BaseFragment {
     @BindView(R.id.recycle_view_joker)RecyclerView recycle_view_joker;
     @BindView(R.id.linear_joker_root)LinearLayout linear_joker_root;
     @BindView(R.id.ptr_frame_joker)PtrFrameLayout ptr_frame_joker;// 支持上拉加载，下拉刷新
+    @BindView(R.id.tv_support_refresh_hint)TextView tv_support_refresh_hint;
 
     private static final int WHAT_GET_JOKER = 0x10;
     private static final int WHAT_AUTO_RELOAD = 0x11;
@@ -119,6 +120,7 @@ public class JokeFragment extends BaseFragment {
                 case WHAT_GET_JOKER:// 获取最新笑话
                     if (dataBeans != null && dataBeans.size() != 0){
                         tv_get_joker.setVisibility(View.GONE);
+                        tv_support_refresh_hint.setVisibility(View.VISIBLE);
 
                         if (adapter != null){
                             adapter.notifyDataSetChanged();
@@ -229,7 +231,7 @@ public class JokeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (view == null && savedInstanceState == null){
+        if (view == null){
             view = inflater.inflate(R.layout.fragment_joke, container, false);
         }
         ButterKnife.bind(this, view);
@@ -278,6 +280,7 @@ public class JokeFragment extends BaseFragment {
             case R.id.iv_another:// 刷新换一组
                 if (banner != null){
                     banner.stopAutoPlay();
+                    banner.releaseBanner();
                     getBannerPic();
                 }
                 break;
@@ -325,6 +328,7 @@ public class JokeFragment extends BaseFragment {
             @Override
             public void onFailure(Call<JokerCollectionEntity> call, Throwable t) {
                 tv_get_joker.setVisibility(View.VISIBLE);
+                tv_support_refresh_hint.setVisibility(View.GONE);
                 tv_get_joker.setText(getResources().getString(R.string.str_get_joker));
                 ptr_frame_joker.refreshComplete();
                 ToastUtil.showToast(getContext(), "获取失败：" + t.getMessage());
@@ -420,6 +424,7 @@ public class JokeFragment extends BaseFragment {
      */
     private void setBanner(){
         // 设置图片加载器
+        banner.setVisibility(View.VISIBLE);
         banner.setImageLoader(new GlideImageLoader());
         banner.setImages(images);
         banner.setIndicatorGravity(BannerConfig.CENTER);

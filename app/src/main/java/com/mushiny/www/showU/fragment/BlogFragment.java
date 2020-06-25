@@ -92,7 +92,7 @@ public class BlogFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (view == null && savedInstanceState == null){
+        if (view == null){
             view = inflater.inflate(R.layout.fragment_blog, container, false);
         }
         ButterKnife.bind(this, view);
