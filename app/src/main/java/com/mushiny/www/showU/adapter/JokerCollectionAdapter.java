@@ -27,6 +27,7 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
     private List<JokerCollectionEntity.DataBean> dataBeans;
     private LayoutInflater inflater;
     private MyItemClickInterface itemClickInterface;
+    private RequestOptions options;
 
     public JokerCollectionAdapter(Context context, List<JokerCollectionEntity.DataBean> dataBeans) {
         this.context = context;
@@ -54,11 +55,13 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        RequestOptions options = new RequestOptions();
-        options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
+        if (options == null){
+            options = new RequestOptions();
+            options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
 //            options.override(200,200);// 指定加载图片大小
-        options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
+            options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
+        }
 
         holder.tv_joker_content.setText(Html.fromHtml(dataBeans.get(position).getContent()));
         holder.tv_joker_update_time.setText(dataBeans.get(position).getUpdateTime());

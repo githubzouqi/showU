@@ -9,7 +9,8 @@ import in.srain.cube.views.ptr.util.PtrLocalDisplay;
 
 public class PtrUtil {
 
-    public static final int DEFAULT_COLOR = 0x3389f7;
+//    public static final int DEFAULT_COLOR = 0x3389f7;
+    public static final int DEFAULT_COLOR = 0x44BB44;
     private static PtrUtil ptrUtil;
     private Context context;
 
@@ -67,6 +68,17 @@ public class PtrUtil {
         footer.setPadding(0, PtrLocalDisplay.dp2px(15),0,0);
         ptr.setFooterView(footer);
         ptr.addPtrUIHandler(footer);
+    }
+
+    /**
+     * 提供默认初始化设置
+     * @param ptr
+     * @param colorInt
+     */
+    public void initial(PtrFrameLayout ptr, int colorInt){
+        set_1_BaseSetting(ptr);
+        set_2_MaterialHeader(ptr, colorInt);
+        set_3_Footer(ptr);
     }
 
     public void autoRefresh(final PtrFrameLayout ptr){

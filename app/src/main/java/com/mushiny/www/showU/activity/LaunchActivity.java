@@ -26,7 +26,7 @@ public class LaunchActivity extends BaseActivity {
 
     @BindView(R.id.tv_text_bottom)TextView tv_text_bottom;
 
-    private static final int DELAY_TIME = 1500;
+    private static final int DELAY_TIME = 2500;
 
     // mac 系统选中英文词变大写：⇧ + ⌘ + u
     private static final int WHAT_NEXT = 0x10;
@@ -105,6 +105,16 @@ public class LaunchActivity extends BaseActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

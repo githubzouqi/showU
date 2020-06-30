@@ -258,8 +258,8 @@ public class PermissionUtil {
             new AlertDialog.Builder(context)
 //                    .setTitle("应用权限说明")
 //                    .setIcon(R.mipmap.showu_icon)
-                    .setMessage("您拒绝的权限有" + notAllowedPermissionNames + "，后面使用相关功能时会再次" +
-                            "向您申请被拒的相关权限，请您知晓！")
+                    .setMessage(notAllowedPermissionNames + "未授权，使用过程中需要授权时会再次进行提醒，" +
+                            "请您知晓！")
                     .setCancelable(false)
                     .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
                         @Override

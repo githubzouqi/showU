@@ -122,6 +122,12 @@ public class DiscoveryFragment extends BaseFragment {
         return view;
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+
+
     /**
      * 设置监听
      */
@@ -146,7 +152,7 @@ public class DiscoveryFragment extends BaseFragment {
                     }
                 }
                 baseTitle = slidingTabLayout.getTitleView(position).getText().toString();
-                setTopTitle();
+                onTitleSet();
             }
 
             @Override
@@ -224,11 +230,12 @@ public class DiscoveryFragment extends BaseFragment {
             slidingTabLayout.setCurrentTab(0);
             slidingTabLayout.getTitleView(0).setTypeface(Typeface.DEFAULT_BOLD);
             slidingTabLayout.getTitleView(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+            // 初始化第一个tab内容为标题
+            baseTitle = slidingTabLayout.getTitleView(0).getText().toString();
+            onTitleSet();
         }
 
-        // 设置标题栏内容
-        baseTitle = slidingTabLayout.getTitleView(0).getText().toString();
-        setTopTitle();
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter{

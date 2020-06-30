@@ -2,8 +2,10 @@ package com.mushiny.www.showU.fragment;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,9 +24,11 @@ import android.widget.TextView;
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.constant.Constants;
+import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PtrUtil;
 import com.mushiny.www.showU.util.RegexUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.SoftInputUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension;
@@ -37,14 +41,21 @@ import com.tencent.smtt.sdk.WebViewClient;
 import com.umeng.analytics.MobclickAgent;
 
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +88,7 @@ public class BlogFragment extends BaseFragment {
     private List<Object[]> recommendList;
 
     private String top_title = "主页";
+    private AlertDialog dialog;
 
     public static BlogFragment newInstance(){
         return new BlogFragment();
@@ -200,7 +212,8 @@ public class BlogFragment extends BaseFragment {
                             startActivity(intent);
                             return true;
                         }catch (Exception e){
-                            e.printStackTrace();
+//                            e.printStackTrace();
+                            return false;
                         }
                     }
 //                    webView.loadUrl(url);
@@ -228,17 +241,34 @@ public class BlogFragment extends BaseFragment {
 //                    ViewGroup.LayoutParams params_error = x5WebView.getLayoutParams();
 //                    params.height = height;
 //                    x5WebView.setLayoutParams(params_error);
-//                    loadUrl = Constants.URL_BAI_DU;
-//                    clearX5WebView(false);
-//                        new AlertDialog.Builder(getContext()).setTitle(webResourceError.getDescription())
-//                            .setIcon(R.mipmap.app_icon).setMessage("加载异常，百度已加载")
-//                            .setCancelable(false).setPositiveButton("我知道了", new
-//                            DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-//                        }
-//                    }).create().show();
+                    if (dialog != null){
+                        dialog.dismiss();
+                    }
+                    dialog = new AlertDialog.Builder(getContext())
+                            .setTitle(webResourceError.getDescription())
+                            .setIcon(R.mipmap.app_icon)
+                            .setMessage("加载异常:" + webResourceError.getDescription())
+                            .setCancelable(false)
+                            .setPositiveButton("尝试重新加载",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            clearX5WebView(false);
+
+                                        }
+                                    })
+                            .setNegativeButton("加载CSDN",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            loadUrl = Constants.URL_CSDN;
+                                            clearX5WebView(false);
+                                        }
+                                    }).create();
+                    dialog.show();
+//                    LogUtil.e("TAG", "onReceivedError = " + webResourceError.getDescription());
                     ptr_frame_blog.refreshComplete();
                 }
             });
@@ -272,7 +302,7 @@ public class BlogFragment extends BaseFragment {
                 public void onReceivedTitle(WebView webView, String title) {
                     super.onReceivedTitle(webView, title);
                     baseTitle = title;
-                    setTopTitle();
+                    onTitleSet();
                 }
             });
 
@@ -297,7 +327,7 @@ public class BlogFragment extends BaseFragment {
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;
 
-        loadUrl = Constants.URL_BAI_DU;
+        loadUrl = Constants.URL_CSDN;
 
         // 更多推荐
         recommendList = new ArrayList<>();
@@ -398,6 +428,7 @@ public class BlogFragment extends BaseFragment {
             if (x5WebView == null){
                 x5WebView = new WebView(getContext().getApplicationContext());
             }
+            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_blog);
             loadWebPage();
         }
     }

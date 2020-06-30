@@ -21,7 +21,7 @@
             <ImageView
                 android:scaleType="fitXY"
                 android:id="@+id/iv_new_list"
-                android:src="@mipmap/load_error"
+                android:src="@mipmap/app_icon"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
 

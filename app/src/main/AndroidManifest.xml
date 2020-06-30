@@ -2,47 +2,49 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mushiny.www.showU">
-
-<!--    camera-->
-    <uses-permission android:name="android.permission.CAMERA"/>
-
-<!--    storage-->
+    <!-- camera -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-<!--    phone-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- phone -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- location 获取经纬度使用 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:name=".application.MyApplication"
-        tools:replace="android:appComponentFactory"
-        android:usesCleartextTraffic="true"
-        android:appComponentFactory="utf-8"
         android:allowBackup="true"
+        android:appComponentFactory="utf-8"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning|ProtectedPermissions">
-
-        <!--        友盟-->
-        <meta-data android:value="5ecb3237167eddb80a000a7f" android:name="UMENG_APPKEY"/>
-        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
-
-        <activity android:name="com.mushiny.www.showU.activity.MainActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:configChanges="orientation|screenSize|keyboardHidden">
-        </activity>
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning|ProtectedPermissions"
+        tools:replace="android:appComponentFactory">
         <activity
+            android:name=".activity.UpdateActivity"
+            android:theme="@style/DialogTheme">
+        </activity>
+        <!-- 友盟 -->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5ecb3237167eddb80a000a7f" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
+
+        <activity
+            android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:name="com.mushiny.www.showU.activity.LaunchActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".activity.LaunchActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/LaunchPageTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,14 +54,13 @@
         </activity>
 
         <provider
+            android:name="android.support.v4.content.FileProvider"
             android:authorities="com.mushiny.www.showU.provider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            android:name="android.support.v4.content.FileProvider">
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"
-                />
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

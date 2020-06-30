@@ -59,6 +59,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        onTitleSet();
         // 首次初始化，默认可见并开启友盟统计
         if (isFirstInit){
             isVisible = true;
@@ -71,6 +72,11 @@ public class BaseFragment extends Fragment {
         if (isVisible){
             MobclickAgent.onPageStart(getClass().getName());
         }
+
+    }
+
+    public void onTitleSet(){
+        setTopTitle();
     }
 
     @Override
@@ -88,7 +94,7 @@ public class BaseFragment extends Fragment {
         if (!hidden){
             isVisible = true;// 用户可见
             MobclickAgent.onPageStart(getClass().getName());
-            setTopTitle();
+            onTitleSet();
         }else {
             isVisible = false;
             MobclickAgent.onPageEnd(getClass().getName());

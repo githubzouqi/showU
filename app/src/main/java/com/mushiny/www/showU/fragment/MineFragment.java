@@ -121,11 +121,19 @@ public class MineFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onTitleSet() {
+        baseTitle = getResources().getString(R.string.str_mine);
+        super.onTitleSet();
+    }
+
     // 初始化数据
     private void initData() {
-
-        baseTitle = getResources().getString(R.string.str_mine);
-        setTopTitle();
 
         parentPath = Environment.getExternalStorageDirectory() + "/imxiaoqi";
 
@@ -284,7 +292,7 @@ public class MineFragment extends BaseFragment {
 
                         new AlertDialog.Builder(getContext())
                                 .setTitle("应用详情页")
-                                .setIcon(R.mipmap.showu_icon)
+                                .setIcon(R.mipmap.app_icon)
                                 .setMessage("请手动开启应用的存储权限，否则无法使用存储功能")
                                 .setCancelable(true)
                                 .setPositiveButton("否", new DialogInterface.OnClickListener() {
@@ -319,7 +327,7 @@ public class MineFragment extends BaseFragment {
 
                         new AlertDialog.Builder(getContext())
                                 .setTitle("应用详情页")
-                                .setIcon(R.mipmap.showu_icon)
+                                .setIcon(R.mipmap.app_icon)
                                 .setMessage("请手动开启应用的相机权限，否则无法使用拍照功能")
                                 .setCancelable(true)
                                 .setPositiveButton("否", new DialogInterface.OnClickListener() {

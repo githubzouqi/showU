@@ -254,7 +254,7 @@ public class JokeFragment extends BaseFragment {
 
                 new AlertDialog.Builder(getContext())
                         .setTitle("轮播动画设置")
-                        .setIcon(R.mipmap.showu_icon)
+                        .setIcon(R.mipmap.app_icon)
                         .setSingleChoiceItems(items, checkedItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -339,9 +339,8 @@ public class JokeFragment extends BaseFragment {
     }
 
     private void initData() {
+        baseTitle = getResources().getString(R.string.str_joker_title);// 标题内容设置
 
-        baseTitle = getResources().getString(R.string.str_joker_title);
-        setTopTitle();
         // 设备宽高
         deviceW = getResources().getDisplayMetrics().widthPixels;
         deviceH = new ScreenUtil().getScreenSize(ScreenUtil.HEIGHT, getContext());
@@ -397,7 +396,7 @@ public class JokeFragment extends BaseFragment {
                     for (int i = 0;i < length;i++){
                         String imageUrl = array.getJSONObject(i).optString("imageUrl");
                         images.add(imageUrl);
-                        titles.add("UHello");
+                        titles.add(getResources().getString(R.string.app_name));
                     }
                     setBanner();
                 } catch (Exception e) {

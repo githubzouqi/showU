@@ -77,7 +77,7 @@
 
             <ImageView
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/mine_weather"
+                android:src="@mipmap/tool_weather"
                 android:layout_width="30dp"
                 android:layout_height="30dp" />
 
@@ -109,7 +109,7 @@
 
             <ImageView
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/mine_rubbish_sort"
+                android:src="@mipmap/tool_rubbish_sort"
                 android:layout_width="30dp"
                 android:layout_height="30dp" />
 
@@ -141,7 +141,7 @@
 
             <ImageView
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/mine_share"
+                android:src="@mipmap/app_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp" />
 

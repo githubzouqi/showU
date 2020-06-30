@@ -2,6 +2,7 @@ package com.mushiny.www.showU.fragment;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -235,6 +236,7 @@ public class NewsDetailFragment extends BaseFragment {
 
                     JSONObject obj = new JSONObject(new String(response.body().bytes()));
                     if (obj.optInt("code") == 0){
+                        // 请求超时，请稍后再试
                         tv_detail_title.setText(title);
                         tv_detail_source_time.setText(source_time);
 
@@ -248,7 +250,9 @@ public class NewsDetailFragment extends BaseFragment {
                         iv_detail.setVisibility(View.VISIBLE);
 
                         ptr_detail.refreshComplete();
-                        ToastUtil.showToast(getContext(), obj.optString("msg"));
+//                        ToastUtil.showToast(getContext(), obj.optString("msg"));
+                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
+                        .create().show();
                         return;
                     }
                     JSONObject objData = obj.getJSONObject("data");

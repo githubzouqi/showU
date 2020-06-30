@@ -1,6 +1,8 @@
 package com.mushiny.www.showU.application;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.mushiny.www.showU.util.LogUtil;
 import com.tencent.smtt.sdk.QbSdk;
@@ -11,6 +13,12 @@ import com.umeng.socialize.PlatformConfig;
 import org.litepal.LitePal;
 
 public class MyApplication extends Application {
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
+    }
 
     @Override
     public void onCreate() {

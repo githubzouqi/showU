@@ -2,11 +2,15 @@ package com.mushiny.www.showU.activity;
 
 import android.Manifest;
 import android.app.ActionBar;
-import android.graphics.Color;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,27 +18,39 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mushiny.www.showU.R;
+import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.fragment.BaseFragment;
 import com.mushiny.www.showU.fragment.BlogFragment;
 import com.mushiny.www.showU.fragment.DiscoveryFragment;
-import com.mushiny.www.showU.fragment.NewsFragment;
 import com.mushiny.www.showU.fragment.JokeFragment;
 import com.mushiny.www.showU.fragment.MineFragment;
-import com.mushiny.www.showU.interfaces.TitleListener;
+import com.mushiny.www.showU.fragment.ToolsFragment;
+import com.mushiny.www.showU.interfaces.NetworkInterface;
 import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PermissionUtil;
+import com.mushiny.www.showU.util.Retrofit2Util;
+import com.mushiny.www.showU.util.SPUtil;
 import com.mushiny.www.showU.util.ToastUtil;
+
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * fragment 的容器
@@ -73,12 +89,85 @@ public class MainActivity extends BaseActivity {
     // fragment的tag变量
     private String tag_blogF;
     private String tag_jokeF;
-    private String tag_news;
+    private String tag_tools;
     private String tag_mine;
     private String tag_discovery;
 
     private long firstTime = 0;
     private PermissionUtil permissionUtil = null;
+
+    private static Handler handler;
+    private static final int WHAT_CHECK_UPDATE = 0x110;
+
+    private static class MyHandler extends Handler{
+
+        WeakReference<Context> weakReference;
+        public MyHandler(Context context){
+            weakReference = new WeakReference<>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (weakReference.get() != null){
+                switch (msg.what){
+                    case WHAT_CHECK_UPDATE:// 应用更新
+                        checkUpdate(weakReference.get());
+                        break;
+                }
+            }
+        }
+
+        private void checkUpdate(final Context context) {
+
+            NetworkInterface anInterface = Retrofit2Util.create(Constants.pgyer_base_url,
+                    NetworkInterface.class);
+            Call<ResponseBody> call = anInterface.getAppInfo(Constants.pgyer_api_key_value,
+                    Constants.pgyer_app_key_value);
+            call.enqueue(new retrofit2.Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    try {
+                        JSONObject obj = new JSONObject(new String(response.body().bytes()));
+                        int code = obj.optInt("code");
+                        if (code == 0){
+                            // 获取成功
+                            JSONObject data = obj.getJSONObject("data");
+                            String app_name = data.optString("buildName");
+                            // 根据该值来判断应用是否需要更新
+                            String app_versionName = data.optString("buildVersion");
+                            String app_updateDesc = data.optString("buildUpdateDescription");
+                            String shortUrl = data.optString("buildShortcutUrl");
+
+                            PackageManager pm = context.getPackageManager();
+                            PackageInfo info = pm.getPackageInfo(context.getPackageName(), 0);
+                            String local_versionName = info.versionName;// 本地版本
+
+                            if (!app_versionName.equals(local_versionName)){
+                                // 发现新版本
+                                boolean bl_update_again = SPUtil.newInstance(context)
+                                        .getBoolean(UpdateActivity.key_update_again, true);
+                                if (bl_update_again){
+                                    // 再次提示
+                                    UpdateActivity.start(context, app_updateDesc, shortUrl);
+                                }else {
+                                    // 不再提示
+                                }
+
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +177,8 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);// 控件绑定
 
         initData();
+        // 一次性申请所有的危险权限
+        applyAllDangerousPermissions();
 
         // 确保内存重启的时候，不会再次加载根fragment，防止重叠问题的出现
         if (findFragmentByTag(tag_blogF) == null && savedInstanceState == null){
@@ -98,20 +189,12 @@ public class MainActivity extends BaseActivity {
             loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
             mCurrentFragment = blogFragment;
             iv_title_refresh.setVisibility(View.VISIBLE);
-            setTabStyle(linear_one,iv_one,tv_one);
+            setTabStyle(linear_one,iv_one,tv_one, R.mipmap.main_select);
         }else {
             LogUtil.e("zouqi", "内存重启了");
         }
 
-//        if (jokeFragment == null){
-//            setHeadTitle(TITLE_TWO);
-//            jokeFragment = JokeFragment.newInstance();
-//            // 加载根 fragment，第一次进入应用显示的界面
-//            loadRootFragment(R.id.framelayout_container, jokeFragment, tag_jokeF);
-//            mCurrentFragment = jokeFragment;
-//            setTabStyle(linear_two,iv_two,tv_two);
-//        }
-
+        // 顶部标题布局背景颜色设置
         relative_layout_title.setBackgroundColor(getResources().getColor(R.color.color_other));
 
         // 透明化状态栏
@@ -125,15 +208,16 @@ public class MainActivity extends BaseActivity {
             actionBar.hide();
         }
 
-        // 一次性申请所有的危险权限
-        applyAllDangerousPermissions();
-
+        // 检查应用更新
+        handler = new MyHandler(this);
+        handler.sendEmptyMessageDelayed(WHAT_CHECK_UPDATE, 2000);
     }
 
     private void applyAllDangerousPermissions() {
         permissionUtil = new PermissionUtil(this, null);
         String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA};
+        Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION};
         // android 6.0以上的危险权限使用时申请
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, PermissionUtil.ONCE_TIME_APPLY);
@@ -141,7 +225,8 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case PermissionUtil.ONCE_TIME_APPLY:
@@ -174,7 +259,7 @@ public class MainActivity extends BaseActivity {
         // tag变量初始化
         tag_blogF = BlogFragment.class.getSimpleName();
         tag_jokeF = JokeFragment.class.getSimpleName();
-        tag_news = NewsFragment.class.getSimpleName();
+        tag_tools = ToolsFragment.class.getSimpleName();
         tag_mine = MineFragment.class.getSimpleName();
         tag_discovery = DiscoveryFragment.class.getSimpleName();
 
@@ -192,27 +277,28 @@ public class MainActivity extends BaseActivity {
         switch (view.getId()){
             case R.id.linear_two:// 欢笑，开心的小段落
 
-                setTabStyle(linear_two,iv_two,tv_two);
+                setTabStyle(linear_two,iv_two,tv_two, R.mipmap.joke_select);
                 show(JokeFragment.newInstance(), tag_jokeF, transaction);
 
                 break;
             case R.id.linear_one:// 主页 博客
 
-                setTabStyle(linear_one,iv_one,tv_one);
+                setTabStyle(linear_one,iv_one,tv_one, R.mipmap.main_select);
                 show(BlogFragment.newInstance(), tag_blogF, transaction);
                 break;
             case R.id.linear_three:// 发现
 
-                setTabStyle(linear_three, iv_three, tv_three);
+                setTabStyle(linear_three, iv_three, tv_three, R.mipmap.discovery_select);
                 DiscoveryFragment discoveryFragment = DiscoveryFragment.newInstance();
                 show(discoveryFragment, tag_discovery, transaction);
 
                 break;
 
-            case R.id.linear_four:// 我的
+            case R.id.linear_four:// 工具
 
-                setTabStyle(linear_four, iv_four, tv_four);
-                show(MineFragment.newInstance(), tag_mine, transaction);
+                setTabStyle(linear_four, iv_four, tv_four, R.mipmap.tool_select);
+//                show(MineFragment.newInstance(), tag_mine, transaction);
+                show(ToolsFragment.newInstance(), tag_tools, transaction);
 
                 break;
 
@@ -264,15 +350,15 @@ public class MainActivity extends BaseActivity {
      * @param imageView
      * @param textView
      */
-    private void setTabStyle(LinearLayout linearLayout, ImageView imageView, TextView textView) {
+    private void setTabStyle(LinearLayout linearLayout, ImageView imageView, TextView textView,
+                             int resourceId) {
 
         setAllTabsStyle();
 
         linearLayout.setBackgroundColor(getResources().getColor(R.color.color_select));
-        imageView.setImageResource(R.mipmap.selected_zhui);
+        imageView.setImageResource(resourceId);
         textView.setTextColor(getResources().getColor(R.color.color_other));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
 
     }
 
@@ -281,19 +367,19 @@ public class MainActivity extends BaseActivity {
      */
     private void setAllTabsStyle(){
 
-        setStyle(linear_one, iv_one, tv_one);
-        setStyle(linear_two, iv_two, tv_two);
-        setStyle(linear_three, iv_three, tv_three);
-        setStyle(linear_four, iv_four, tv_four);
+        setStyle(linear_one, iv_one, tv_one, R.mipmap.main_unselect);
+        setStyle(linear_two, iv_two, tv_two, R.mipmap.joke_unselect);
+        setStyle(linear_three, iv_three, tv_three, R.mipmap.discovery_unselect);
+        setStyle(linear_four, iv_four, tv_four, R.mipmap.tool_unselect);
 
     }
 
-    private void setStyle(LinearLayout linearLayout, ImageView imageView, TextView textView) {
+    private void setStyle(LinearLayout linearLayout, ImageView imageView, TextView textView,
+                          int resourceId) {
         linearLayout.setBackgroundColor(getResources().getColor(R.color.color_white));
-        imageView.setImageResource(R.mipmap.app_icon);
-        textView.setTextColor(getResources().getColor(R.color.color_other));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        textView.setTypeface(Typeface.DEFAULT);
+        imageView.setImageResource(resourceId);
+        textView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
     }
 
     /**
@@ -330,6 +416,7 @@ public class MainActivity extends BaseActivity {
 
             boolean canBack = false;
             if (getBackStackEntryCount() == 1){
+                ((BaseFragment) mCurrentFragment).onTitleSet();
                 visibleTab();
             }
 
@@ -381,6 +468,29 @@ public class MainActivity extends BaseActivity {
         }else {
             finish();
             System.exit(0);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtil.e("TAG", "onPause");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.e("TAG", "onDestroy");
+        // 移除消息，防止内存泄漏
+        if (handler != null){
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
         }
     }
 }

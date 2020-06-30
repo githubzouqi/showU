@@ -86,21 +86,19 @@
 
             <ImageView
                 android:clickable="false"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/iv_one"
                 android:layout_marginTop="2dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/selected_zhui"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
+                android:src="@mipmap/main_select"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
             <TextView
-                android:padding="10dp"
                 android:clickable="false"
                 android:id="@+id/tv_one"
                 android:text="@string/str_my_blog"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textSize="12sp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
@@ -122,25 +120,24 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:clickable="false"
                 android:id="@+id/iv_two"
                 android:layout_marginTop="2dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
+                android:src="@mipmap/joke_unselect"
+                android:layout_width="30dp"
+                android:layout_height="20dp" />
 
             <TextView
-                android:padding="10dp"
                 android:clickable="false"
                 android:id="@+id/tv_two"
                 android:text="@string/str_joker"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
+                android:textColor="@android:color/darker_gray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -157,25 +154,24 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:clickable="false"
                 android:id="@+id/iv_three"
                 android:layout_marginTop="2dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
+                android:src="@mipmap/discovery_unselect"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
             <TextView
-                android:padding="10dp"
                 android:clickable="false"
                 android:id="@+id/tv_three"
                 android:text="@string/str_finder"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
+                android:textColor="@android:color/darker_gray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -192,25 +188,24 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:clickable="false"
                 android:id="@+id/iv_four"
                 android:layout_marginTop="2dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/showu_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp" />
+                android:src="@mipmap/tool_unselect"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
             <TextView
-                android:padding="10dp"
                 android:clickable="false"
                 android:id="@+id/tv_four"
                 android:text="@string/str_mine"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/color_black"
+                android:textColor="@android:color/darker_gray"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

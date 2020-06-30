@@ -193,6 +193,14 @@ public class NewsFragment extends BaseFragment {
         lazyLoad();
     }
 
+    @Override
+    public void onTitleSet() {
+       if (isVisible){
+           baseTitle = typeName;
+           super.onTitleSet();
+       }
+    }
+
     /**
      * 恢复标记 防止重复加载
      */
@@ -206,6 +214,7 @@ public class NewsFragment extends BaseFragment {
      */
     private void lazyLoad() {
         if (isVisible && isViewCreated){
+            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
             loadData();
             reset();
         }
@@ -229,10 +238,6 @@ public class NewsFragment extends BaseFragment {
                 .DEFAULT_COLOR);
         PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
         ptr_frame_news.setMode(PtrFrameLayout.Mode.REFRESH);// 设置模式
-        // 对用户可见且view已经初始化完成才自动刷新
-        if (isViewCreated && isVisible){
-            PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
-        }
 
     }
 
@@ -309,10 +314,6 @@ public class NewsFragment extends BaseFragment {
             typeId = getArguments().getString(TYPE_ID, "510");
             typeName = getArguments().getString(TYPE_NAME, "UHello");
         }
-
-        // 设置顶部标题
-        baseTitle = typeName;
-        setTopTitle();
 
     }
 

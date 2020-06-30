@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+<!--    <color name="colorPrimary">#008577</color>-->
+<!--    <color name="colorPrimaryDark">#00574B</color>-->
+<!--    <color name="colorAccent">#D81B60</color>-->
+    <color name="colorPrimary">#44BB44</color>
+    <color name="colorPrimaryDark">#44BB44</color>
+    <color name="colorAccent">#44BB44</color>
 
-    <color name="color_other">#3389f7</color>
+<!--    <color name="color_other">#3389f7</color>-->
+    <color name="color_other">#44BB44</color>
     <color name="color_black">#000000</color>
     <color name="color_lighter_gray">#ddd</color>
     <color name="color_bg_gray">#ECECEC</color>
@@ -14,6 +18,9 @@
     <color name="color_news_tab">#44BB44</color>
     <color name="color_transparent">#00000000</color>
     <color name="color_red">#FF0000</color>
+    <color name="color_dark_blue">#00008B</color>
+    <color name="color_rubbish_wet">#A0522D</color>
+    <color name="color_rubbish_dry">#000000</color>
 
     <color name="color_test">#34A350</color>
 </resources>
