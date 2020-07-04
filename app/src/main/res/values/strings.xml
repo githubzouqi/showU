@@ -78,5 +78,7 @@
     <string name="str_tool_rubbish_sort_keyword">输入需要查询分类物品的主要字词</string>
     <string name="str_item_weather_date">江西省 赣州市\n2020-06-27（今天） 星期六</string>
     <string name="str_tool_weather_hint">请输入需要查询的城市</string>
+    <string name="str_lottery_type_hint">请选择彩票种类</string>
+    <string name="str_lottery_expect_hint">请输入彩票期号</string>
 
 </resources>

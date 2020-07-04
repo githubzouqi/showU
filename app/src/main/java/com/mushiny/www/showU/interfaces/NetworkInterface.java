@@ -63,6 +63,9 @@ public interface NetworkInterface {
 
     @GET("weather/forecast/{site}")// @Path主要用于Get请求，用于替换Url路径中的变量字符
     Call<ResponseBody> getWeather(@Path("site") String site);//  获取特定城市今天及未来天气信息
+
+    @GET("lottery/common/aim_lottery") // ?expect=20058&code=ssq
+    Call<ResponseBody> getLotteryInfo(@QueryMap Map<String, Object> map);// 根据彩票期号查询中奖结果
     /* -RollToolsApi，开放易用的接口服务- */
 
     // 蒲公英内测

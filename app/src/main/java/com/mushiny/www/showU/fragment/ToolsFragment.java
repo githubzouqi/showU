@@ -47,6 +47,7 @@ public class ToolsFragment extends BaseFragment {
     private static final String tool_weather = "天气查询";
     private static final String tool_rubbish_sort = "垃圾分类查询";
     private static final String tool_lottery = "彩票信息";
+    private static final String tool_logistics = "物流信息";
 
     private int count = 1;
     private List<Object[]> toolList = new ArrayList<>();
@@ -116,6 +117,7 @@ public class ToolsFragment extends BaseFragment {
         toolList.add(new Object[]{tool_weather, R.mipmap.tool_weather});
         toolList.add(new Object[]{tool_rubbish_sort, R.mipmap.tool_rubbish_sort});
         toolList.add(new Object[]{tool_lottery, R.mipmap.tool_lottery});
+        toolList.add(new Object[]{tool_logistics, R.mipmap.tool_logistics});
 
         loadData();
     }
@@ -167,6 +169,15 @@ public class ToolsFragment extends BaseFragment {
                                     ToolsRubbishSortFragment.newInstance(tool_rubbish_sort);
                             showFragment(getActivity(), ToolsFragment.this,
                                     toolsRubbishSortFragment, ToolsRubbishSortFragment.TAG);
+                            break;
+                        case tool_lottery:// 彩票信息
+                            ToolsLotteryFragment lotteryFragment = ToolsLotteryFragment
+                                    .newInstance(tool_lottery);
+                            showFragment(getActivity(), ToolsFragment.this, lotteryFragment
+                            , ToolsLotteryFragment.TAG);
+                            break;
+                        case tool_logistics:// 物流信息
+
                             break;
                     }
                 }

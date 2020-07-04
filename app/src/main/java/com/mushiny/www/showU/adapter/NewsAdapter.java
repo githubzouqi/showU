@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,12 +83,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
         String source = dataBeans.get(position).getSource();
         String postTime = dataBeans.get(position).getPostTime();
 
-        holder.tv_title.setText(title);
+        holder.tv_title.setText(Html.fromHtml(title));
         if (!TextUtils.isEmpty(imgUrl)){
             Glide.with(context).load(Uri.parse(imgUrl)).apply(options).into(holder.iv_new_list);
         }
         if (TextUtils.isEmpty(source)){
-            source = "UHello";
+            source = context.getResources().getString(R.string.app_name);
         }
         holder.tv_source_time.setText(source + "  " + postTime);
 
