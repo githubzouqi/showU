@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,15 +17,23 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.constant.Constants;
 import com.mushiny.www.showU.fragment.BaseFragment;
@@ -36,6 +47,8 @@ import com.mushiny.www.showU.util.LogUtil;
 import com.mushiny.www.showU.util.PermissionUtil;
 import com.mushiny.www.showU.util.Retrofit2Util;
 import com.mushiny.www.showU.util.SPUtil;
+import com.mushiny.www.showU.util.ScaleUtil;
+import com.mushiny.www.showU.util.ScreenUtil;
 import com.mushiny.www.showU.util.ToastUtil;
 
 import org.json.JSONObject;
@@ -78,6 +91,12 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.linear_tab)LinearLayout linear_tab;
     @BindView(R.id.relative_layout_title) RelativeLayout relative_layout_title;
     @BindView(R.id.iv_title_refresh)ImageView iv_title_refresh;
+    @BindView(R.id.iv_title_menu)ImageView iv_title_menu;
+    @BindView(R.id.framelayout_container) FrameLayout framelayout_container;
+
+    private PopupWindow pop_window_menu = null;
+    private View pop_view_menu = null;
+    private RequestOptions options;
 
     private BlogFragment blogFragment;
     private JokeFragment jokeFragment;
@@ -111,62 +130,69 @@ public class MainActivity extends BaseActivity {
             if (weakReference.get() != null){
                 switch (msg.what){
                     case WHAT_CHECK_UPDATE:// 应用更新
-                        checkUpdate(weakReference.get());
+                        checkUpdate(weakReference.get(), true);
                         break;
                 }
             }
         }
 
-        private void checkUpdate(final Context context) {
+    }
 
-            NetworkInterface anInterface = Retrofit2Util.create(Constants.pgyer_base_url,
-                    NetworkInterface.class);
-            Call<ResponseBody> call = anInterface.getAppInfo(Constants.pgyer_api_key_value,
-                    Constants.pgyer_app_key_value);
-            call.enqueue(new retrofit2.Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    try {
-                        JSONObject obj = new JSONObject(new String(response.body().bytes()));
-                        int code = obj.optInt("code");
-                        if (code == 0){
-                            // 获取成功
-                            JSONObject data = obj.getJSONObject("data");
-                            String app_name = data.optString("buildName");
-                            // 根据该值来判断应用是否需要更新
-                            String app_versionName = data.optString("buildVersion");
-                            String app_updateDesc = data.optString("buildUpdateDescription");
-                            String shortUrl = data.optString("buildShortcutUrl");
+    // 检查更新
+    private static void checkUpdate(final Context context, final boolean isAutoCheck) {
 
-                            PackageManager pm = context.getPackageManager();
-                            PackageInfo info = pm.getPackageInfo(context.getPackageName(), 0);
-                            String local_versionName = info.versionName;// 本地版本
+        NetworkInterface anInterface = Retrofit2Util.create(Constants.pgyer_base_url,
+                NetworkInterface.class);
+        Call<ResponseBody> call = anInterface.getAppInfo(Constants.pgyer_api_key_value,
+                Constants.pgyer_app_key_value);
+        call.enqueue(new retrofit2.Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    JSONObject obj = new JSONObject(new String(response.body().bytes()));
+                    int code = obj.optInt("code");
+                    if (code == 0){
+                        // 获取成功
+                        JSONObject data = obj.getJSONObject("data");
+                        String app_name = data.optString("buildName");
+                        // 根据该值来判断应用是否需要更新
+                        String app_versionName = data.optString("buildVersion");
+                        String app_updateDesc = data.optString("buildUpdateDescription");
+                        String shortUrl = data.optString("buildShortcutUrl");
 
-                            if (!app_versionName.equals(local_versionName)){
-                                // 发现新版本
-                                boolean bl_update_again = SPUtil.newInstance(context)
-                                        .getBoolean(UpdateActivity.key_update_again, true);
-                                if (bl_update_again){
-                                    // 再次提示
-                                    UpdateActivity.start(context, app_updateDesc, shortUrl);
-                                }else {
-                                    // 不再提示
-                                }
+                        PackageManager pm = context.getPackageManager();
+                        PackageInfo info = pm.getPackageInfo(context.getPackageName(), 0);
+                        String local_versionName = info.versionName;// 本地版本
 
+                        if (!app_versionName.equals(local_versionName)){
+                            // 发现新版本
+                            boolean bl_update_again = SPUtil.newInstance(context)
+                                    .getBoolean(UpdateActivity.key_update_again, true);
+                            if (bl_update_again){
+                                // 再次提示
+                                UpdateActivity.start(context, app_updateDesc, shortUrl);
+                            }else {
+                                // 不再提示
                             }
+
+                        }else {
+                            if (isAutoCheck){
+                                return;// 自动更新检查不提示，直接回滚
+                            }
+                            ToastUtil.showToast(context, "已是最新版本");
                         }
-                    }catch (Exception e){
-                        e.printStackTrace();
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                }
-            });
+            }
+        });
 
-        }
     }
 
     @Override
@@ -263,13 +289,20 @@ public class MainActivity extends BaseActivity {
         tag_mine = MineFragment.class.getSimpleName();
         tag_discovery = DiscoveryFragment.class.getSimpleName();
 
+        if (options == null){
+            options = new RequestOptions();
+            options.placeholder(R.mipmap.app_icon);// 设置占位图
+//            options.override(200,200);// 指定加载图片大小
+            options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
+//            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
+        }
     }
 
     /**
      * 控件的点击事件（这里也就是tab的点击事件）
      */
     @OnClick({R.id.linear_one, R.id.linear_two, R.id.linear_three, R.id.linear_four,
-            R.id.iv_title_refresh})
+            R.id.iv_title_refresh, R.id.iv_title_menu})
     public void doClick(View view){
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -307,8 +340,65 @@ public class MainActivity extends BaseActivity {
                     ((BlogFragment)mCurrentFragment).reload();
                 }
                 break;
+            case R.id.iv_title_menu:// 主页 - 菜单
+                showMenuPop();
+                break;
 
         }
+    }
+
+    /**
+     * 弹框显示 menu
+     */
+    private void showMenuPop() {
+
+        pop_view_menu = getLayoutInflater().inflate(R.layout.pop_view_menu, null);
+        final ImageView iv_menu_gif = pop_view_menu.findViewById(R.id.iv_menu_gif);
+        Glide.with(this).asGif()
+                .load(R.mipmap.menu_bg).apply(options).into(iv_menu_gif);
+        // 菜单 - 检查更新
+        pop_view_menu.findViewById(R.id.tv_menu_check_update).setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkUpdate(MainActivity.this, false);// 手动检查更新
+                pop_window_menu.dismiss();
+            }
+        });
+        // 菜单 - 关于
+        pop_view_menu.findViewById(R.id.tv_menu_about).setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("关于")
+                        .setIcon(R.mipmap.app_icon)
+                        .setMessage(getResources().getString(R.string.str_menu_about))
+                        .create().show();
+                pop_window_menu.dismiss();
+            }
+        });
+
+        int width = new ScreenUtil().getScreenSize(ScreenUtil.WIDTH, this);
+        int w = width - ScaleUtil.dip2px(this, 20);
+        pop_window_menu = new PopupWindow(pop_view_menu, w, ViewGroup.LayoutParams.WRAP_CONTENT);
+        pop_window_menu.setAnimationStyle(R.style.pop_anim_menu);
+        pop_window_menu.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
+        pop_window_menu.setFocusable(true);
+        pop_window_menu.setOutsideTouchable(true);
+        pop_window_menu.update();
+        pop_window_menu.showAtLocation(framelayout_container, Gravity.TOP, 0, 0);
+
+        bgAlpha(0.618f);
+        pop_window_menu.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                bgAlpha(1.0f);
+                Glide.with(MainActivity.this).clear(iv_menu_gif);
+            }
+        });
+
     }
 
     /**
@@ -469,6 +559,16 @@ public class MainActivity extends BaseActivity {
             finish();
             System.exit(0);
         }
+    }
+
+    /**
+     * 窗口背景透明度设置
+     * @param f
+     */
+    private  void bgAlpha(float f){
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.alpha = f;
+        getWindow().setAttributes(layoutParams);
     }
 
     @Override

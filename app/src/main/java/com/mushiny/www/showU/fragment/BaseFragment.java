@@ -28,11 +28,12 @@ public class BaseFragment extends Fragment {
     // 是否可见
     private boolean isVisible;
 
-    protected String baseTitle = "UHello";
+    protected String baseTitle = "OpenMe";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        baseTitle = getResources().getString(R.string.app_name);
 
         // fragment 重影解决方案：自己保存Fragment的Hidden状态
         if (savedInstanceState != null) {

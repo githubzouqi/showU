@@ -43,7 +43,7 @@
                         android:layout_gravity="center_horizontal"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="@string/str_new_list_title"
+                        android:text="@string/app_name"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="20sp"
                         android:textStyle="bold"

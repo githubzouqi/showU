@@ -81,6 +81,11 @@ public class PtrUtil {
         set_3_Footer(ptr);
     }
 
+    public void initialRefreshOnly(PtrFrameLayout ptr, int colorInt){
+        initial(ptr, colorInt);
+        ptr.setMode(PtrFrameLayout.Mode.REFRESH);
+    }
+
     public void autoRefresh(final PtrFrameLayout ptr){
         // 自动刷新
         ptr.post(new Runnable() {

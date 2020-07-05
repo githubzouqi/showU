@@ -177,7 +177,10 @@ public class ToolsFragment extends BaseFragment {
                             , ToolsLotteryFragment.TAG);
                             break;
                         case tool_logistics:// 物流信息
-
+                            ToolLogisticsFragment logisticsFragment = ToolLogisticsFragment
+                                    .newInstance(tool_logistics);
+                            showFragment(getActivity(), ToolsFragment.this, logisticsFragment
+                                    , ToolLogisticsFragment.TAG);
                             break;
                     }
                 }

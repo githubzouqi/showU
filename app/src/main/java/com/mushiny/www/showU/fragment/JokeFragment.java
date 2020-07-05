@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -84,6 +85,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class JokeFragment extends BaseFragment {
 
+    private boolean isPause = false;// 默认轮播开启
 
     @BindView(R.id.banner)Banner banner;// 轮播控件
     @BindView(R.id.tv_banner_animation_setting)TextView tv_banner_animation_setting;
@@ -286,6 +288,11 @@ public class JokeFragment extends BaseFragment {
                 break;
             case R.id.iv_pause:// 轮播暂停 banner
                 if (banner != null){
+                    if (isPause){
+                        ToastUtil.showToast(getContext(), "轮播已暂停");
+                        return;
+                    }
+                    isPause = true;
                     banner.stopAutoPlay();
                     ToastUtil.showToast(getContext(), "轮播暂停成功");
                 }
@@ -293,12 +300,18 @@ public class JokeFragment extends BaseFragment {
             case R.id.iv_start:// 轮播启动 banner
 
                 if (banner != null){
+                    if (!isPause){
+                        ToastUtil.showToast(getContext(), "轮播已开启");
+                        return;
+                    }
+                    isPause = false;
                     banner.startAutoPlay();
                     ToastUtil.showToast(getContext(), "轮播开启成功");
                 }
                 break;
         }
     }
+
 
     /**
      * 获取随机笑话
@@ -431,6 +444,7 @@ public class JokeFragment extends BaseFragment {
         banner.setBannerTitles(titles);
         banner.setBannerAnimation(Transformer.CubeOut);
         banner.start();
+        isPause = false;
         banner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
@@ -445,6 +459,23 @@ public class JokeFragment extends BaseFragment {
         setPtrFrame();
 
         handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 500);
+
+        banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                isPause = false;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
     }
 
@@ -497,10 +528,14 @@ public class JokeFragment extends BaseFragment {
         super.onHiddenChanged(hidden);
         // banner 优化用户体验
         if (!hidden){
+            // 页面可见
             if (banner != null){
-                banner.startAutoPlay();
+                if(!isPause){
+                    banner.startAutoPlay();
+                }
             }
         }else {
+            // 页面不可见
             if (banner != null){
                 banner.stopAutoPlay();
             }

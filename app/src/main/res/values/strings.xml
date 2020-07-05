@@ -80,5 +80,10 @@
     <string name="str_tool_weather_hint">请输入需要查询的城市</string>
     <string name="str_lottery_type_hint">请选择彩票种类</string>
     <string name="str_lottery_expect_hint">请输入彩票期号</string>
+    <string name="str_logistics_hint">请输入 【运单号】</string>
+    <string name="str_logistics_item_desc">您的快递已签收, 签收人在【丰巢的印月尚庭(丰巢智能快递柜)】(丹枫路)领取。如有疑问请电联:（18258261251）, 投诉电话:（4000633333,18258261251）, 您的快递已经妥投。风里来雨里去, 只为客官您满意。上有老下有小, 赏个好评好不好？【请在评价快递员处帮忙点亮五颗星星哦~】</string>
+
+    <string name="str_menu_about">应用名称（OpenMe）\n开发者（邹奇）\n博客（https://imxiaoqi.blog.csdn.net）\n微信（zou2273536886）\n联系邮箱（15011307035@163.com）\n网易云音乐（丶ImXiaoQi丶）</string>
+
 
 </resources>

@@ -14,6 +14,11 @@
         <item name="android:windowEnterAnimation">@anim/in</item>
         <item name="android:windowExitAnimation">@anim/out</item>
     </style>
+
+    <style name="pop_anim_menu" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/menu_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_out</item>
+    </style>
     
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <!--设置dialog的背景-->

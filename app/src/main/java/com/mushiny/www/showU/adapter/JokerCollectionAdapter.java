@@ -57,7 +57,7 @@ public class JokerCollectionAdapter extends RecyclerView.Adapter<JokerCollection
 
         if (options == null){
             options = new RequestOptions();
-            options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
+            options.placeholder(R.mipmap.app_icon);// 设置占位图
 //            options.override(200,200);// 指定加载图片大小
             options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的

@@ -66,6 +66,13 @@ public interface NetworkInterface {
 
     @GET("lottery/common/aim_lottery") // ?expect=20058&code=ssq
     Call<ResponseBody> getLotteryInfo(@QueryMap Map<String, Object> map);// 根据彩票期号查询中奖结果
+
+    @GET("logistics/discern") // ?logistics_no=546379702133
+    Call<ResponseBody> getCos(@QueryMap Map<String, Object> map);// 根据快递单号识别出所属快递公司编号
+
+    @GET("logistics/details/search") // ?logistics_no=546379702133&logistics_id=3
+    // 根据快递单号以及物流公司id查询物流信息
+    Call<ResponseBody> getLogisticsInfo(@QueryMap Map<String, Object> map);
     /* -RollToolsApi，开放易用的接口服务- */
 
     // 蒲公英内测

@@ -15,15 +15,26 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
+        <ImageView
+            android:clickable="true"
+            android:foreground="@drawable/water_foreground"
+            android:id="@+id/iv_title_menu"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/title_menu"
+            android:layout_centerVertical="true"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
+
         <TextView
             android:singleLine="true"
             android:ellipsize="end"
             android:maxEms="10"
+            android:layout_toRightOf="@+id/iv_title_menu"
             android:layout_toLeftOf="@+id/iv_title_refresh"
             android:id="@+id/tv_title"
             android:textColor="@android:color/white"
             android:text="@string/default_title"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
             android:textStyle="bold"

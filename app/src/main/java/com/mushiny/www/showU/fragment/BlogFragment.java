@@ -202,6 +202,8 @@ public class BlogFragment extends BaseFragment {
             x5WebSettings.setSavePassword(false);
             x5WebSettings.setDomStorageEnabled(true);
 
+            x5WebView.loadUrl(loadUrl);
+
             // 设置 WebViewClient
             x5WebView.setWebViewClient(new WebViewClient(){
                 @Override
@@ -320,7 +322,7 @@ public class BlogFragment extends BaseFragment {
 //            x5WebView.loadUrl(Constants.URL_qq_browser_feedback);
 //            x5WebView.loadUrl("http://debugtbs.qq.com");// debug调试页面
 //            x5WebView.loadUrl(Constants.URL_BLOG);
-            x5WebView.loadUrl(loadUrl);
+
         }
 
     }
