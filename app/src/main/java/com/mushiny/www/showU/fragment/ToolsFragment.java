@@ -205,8 +205,13 @@ public class ToolsFragment extends BaseFragment {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ptr_frame_tool.refreshComplete();
                 try {
-                    ptr_frame_tool.refreshComplete();
+
+                    if (response.code() != 200){
+                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        return;
+                    }
                     JSONObject obj = new JSONObject(new String(response.body().bytes()));
                     int code = obj.optInt("code");
                     String msg = obj.optString("msg");
@@ -224,16 +229,15 @@ public class ToolsFragment extends BaseFragment {
                         ToastUtil.showToast(getContext(), msg);
                     }
                 }catch (Exception e){
-                    ptr_frame_tool.refreshComplete();
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(), "数据异常：" + e.getMessage());
+                    ToastUtil.showToast(getContext(), "数据异常，请稍后重试");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 ptr_frame_tool.refreshComplete();
-                ToastUtil.showToast(getContext(), "请求失败：" + t.getMessage());
+                ToastUtil.showToast(getContext(), "网络异常，请稍后重试");
             }
         });
 

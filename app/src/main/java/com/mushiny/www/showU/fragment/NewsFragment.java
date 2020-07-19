@@ -2,9 +2,11 @@ package com.mushiny.www.showU.fragment;
 
 
 import android.annotation.SuppressLint;
+import android.icu.util.ValueIterator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.activity.MainActivity;
@@ -60,12 +63,14 @@ public class NewsFragment extends BaseFragment {
 
     @BindView(R.id.recycler_view_news)RecyclerView recycler_view_news;
     @BindView(R.id.ptr_frame_news)PtrFrameLayout ptr_frame_news;
+    @BindView(R.id.iv_news_timeout)
+    ImageView iv_news_timeout;
 
     private List<NewsEntity.DataBean> dataBeans = new ArrayList<>();// 保存新闻实体
     private NewsAdapter adapter = null;
 
     private String typeId = "510"; // 510 - 科技
-    private String typeName = "UHello";
+    private String typeName = "OpenMe";
     private int page = 1;// 从1开始
 
     @SuppressLint("HandlerLeak")
@@ -77,6 +82,8 @@ public class NewsFragment extends BaseFragment {
 
                     // 自动刷新取消显示
                     ptr_frame_news.refreshComplete();
+                    recycler_view_news.setVisibility(View.VISIBLE);
+                    ptr_frame_news.setMode(PtrFrameLayout.Mode.BOTH);
 
                     if (adapter != null && dataBeans.size() != 0){
                         adapter.notifyDataSetChanged();
@@ -104,7 +111,7 @@ public class NewsFragment extends BaseFragment {
                             String source = dataBeans.get(position).getSource();
                             String postTime = dataBeans.get(position).getPostTime();
                             if (TextUtils.isEmpty(source)){
-                                source = "UHello";
+                                source = getResources().getString(R.string.app_name);
                             }
                             String title = dataBeans.get(position).getTitle();
                             String source_time = source + "  " + postTime;
@@ -122,22 +129,6 @@ public class NewsFragment extends BaseFragment {
                     recycler_view_news.setItemAnimator(new DefaultItemAnimator());
                     ptr_frame_news.setMode(PtrFrameLayout.Mode.BOTH);
 
-                    ptr_frame_news.setPtrHandler(new PtrDefaultHandler2() {
-                        @Override
-                        public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
-                            page += 1;
-                            getNews(typeId);
-                            LogUtil.e("TAG", "onLoadMoreBegin - " + typeId);
-                        }
-
-                        @Override
-                        public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
-                            dataBeans.clear();
-                            page = 1;
-                            getNews(typeId);
-                            LogUtil.e("TAG", "onRefreshBegin - " + typeId);
-                        }
-                    });
 
                 break;
             }
@@ -214,8 +205,23 @@ public class NewsFragment extends BaseFragment {
      */
     private void lazyLoad() {
         if (isVisible && isViewCreated){
+            ptr_frame_news.setPtrHandler(new PtrDefaultHandler2() {
+                @Override
+                public void onLoadMoreBegin(PtrFrameLayout frame) {// 上拉加载
+                    page += 1;
+                    getNews(typeId);
+                    LogUtil.e("TAG", "onLoadMoreBegin - " + typeId);
+                }
+
+                @Override
+                public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
+                    page = 1;
+                    getNews(typeId);
+                    LogUtil.e("TAG", "onRefreshBegin - " + typeId);
+                }
+            });
             PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
-            loadData();
+//            loadData();
             reset();
         }
     }
@@ -224,8 +230,10 @@ public class NewsFragment extends BaseFragment {
      *
      */
     private void loadData() {
-        getNews(typeId);
-        LogUtil.e("TAG", "loadData - " + typeId);
+        if (dataBeans.size() == 0){
+            getNews(typeId);
+            LogUtil.e("TAG", "loadData - " + typeId);
+        }
     }
 
     /**
@@ -259,16 +267,22 @@ public class NewsFragment extends BaseFragment {
             @Override
             public void onResponse(Call<NewsEntity> call, Response<NewsEntity> response) {
                 try {
+                    if (response.code() != 200){
+                        showFailUi();
+                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        return;
+                    }
                     NewsEntity newsEntity = response.body();
                     int code = newsEntity.getCode();
                     String msg = newsEntity.getMsg();
 
                     if (code != 1){
                         // 请求失败
-                        ptr_frame_news.refreshComplete();
+                        showFailUi();
                         ToastUtil.showToast(getContext(), msg);
                         return;
                     }else {
+                        iv_news_timeout.setVisibility(View.GONE);
                         // 获取信息成功
                         List<NewsEntity.DataBean> beans = newsEntity.getData();
                         // 刷新操作 - 相关数据进行重置
@@ -289,22 +303,43 @@ public class NewsFragment extends BaseFragment {
 
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(), "异常:" + e.getMessage());
+                    showFailUi();
+                    ToastUtil.showToast(getContext(), "数据异常，请稍后重试");
                 }
             }
 
             @Override
             public void onFailure(Call<NewsEntity> call, Throwable t) {
-                ToastUtil.showToast(getContext(), t.getMessage());
+                showFailUi();
+                ToastUtil.showToast(getContext(), "网络异常，请稍后重试");
             }
         });
 
     }
 
+    private void showFailUi(){
+        ptr_frame_news.refreshComplete();
+        if (dataBeans.size() == 0){
+            iv_news_timeout.setVisibility(View.VISIBLE);
+        }
+        page = 1;// 重置分页数
+    }
+
+    private boolean isRecyclerTop = true;
+    private boolean isRecyclerBottom = false;
+
     // 设置监听
     private void setListener() {
 
+    }
 
+    @OnClick({R.id.iv_news_timeout})
+    public void doClick(View view){
+        switch (view.getId()){
+            case R.id.iv_news_timeout:// 网络错误 刷新操作
+                getNews(typeId);
+                break;
+        }
     }
 
     // 初始化

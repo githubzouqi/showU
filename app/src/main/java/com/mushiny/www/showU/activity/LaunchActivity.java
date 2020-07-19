@@ -26,12 +26,14 @@ public class LaunchActivity extends BaseActivity {
 
     @BindView(R.id.tv_text_bottom)TextView tv_text_bottom;
 
-    private static final int DELAY_TIME = 2500;
+    private static final int DELAY_TIME = 1500;
+    private static final int DELAY_TIME_AGAIN = 500;
 
     // mac 系统选中英文词变大写：⇧ + ⌘ + u
     private static final int WHAT_NEXT = 0x10;
 
     private static Handler handler;
+    private boolean isFirst = true;
 
     private static class MyHandler extends Handler{
         WeakReference<LaunchActivity> weakReference;
@@ -95,7 +97,12 @@ public class LaunchActivity extends BaseActivity {
         }
 
         handler = new MyHandler(this);// 创建 Handler
-        handler.sendEmptyMessageDelayed(WHAT_NEXT, DELAY_TIME);
+        if (isFirst){
+            isFirst = false;
+            handler.sendEmptyMessageDelayed(WHAT_NEXT, DELAY_TIME);
+        }else {
+            handler.sendEmptyMessageDelayed(WHAT_NEXT, DELAY_TIME_AGAIN);
+        }
     }
 
     @Override

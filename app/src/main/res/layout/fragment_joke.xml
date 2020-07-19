@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<in.srain.cube.views.ptr.PtrFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ptr_frame_joker"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.JokeFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/linear_joker_root"
@@ -78,10 +83,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <in.srain.cube.views.ptr.PtrFrameLayout
-                android:id="@+id/ptr_frame_joker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
                 <android.support.v7.widget.RecyclerView
                     android:visibility="gone"
@@ -92,43 +93,57 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-            </in.srain.cube.views.ptr.PtrFrameLayout>
 
         </LinearLayout>
 
-    <ImageView
-        android:clickable="true"
-        android:id="@+id/iv_another"
-        android:foreground="@drawable/water_foreground"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentRight="true"
-        android:src="@mipmap/refresh"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
+        <ImageView
+            android:visibility="gone"
+            android:clickable="true"
+            android:id="@+id/iv_another"
+            android:foreground="@drawable/water_foreground"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/refresh"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
 
-    <ImageView
-        android:clickable="true"
-        android:layout_below="@+id/iv_another"
-        android:id="@+id/iv_pause"
-        android:foreground="@drawable/water_foreground"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="2dp"
-        android:layout_alignParentRight="true"
-        android:src="@mipmap/pause"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
+        <ImageView
+            android:visibility="gone"
+            android:clickable="true"
+            android:layout_below="@+id/iv_another"
+            android:id="@+id/iv_pause"
+            android:foreground="@drawable/water_foreground"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/pause"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
 
-    <ImageView
-        android:clickable="true"
-        android:layout_below="@+id/iv_pause"
-        android:id="@+id/iv_start"
-        android:foreground="@drawable/water_foreground"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="2dp"
-        android:layout_alignParentRight="true"
-        android:src="@mipmap/start"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
+        <ImageView
+            android:visibility="gone"
+            android:clickable="true"
+            android:layout_below="@+id/iv_pause"
+            android:id="@+id/iv_start"
+            android:foreground="@drawable/water_foreground"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/start"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/iv_joker_timeout"
+            android:visibility="gone"
+            android:foreground="@drawable/water_foreground_whte"
+            android:clickable="true"
+            android:src="@mipmap/refresh"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+</in.srain.cube.views.ptr.PtrFrameLayout>

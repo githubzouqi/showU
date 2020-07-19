@@ -4,11 +4,15 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.mushiny.www.showU.activity.LaunchActivity;
+import com.mushiny.www.showU.activity.MainActivity;
 import com.mushiny.www.showU.util.LogUtil;
 import com.tencent.smtt.sdk.QbSdk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.zxy.recovery.callback.RecoveryCallback;
+import com.zxy.recovery.core.Recovery;
 
 import org.litepal.LitePal;
 
@@ -31,11 +35,44 @@ public class MyApplication extends Application {
         // 友盟SDK
         initUmeng();
 
-        LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
-//        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
+//        LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
+        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
 
         // LitePal开源框架
         LitePal.initialize(this);// 配置 LitePalApplication
+
+
+        // 自动处理程序在运行时的Crash
+        Recovery.getInstance()
+                .debug(false)
+                .recoverInBackground(false)
+                .recoverStack(true)
+                .mainPage(LaunchActivity.class)
+                .recoverEnabled(true)
+                .callback(new RecoveryCallback() {
+                    @Override
+                    public void stackTrace(String stackTrace) {
+
+                    }
+
+                    @Override
+                    public void cause(String cause) {
+
+                        LogUtil.e("TAG", "crash happens :" + cause);
+                    }
+
+                    @Override
+                    public void exception(String throwExceptionType, String throwClassName, String throwMethodName, int throwLineNumber) {
+
+                    }
+
+                    @Override
+                    public void throwable(Throwable throwable) {
+
+                    }
+                }).silent(true, Recovery.SilentMode.RESTART)
+                .init(this);
+
 
     }
 

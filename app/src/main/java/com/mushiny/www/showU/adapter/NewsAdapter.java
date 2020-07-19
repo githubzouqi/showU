@@ -82,6 +82,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
         }
         String source = dataBeans.get(position).getSource();
         String postTime = dataBeans.get(position).getPostTime();
+        if (TextUtils.isEmpty(postTime)){
+            postTime = "";
+        }
 
         holder.tv_title.setText(Html.fromHtml(title));
         if (!TextUtils.isEmpty(imgUrl)){

@@ -26,11 +26,11 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning|ProtectedPermissions"
         tools:replace="android:appComponentFactory">
+        <activity android:name=".activity.FeedbackActivity"
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".activity.UpdateActivity"
-            android:theme="@style/DialogTheme">
-        </activity>
-        <!-- 友盟 -->
+            android:theme="@style/DialogTheme"></activity> <!-- 友盟 -->
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5ecb3237167eddb80a000a7f" />
@@ -40,6 +40,7 @@
 
         <activity
             android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity

@@ -433,3 +433,6 @@
 }
 -keep class com.linkedin.** { *; }
 -keep class com.android.dingtalk.share.ddsharemodule.** { *; }
+
+# recovery
+-keep class com.zxy.recovery.** { *; }

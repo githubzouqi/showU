@@ -42,4 +42,8 @@ public class Constants {
     public static final String pgyer_app_key = "appKey";
     public static final String pgyer_app_key_value = "eb0576196678e36f065517090f35e3c5";
 
+    // 兔小巢
+    public static final String productId = "174675";// 应用id
+    public static final String url_txc_root = "https://support.qq.com/product/";
+
 }

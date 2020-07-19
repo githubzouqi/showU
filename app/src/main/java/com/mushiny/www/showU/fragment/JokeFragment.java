@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -94,6 +95,10 @@ public class JokeFragment extends BaseFragment {
     @BindView(R.id.linear_joker_root)LinearLayout linear_joker_root;
     @BindView(R.id.ptr_frame_joker)PtrFrameLayout ptr_frame_joker;// 支持上拉加载，下拉刷新
     @BindView(R.id.tv_support_refresh_hint)TextView tv_support_refresh_hint;
+    @BindView(R.id.iv_joker_timeout)ImageView iv_joker_timeout;
+    @BindView(R.id.iv_start) ImageView iv_start;
+    @BindView(R.id.iv_pause) ImageView iv_pause;
+    @BindView(R.id.iv_another) ImageView iv_another;
 
     private static final int WHAT_GET_JOKER = 0x10;
     private static final int WHAT_AUTO_RELOAD = 0x11;
@@ -122,6 +127,7 @@ public class JokeFragment extends BaseFragment {
                 case WHAT_GET_JOKER:// 获取最新笑话
                     if (dataBeans != null && dataBeans.size() != 0){
                         tv_get_joker.setVisibility(View.GONE);
+                        iv_joker_timeout.setVisibility(View.GONE);
                         tv_support_refresh_hint.setVisibility(View.VISIBLE);
 
                         if (adapter != null){
@@ -238,6 +244,7 @@ public class JokeFragment extends BaseFragment {
         }
         ButterKnife.bind(this, view);
 
+        setPtrFrame();
         initData();
         setListener();// 设置监听
 
@@ -249,7 +256,7 @@ public class JokeFragment extends BaseFragment {
      * @param view
      */
     @OnClick({R.id.relative_banner_animation_setting, R.id.tv_get_joker, R.id.iv_another,
-    R.id.iv_pause, R.id.iv_start})
+    R.id.iv_pause, R.id.iv_start, R.id.iv_joker_timeout})
     public void doClick(View view){
         switch (view.getId()){
             case R.id.relative_banner_animation_setting:// 动画设置
@@ -275,8 +282,17 @@ public class JokeFragment extends BaseFragment {
                 break;
             case R.id.tv_get_joker:// 获取最新笑话
 
+//                PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
+//                getJoker();
+
+                break;
+            case R.id.iv_joker_timeout:// 获取最新笑话
+
                 PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
-                getJoker();
+                if (adapter == null){
+                    getJoker();
+                }
+//                getJoker();
 
                 break;
             case R.id.iv_another:// 刷新换一组
@@ -326,7 +342,17 @@ public class JokeFragment extends BaseFragment {
             public void onResponse(Call<JokerCollectionEntity> call,
                                    Response<JokerCollectionEntity> response) {
 
+                if (response.code() != 200){
+                    showFailUi();
+                    ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                    return;
+                }
                 JokerCollectionEntity entity = response.body();
+                if (entity.getData() == null){
+                    showFailUi();
+                    ToastUtil.showToast(getContext(), "数据异常，请稍后重试");
+                    return;
+                }
                 List<JokerCollectionEntity.DataBean> data = entity.getData();
                 if (dataBeans.size() != 0){
                     dataBeans.clear();
@@ -340,15 +366,20 @@ public class JokeFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<JokerCollectionEntity> call, Throwable t) {
-                tv_get_joker.setVisibility(View.VISIBLE);
-                tv_support_refresh_hint.setVisibility(View.GONE);
-                tv_get_joker.setText(getResources().getString(R.string.str_get_joker));
-                ptr_frame_joker.refreshComplete();
-                ToastUtil.showToast(getContext(), "获取失败：" + t.getMessage());
+                showFailUi();
+                ToastUtil.showToast(getContext(), "网络异常，请稍后重试");
             }
         });
 
 
+    }
+
+    private void showFailUi(){
+        if (adapter == null){
+            tv_support_refresh_hint.setVisibility(View.GONE);
+            iv_joker_timeout.setVisibility(View.VISIBLE);
+        }
+        ptr_frame_joker.refreshComplete();
     }
 
     private void initData() {
@@ -393,15 +424,26 @@ public class JokeFragment extends BaseFragment {
      * 获取轮播图片
      */
     private void getBannerPic() {
-        images.clear();
-        titles.clear();
 
+        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
         NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
         Call<ResponseBody> call = anInterface.getRandomGirl();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                iv_another.setVisibility(View.VISIBLE);
+                ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
                 try {
+                    if (response.code() != 200){
+                        iv_pause.setVisibility(View.GONE);
+                        iv_start.setVisibility(View.GONE);
+                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        return;
+                    }
+                    images.clear();
+                    titles.clear();
+                    iv_pause.setVisibility(View.VISIBLE);
+                    iv_start.setVisibility(View.VISIBLE);
                     String s = new String(response.body().bytes());
                     JSONObject obj = new JSONObject(s);
                     JSONArray array = obj.getJSONArray("data");
@@ -419,12 +461,17 @@ public class JokeFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                images.add("http://pics1.baidu.com/feed/" +
-                        "bf096b63f6246b60a6338e6292dd064a510fa296.jpeg?" +
-                        "token=fc9beda1f65bbe6d13aff6fc3b338a19&s=13528C6C81945C6E1D0E52500300D0DB");
-                titles.add("UHello");
-                setBanner();
-                ToastUtil.showToast(getContext(), "图片获取失败 :" + t.getMessage());
+                iv_another.setVisibility(View.VISIBLE);
+                ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
+                ptr_frame_joker.refreshComplete();
+                if(images != null && images.size() != 0){ }else {
+                    images.add("http://pics1.baidu.com/feed/" +
+                            "bf096b63f6246b60a6338e6292dd064a510fa296.jpeg?" +
+                            "token=fc9beda1f65bbe6d13aff6fc3b338a19&s=13528C6C81945C6E1D0E52500300D0DB");
+                    titles.add(getResources().getString(R.string.app_name));
+                    setBanner();
+                }
+                ToastUtil.showToast(getContext(), "网络异常，请稍后重试");
             }
         });
 
@@ -451,12 +498,11 @@ public class JokeFragment extends BaseFragment {
                 ToastUtil.showToast(getContext(), titles.get(position));
             }
         });
+
     }
 
     // 设置监听
     private void setListener() {
-
-        setPtrFrame();
 
         handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 500);
 
@@ -474,6 +520,27 @@ public class JokeFragment extends BaseFragment {
             @Override
             public void onPageScrollStateChanged(int i) {
 
+            }
+        });
+
+        recycle_view_joker.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int firstVisibleItemPosition = manager.findFirstVisibleItemPosition();
+                if (firstVisibleItemPosition == 0){
+                    // 滑动到了顶部
+                    int firstItemTop = recycle_view_joker.getChildAt(firstVisibleItemPosition)
+                            .getTop();
+                    if (firstItemTop == 0){
+                        ptr_frame_joker.setMode(PtrFrameLayout.Mode.REFRESH);
+                    }else {
+                        ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
+                    }
+                }else {
+                    ptr_frame_joker.setMode(PtrFrameLayout.Mode.NONE);
+                }
             }
         });
 

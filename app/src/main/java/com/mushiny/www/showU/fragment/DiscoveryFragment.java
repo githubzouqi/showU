@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +65,7 @@ public class DiscoveryFragment extends BaseFragment {
 
     @BindView(R.id.view_pager_discovery)ViewPager view_pager_discovery;
     @BindView(R.id.slidingTabLayout)SlidingTabLayout slidingTabLayout;
+    @BindView(R.id.iv_discovery_timeout) ImageView iv_discovery_timeout;
 
     private ArrayList<CustomTabEntity> tabEntitys = new ArrayList<>();
     private List<NewsFragment> newsFragments = new ArrayList<>();
@@ -128,6 +131,8 @@ public class DiscoveryFragment extends BaseFragment {
 //    }
 
 
+
+
     /**
      * 设置监听
      */
@@ -161,6 +166,7 @@ public class DiscoveryFragment extends BaseFragment {
             }
         });
 
+
     }
 
     /**
@@ -175,7 +181,12 @@ public class DiscoveryFragment extends BaseFragment {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-
+                    if (response.code() != 200){
+                        showFailUi();
+                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        return;
+                    }
+                    iv_discovery_timeout.setVisibility(View.GONE);
                     JSONObject obj = new JSONObject(new String(response.body().bytes()));
                     JSONArray array = obj.getJSONArray("data");
                     int length = array.length();
@@ -188,16 +199,35 @@ public class DiscoveryFragment extends BaseFragment {
                     setTabs();
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(), "获取失败：" + e.getMessage());
+                    ToastUtil.showToast(getContext(), "数据异常，请稍后重试");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                ToastUtil.showToast(getContext(), "获取失败：" + t.getMessage());
+                showFailUi();
+                ToastUtil.showToast(getContext(), "网络异常，请稍后重试");
             }
         });
 
+    }
+
+    private void showFailUi(){
+        if (newsFragments.size() == 0){
+            // 显示超时刷新 icon
+            iv_discovery_timeout.setVisibility(View.VISIBLE);
+            baseTitle = getResources().getString(R.string.app_name);
+            onTitleSet();
+        }
+    }
+
+    @OnClick({R.id.iv_discovery_timeout})
+    public void doClick(View view){
+        switch (view.getId()){
+            case R.id.iv_discovery_timeout:// 超时刷新
+                initData();
+                break;
+        }
     }
 
     /**
@@ -215,6 +245,7 @@ public class DiscoveryFragment extends BaseFragment {
         }
 
         if (newsFragments.size() != 0) {
+            slidingTabLayout.setVisibility(View.VISIBLE);
             MyPagerAdapter myPagerAdapter = new MyPagerAdapter(getChildFragmentManager(),
                     getContext());
             view_pager_discovery.setAdapter(myPagerAdapter);

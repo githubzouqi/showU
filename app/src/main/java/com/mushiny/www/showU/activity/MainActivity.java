@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -91,8 +92,10 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.linear_tab)LinearLayout linear_tab;
     @BindView(R.id.relative_layout_title) RelativeLayout relative_layout_title;
     @BindView(R.id.iv_title_refresh)ImageView iv_title_refresh;
+    @BindView(R.id.iv_title_feedback)ImageView iv_title_feedback;
     @BindView(R.id.iv_title_menu)ImageView iv_title_menu;
     @BindView(R.id.framelayout_container) FrameLayout framelayout_container;
+    @BindView(R.id.linear_container) LinearLayout linear_container;
 
     private PopupWindow pop_window_menu = null;
     private View pop_view_menu = null;
@@ -215,6 +218,7 @@ public class MainActivity extends BaseActivity {
             loadRootFragment(R.id.framelayout_container, blogFragment, tag_blogF);
             mCurrentFragment = blogFragment;
             iv_title_refresh.setVisibility(View.VISIBLE);
+            iv_title_feedback.setVisibility(View.VISIBLE);
             setTabStyle(linear_one,iv_one,tv_one, R.mipmap.main_select);
         }else {
             LogUtil.e("zouqi", "内存重启了");
@@ -237,6 +241,15 @@ public class MainActivity extends BaseActivity {
         // 检查应用更新
         handler = new MyHandler(this);
         handler.sendEmptyMessageDelayed(WHAT_CHECK_UPDATE, 2000);
+
+        initListener();
+    }
+
+    /**
+     * 设置监听
+     */
+    private void initListener() {
+
     }
 
     private void applyAllDangerousPermissions() {
@@ -302,7 +315,7 @@ public class MainActivity extends BaseActivity {
      * 控件的点击事件（这里也就是tab的点击事件）
      */
     @OnClick({R.id.linear_one, R.id.linear_two, R.id.linear_three, R.id.linear_four,
-            R.id.iv_title_refresh, R.id.iv_title_menu})
+            R.id.iv_title_refresh, R.id.iv_title_menu, R.id.iv_title_feedback})
     public void doClick(View view){
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -343,6 +356,11 @@ public class MainActivity extends BaseActivity {
             case R.id.iv_title_menu:// 主页 - 菜单
                 showMenuPop();
                 break;
+            case R.id.iv_title_feedback:// 主页 - 反馈
+//                ToastUtil.showToast(this, "敬请期待");
+                Intent intent = new Intent(MainActivity.this, FeedbackActivity.class);
+                startActivity(intent);
+                break;
 
         }
     }
@@ -351,7 +369,6 @@ public class MainActivity extends BaseActivity {
      * 弹框显示 menu
      */
     private void showMenuPop() {
-
         pop_view_menu = getLayoutInflater().inflate(R.layout.pop_view_menu, null);
         final ImageView iv_menu_gif = pop_view_menu.findViewById(R.id.iv_menu_gif);
         Glide.with(this).asGif()
@@ -411,8 +428,10 @@ public class MainActivity extends BaseActivity {
 
         if (fragment instanceof BlogFragment){
             iv_title_refresh.setVisibility(View.VISIBLE);
+            showMenu();
         }else {
             iv_title_refresh.setVisibility(View.GONE);
+            dismissMenu();
         }
 
         if (findFragmentByTag(tag) == null){
@@ -487,11 +506,19 @@ public class MainActivity extends BaseActivity {
     // 隐藏底部选项栏
     public void goneTab(){
         linear_tab.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) linear_container
+                .getLayoutParams();
+        params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        linear_container.setLayoutParams(params);
     }
 
     // 显示底部选项栏
     public void visibleTab(){
         linear_tab.setVisibility(View.VISIBLE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) linear_container
+                .getLayoutParams();
+        params.height = 0;
+        linear_container.setLayoutParams(params);
     }
 
     // 设置标题内容
@@ -557,7 +584,7 @@ public class MainActivity extends BaseActivity {
             firstTime = System.currentTimeMillis();
         }else {
             finish();
-            System.exit(0);
+//            System.exit(0);
         }
     }
 
@@ -569,6 +596,18 @@ public class MainActivity extends BaseActivity {
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.alpha = f;
         getWindow().setAttributes(layoutParams);
+    }
+
+    // 隐藏主页菜单栏图标
+    public void dismissMenu(){
+        iv_title_menu.setVisibility(View.GONE);
+        iv_title_feedback.setVisibility(View.GONE);
+    }
+
+    // 显示主页菜单栏图标
+    public void showMenu(){
+        iv_title_menu.setVisibility(View.VISIBLE);
+        iv_title_feedback.setVisibility(View.VISIBLE);
     }
 
     @Override

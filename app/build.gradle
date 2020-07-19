@@ -16,8 +16,8 @@ android {
         // android 5.0
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.2"
+        versionCode 9
+        versionName "2.3.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 //        ndk {
 //            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
@@ -104,4 +104,5 @@ dependencies {
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 //    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.android.support:multidex:1.0.0'
+    implementation 'com.zxy.android:recovery:1.0.0'
 }

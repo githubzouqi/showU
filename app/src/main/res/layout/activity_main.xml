@@ -30,7 +30,7 @@
             android:ellipsize="end"
             android:maxEms="10"
             android:layout_toRightOf="@+id/iv_title_menu"
-            android:layout_toLeftOf="@+id/iv_title_refresh"
+            android:layout_toLeftOf="@+id/iv_title_feedback"
             android:id="@+id/tv_title"
             android:textColor="@android:color/white"
             android:text="@string/default_title"
@@ -55,9 +55,23 @@
             android:layout_width="24dp"
             android:layout_height="24dp"/>
 
+        <ImageView
+            android:visibility="gone"
+            android:clickable="true"
+            android:layout_centerVertical="true"
+            android:foreground="@drawable/water_foreground"
+            android:background="@color/color_other"
+            android:id="@+id/iv_title_feedback"
+            android:layout_toLeftOf="@+id/iv_title_refresh"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/feedback"
+            android:layout_width="26dp"
+            android:layout_height="26dp"/>
+
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/linear_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_weight="0.88"

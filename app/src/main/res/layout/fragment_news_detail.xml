@@ -37,7 +37,7 @@
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:id="@+id/tv_detail_title"
-                        android:text="@string/str_joker_content"
+                        android:text="@string/str_tool_fine_statement_default"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 

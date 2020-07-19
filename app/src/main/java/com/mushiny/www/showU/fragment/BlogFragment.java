@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -86,6 +88,7 @@ public class BlogFragment extends BaseFragment {
     private String huYa = "虎牙"; // https://www.huya.com/
     private String wanAndroid = "玩Android"; // https://www.wanandroid.com/
     private String imxiaoqi = "imxiaoqi.blog.csdn.net"; // https://blog.csdn.net/csdnzouqi
+    private String feedback = "我要反馈";
     private List<Object[]> recommendList;
 
     private String top_title = "主页";
@@ -153,6 +156,39 @@ public class BlogFragment extends BaseFragment {
                 return false;
             }
         });
+
+        // editText的文本改变监听
+        et_url.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String str = s.toString();
+                LogUtil.e("TAG", "afterTextChanged str = " + str);
+
+                if (str.equals("http:") || str.equals("https:")){
+                    et_url.setText("");
+                }
+
+                if (str.equals("http")){
+                    et_url.setText(str + "://");
+                    et_url.setSelection("http".length());
+                }
+
+                if (str.equals("https://")){
+                    et_url.setSelection(str.length());
+                }
+
+            }
+        });
     }
 
     /**
@@ -202,13 +238,14 @@ public class BlogFragment extends BaseFragment {
             x5WebSettings.setSavePassword(false);
             x5WebSettings.setDomStorageEnabled(true);
 
-            x5WebView.loadUrl(loadUrl);
-
             // 设置 WebViewClient
             x5WebView.setWebViewClient(new WebViewClient(){
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView webView, String url) {
 
+                    if (url == null){
+                        return false;
+                    }
                     LogUtil.e("TAG", "shouldOverrideUrlLoading url is:" + url);
                     // 如果不是http或者https开头的url，那么使用手机自带的浏览器打开
                     if (!url.startsWith("http://") && !url.startsWith("https://")){
@@ -223,7 +260,7 @@ public class BlogFragment extends BaseFragment {
                     }
 //                    webView.loadUrl(url);
                     return false;
-//                    return super.shouldOverrideUrlLoading(webView, s);
+//                    return super.shouldOverrideUrlLoading(webView, url);
                 }
 
 
@@ -243,44 +280,7 @@ public class BlogFragment extends BaseFragment {
                 public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest,
                                             WebResourceError webResourceError) {
                     super.onReceivedError(webView, webResourceRequest, webResourceError);
-                    // 当没网络 加载失败 设置webView固定高度 优化体验
-//                    ViewGroup.LayoutParams params_error = x5WebView.getLayoutParams();
-//                    params.height = height;
-//                    x5WebView.setLayoutParams(params_error);
-
-//                    if (errorCount > 1){
-//                        if (dialog != null){
-//                            dialog.dismiss();
-//                        }
-//                        dialog = new AlertDialog.Builder(getContext())
-//                                .setTitle(webResourceError.getDescription())
-//                                .setIcon(R.mipmap.app_icon)
-//                                .setMessage("加载异常:" + webResourceError.getDescription())
-//                                .setCancelable(false)
-//                                .setPositiveButton("尝试重新加载",
-//                                        new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                errorCount = 0;
-//                                                dialog.dismiss();
-//                                                clearX5WebView(false);
-//
-//                                            }
-//                                        })
-//                                .setNegativeButton("取消",
-//                                        new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                errorCount = 0;
-//                                                dialog.dismiss();
-//                                            }
-//                                        }).create();
-//                        dialog.show();
-//                    }
-
-
                     LogUtil.e("TAG", "onReceivedError = " + webResourceError.getDescription());
-
                     ptr_frame_blog.refreshComplete();
                 }
             });
@@ -296,10 +296,12 @@ public class BlogFragment extends BaseFragment {
                         // 二级页面，隐藏底部栏
                         if(x5WebView.canGoBack()){
                             ((MainActivity)getActivity()).goneTab();
+                            ((MainActivity)getActivity()).dismissMenu();
                             ptr_frame_blog.setMode(PtrFrameLayout.Mode.NONE);
                             linear_url.setVisibility(View.GONE);
                         }else {
                             ((MainActivity)getActivity()).visibleTab();
+                            ((MainActivity)getActivity()).showMenu();
                             ptr_frame_blog.setMode(PtrFrameLayout.Mode.REFRESH);
                             linear_url.setVisibility(View.VISIBLE);
                         }
@@ -322,6 +324,7 @@ public class BlogFragment extends BaseFragment {
 //            x5WebView.loadUrl(Constants.URL_qq_browser_feedback);
 //            x5WebView.loadUrl("http://debugtbs.qq.com");// debug调试页面
 //            x5WebView.loadUrl(Constants.URL_BLOG);
+            x5WebView.loadUrl(loadUrl);
 
         }
 
@@ -352,6 +355,7 @@ public class BlogFragment extends BaseFragment {
 //        recommendList.add(new Object[]{douYu, "https://www.douyu.com/"});
         recommendList.add(new Object[]{huYa, "https://www.huya.com/"});
         recommendList.add(new Object[]{imxiaoqi, "https://imxiaoqi.blog.csdn.net/"});
+//        recommendList.add(new Object[]{feedback, Constants.url_txc_root + Constants.productId});
 
         items = new CharSequence[recommendList.size()];
         for (int j = 0;j < recommendList.size();j++){
@@ -380,7 +384,7 @@ public class BlogFragment extends BaseFragment {
         if (hidden){
             return false;
         }
-        if (x5WebView.canGoBack()){
+        if (x5WebView != null && x5WebView.canGoBack()){
 //            x5WebView.goBack();
             return true;
         }

@@ -164,6 +164,7 @@ public class NewsDetailFragment extends BaseFragment {
         initData();
         setPtrFrame();
 
+        loadData();
         return view;
     }
 
@@ -212,10 +213,10 @@ public class NewsDetailFragment extends BaseFragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
     }
 
     /**
@@ -233,7 +234,10 @@ public class NewsDetailFragment extends BaseFragment {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
                 try {
-
+                    if (response.code() != 200){
+                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        return;
+                    }
                     JSONObject obj = new JSONObject(new String(response.body().bytes()));
                     if (obj.optInt("code") == 0){
                         // 请求超时，请稍后再试
@@ -250,9 +254,9 @@ public class NewsDetailFragment extends BaseFragment {
                         iv_detail.setVisibility(View.VISIBLE);
 
                         ptr_detail.refreshComplete();
-//                        ToastUtil.showToast(getContext(), obj.optString("msg"));
-                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
-                        .create().show();
+                        ToastUtil.showToast(getContext(), obj.optString("msg"));
+//                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
+//                        .create().show();
                         return;
                     }
                     JSONObject objData = obj.getJSONObject("data");
@@ -286,7 +290,7 @@ public class NewsDetailFragment extends BaseFragment {
                 }catch (Exception e){
                     ptr_detail.refreshComplete();
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(),"详情数据解析异常：" + e.getMessage());
+                    ToastUtil.showToast(getContext(),"详情数据异常，请稍后重试");
                 }
 
             }
@@ -294,7 +298,7 @@ public class NewsDetailFragment extends BaseFragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 ptr_detail.refreshComplete();
-                ToastUtil.showToast(getContext(),"详情获取异常：" + t.getMessage());
+                ToastUtil.showToast(getContext(),"网络异常，请稍后重试");
             }
         });
 
