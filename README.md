@@ -8,10 +8,11 @@
 
 - 极致用户体验
 
-# 应用展示图例（使用Android 10系统手机）
+# 应用最新说明
 
-- 博客页
+- 当前已完成初版的所有功能，有应用内更新，用户反馈，一些基础的功能。正在申请软著，还未上架，不过已经在某英平台托管进行版本控制。
 
-<br/>
-<img src="https://github.com/githubzouqi/showU/blob/master/displayImage/boke.jpg" width="216" height="480">
+-  [OpenMe下载页与应用说明](https://www.pgyer.com/v2TO)
+
+
 
