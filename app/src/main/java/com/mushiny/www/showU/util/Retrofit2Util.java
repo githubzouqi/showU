@@ -34,8 +34,8 @@ public class Retrofit2Util {
     public static <T> T create(@NonNull String baseUrl,@NonNull Class<?> interfaceClass) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())// 设置数据解析器
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())// 支持RxJava平台
                 .build();
         return (T) retrofit.create(interfaceClass);
     }
