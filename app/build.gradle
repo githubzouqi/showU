@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            storeFile file('./hello.keystore')
+            storeFile file('../showU.keystore')
             storePassword 'imxiaoqi'
-            keyAlias 'zouqi'
+            keyAlias 'imxiaoqi'
             keyPassword 'imxiaoqi'
         }
 
@@ -35,6 +35,11 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled false
         }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     // 渠道风味

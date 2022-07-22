@@ -58,5 +58,22 @@ public class JokerCollectionEntity implements Serializable{
         public void setUpdateTime(String updateTime) {
             this.updateTime = updateTime;
         }
+
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "content='" + content + '\'' +
+                    ", updateTime='" + updateTime + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "JokerCollectionEntity{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                '}';
     }
 }
