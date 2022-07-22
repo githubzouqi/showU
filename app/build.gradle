@@ -96,8 +96,9 @@ dependencies {
     implementation 'in.srain.cube:ptr-load-more:1.0.6'
     implementation 'org.litepal.android:java:3.0.0'
     // 友盟统计
-    implementation 'com.umeng.umsdk:analytics:8.0.0'
-    implementation 'com.umeng.umsdk:common:2.0.0'
+//    implementation 'com.umeng.umsdk:analytics:8.0.0'
+    implementation 'com.umeng.umsdk:common:9.4.7'
+    implementation  'com.umeng.umsdk:asms:1.4.1'
     // 分享核心库
     implementation 'com.umeng.umsdk:share-core:7.1.9'
     implementation 'com.umeng.umsdk:share-board:7.1.9'
