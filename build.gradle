@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+//apply from: "http://dev.yanhuamedia.tv:83/projects/TVB/repos/prjconfig/raw/config/config.gradle"
 buildscript {
     
     repositories {
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/umsdk/release' }
+        
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:3.5.2'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -20,7 +20,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://dl.bintray.com/umsdk/release' }
+        
     }
 }
 
