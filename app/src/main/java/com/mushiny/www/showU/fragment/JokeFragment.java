@@ -178,7 +178,14 @@ public class JokeFragment extends BaseFragment {
                     break;
 
                 case WHAT_AUTO_RELOAD:// 自动加载数据
-                    getJoker();
+                    if (adapter == null){
+                        getJoker();
+                    }else {
+                        if (ptr_frame_joker != null){
+                            ptr_frame_joker.autoRefresh();
+                        }
+                    }
+
                     break;
             }
         }
@@ -446,8 +453,8 @@ public class JokeFragment extends BaseFragment {
                     }
                     images.clear();
                     titles.clear();
-                    iv_pause.setVisibility(View.VISIBLE);
-                    iv_start.setVisibility(View.VISIBLE);
+//                    iv_pause.setVisibility(View.VISIBLE);
+//                    iv_start.setVisibility(View.VISIBLE);
                     String s = new String(response.body().bytes());
                     JSONObject obj = new JSONObject(s);
                     JSONArray array = obj.getJSONArray("data");
@@ -505,6 +512,7 @@ public class JokeFragment extends BaseFragment {
         });
 
         handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 1200);
+
     }
 
     // 设置监听
