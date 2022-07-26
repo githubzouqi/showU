@@ -86,6 +86,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class JokeFragment extends BaseFragment {
 
+    private static final int BANNER_DELAY_TIME = 3000;
+    private String TAG = "JokeFragment";
+
     private boolean isPause = false;// 默认轮播开启
 
     @BindView(R.id.banner)Banner banner;// 轮播控件
@@ -175,7 +178,14 @@ public class JokeFragment extends BaseFragment {
                     break;
 
                 case WHAT_AUTO_RELOAD:// 自动加载数据
-                    getJoker();
+                    if (adapter == null){
+                        getJoker();
+                    }else {
+                        if (ptr_frame_joker != null){
+                            ptr_frame_joker.autoRefresh();
+                        }
+                    }
+
                     break;
             }
         }
@@ -273,6 +283,7 @@ public class JokeFragment extends BaseFragment {
                                 // 设置动画的时候，先停止轮播，然后再开启
                                 banner.stopAutoPlay();
                                 banner.setBannerAnimation(animations.get(which));
+                                banner.setDelayTime(BANNER_DELAY_TIME);
                                 banner.start();
 
                                 dialog.dismiss();
@@ -334,6 +345,7 @@ public class JokeFragment extends BaseFragment {
      */
     private void getJoker() {
 
+        LogUtil.e(TAG, ":> getJoker start");
         NetworkInterface networkInterface = Retrofit2Util
                 .createWithROLLHeader(NetworkInterface.class);
         Call<JokerCollectionEntity> call = networkInterface.getRandomJokers();
@@ -341,6 +353,7 @@ public class JokeFragment extends BaseFragment {
             @Override
             public void onResponse(Call<JokerCollectionEntity> call,
                                    Response<JokerCollectionEntity> response) {
+                LogUtil.e(TAG, ":> getJoker onResponse: " + response.body().toString());
 
                 if (response.code() != 200){
                     showFailUi();
@@ -395,7 +408,6 @@ public class JokeFragment extends BaseFragment {
         banner.setLayoutParams(bp);
 
         getBannerPic();
-
         items = new CharSequence[]{"Accordion", "BackgroundToForeground","CubeIn","CubeOut"
         ,"Default","DepthPage","FlipHorizontal","FlipVertical","ForegroundToBackground",
         "RotateDown","RotateUp","ScaleInOut","Stack","Tablet","ZoomIn","ZoomOut","ZoomOutSlide"};
@@ -425,7 +437,6 @@ public class JokeFragment extends BaseFragment {
      */
     private void getBannerPic() {
 
-        PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_joker);
         NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
         Call<ResponseBody> call = anInterface.getRandomGirl();
         call.enqueue(new Callback<ResponseBody>() {
@@ -442,8 +453,8 @@ public class JokeFragment extends BaseFragment {
                     }
                     images.clear();
                     titles.clear();
-                    iv_pause.setVisibility(View.VISIBLE);
-                    iv_start.setVisibility(View.VISIBLE);
+//                    iv_pause.setVisibility(View.VISIBLE);
+//                    iv_start.setVisibility(View.VISIBLE);
                     String s = new String(response.body().bytes());
                     JSONObject obj = new JSONObject(s);
                     JSONArray array = obj.getJSONArray("data");
@@ -490,6 +501,7 @@ public class JokeFragment extends BaseFragment {
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
         banner.setBannerTitles(titles);
         banner.setBannerAnimation(Transformer.CubeOut);
+        banner.setDelayTime(BANNER_DELAY_TIME);
         banner.start();
         isPause = false;
         banner.setOnBannerListener(new OnBannerListener() {
@@ -499,13 +511,12 @@ public class JokeFragment extends BaseFragment {
             }
         });
 
+        handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 1200);
+
     }
 
     // 设置监听
     private void setListener() {
-
-        handler.sendEmptyMessageDelayed(WHAT_AUTO_RELOAD, 500);
-
         banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {

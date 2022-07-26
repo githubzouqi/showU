@@ -35,8 +35,8 @@ public class MyApplication extends Application {
         // 友盟SDK
         initUmeng();
 
-//        LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
-        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
+        LogUtil.setLevel(LogUtil.VERBOSE);// 可打印所有等级 log 信息
+//        LogUtil.setLevel(LogUtil.NOTHING);// 正式上线 不打印 log 信息
 
         // LitePal开源框架
         LitePal.initialize(this);// 配置 LitePalApplication
