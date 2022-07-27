@@ -3,6 +3,8 @@ package com.mushiny.www.showU.fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -36,6 +38,7 @@ import com.umeng.commonsdk.debug.E;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +76,32 @@ public class DiscoveryFragment extends BaseFragment {
 
     private List<Object[]> newList = new ArrayList<>();// 保存新闻类型列表
 
+    private static final int DELAY_TIME = 1200;
+    private static final int  WHAT_DELAY_REQUEST = 0x20;
+    private Handler handler;
+
     public DiscoveryFragment() {
         // Required empty public constructor
+    }
+
+    public static class MyHandler extends Handler{
+        WeakReference<DiscoveryFragment> weakReference;
+
+        public MyHandler(DiscoveryFragment fragment){
+            weakReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            DiscoveryFragment fragment = weakReference.get();
+            if (fragment != null){
+                switch (msg.what){
+                    case WHAT_DELAY_REQUEST:
+                        fragment.setTabs();
+                        break;
+                }
+            }
+        }
     }
 
     private TitleListener titleListener;
@@ -156,8 +183,7 @@ public class DiscoveryFragment extends BaseFragment {
                         slidingTabLayout.getTitleView(i).setTypeface(Typeface.DEFAULT);
                     }
                 }
-                baseTitle = slidingTabLayout.getTitleView(position).getText().toString();
-                onTitleSet();
+                onTitleSet(slidingTabLayout.getTitleView(position).getText().toString());
             }
 
             @Override
@@ -173,6 +199,10 @@ public class DiscoveryFragment extends BaseFragment {
      * 数据初始化
      */
     private void initData() {
+
+        if (handler == null){
+            handler = new MyHandler(this);
+        }
 
         // 获取新闻类型列表
         final NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
@@ -196,7 +226,8 @@ public class DiscoveryFragment extends BaseFragment {
                         newList.add(new Object[]{typeId, typeName});
                     }
 
-                    setTabs();
+                    // 有 qps 为 1 的限制，故延迟 1s 再列表数据
+                    handler.sendEmptyMessageDelayed(WHAT_DELAY_REQUEST, DELAY_TIME);
                 }catch (Exception e){
                     e.printStackTrace();
                     ToastUtil.showToast(getContext(), "数据异常，请稍后重试");
@@ -216,8 +247,7 @@ public class DiscoveryFragment extends BaseFragment {
         if (newsFragments.size() == 0){
             // 显示超时刷新 icon
             iv_discovery_timeout.setVisibility(View.VISIBLE);
-            baseTitle = getResources().getString(R.string.app_name);
-            onTitleSet();
+            onTitleSet(getResources().getString(R.string.app_name));
         }
     }
 
@@ -235,13 +265,16 @@ public class DiscoveryFragment extends BaseFragment {
      */
     private void setTabs() {
         for (int i = 0;i < newList.size();i++){
-            String typeId = String.valueOf(newList.get(i)[0]);
+            String typeId = String.valueOf(newList.get(i)[0]);// 509 510
             String typeName = String.valueOf(newList.get(i)[1]);
-            if (!TextUtils.isEmpty(typeName) && !typeName.contains("视频")){
+            if (!TextUtils.isEmpty(typeName) && !typeName.contains("视频")
+            && !typeId.equals("509")
+            && !typeId.equals("510")){
                 tabEntitys.add(new TabEntity(typeName));
                 NewsFragment newsFragment = NewsFragment.newInstance(typeId, typeName);
                 newsFragments.add(newsFragment);
             }
+
         }
 
         if (newsFragments.size() != 0) {
@@ -263,8 +296,7 @@ public class DiscoveryFragment extends BaseFragment {
             slidingTabLayout.getTitleView(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
             // 初始化第一个tab内容为标题
-            baseTitle = slidingTabLayout.getTitleView(0).getText().toString();
-            onTitleSet();
+            onTitleSet(slidingTabLayout.getTitleView(0).getText().toString());
         }
 
     }

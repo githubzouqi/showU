@@ -127,9 +127,8 @@ public class MineFragment extends BaseFragment {
     }
 
     @Override
-    public void onTitleSet() {
-        baseTitle = getResources().getString(R.string.str_mine);
-        super.onTitleSet();
+    public void onTitleSet(String mBaseTitle) {
+        super.onTitleSet(getResources().getString(R.string.str_mine));
     }
 
     // 初始化数据

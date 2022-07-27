@@ -185,10 +185,9 @@ public class NewsFragment extends BaseFragment {
     }
 
     @Override
-    public void onTitleSet() {
+    public void onTitleSet(String mBaseTitle) {
        if (isVisible){
-           baseTitle = typeName;
-           super.onTitleSet();
+           super.onTitleSet(typeName);
        }
     }
 

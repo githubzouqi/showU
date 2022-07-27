@@ -374,9 +374,8 @@ public class ToolLogisticsFragment extends BaseFragment {
     }
 
     @Override
-    public void onTitleSet() {
-        baseTitle = type;
-        super.onTitleSet();
+    public void onTitleSet(String mBaseTitle) {
+        super.onTitleSet(type);
     }
 
     @Override
