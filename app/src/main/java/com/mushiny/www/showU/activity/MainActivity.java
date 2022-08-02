@@ -533,7 +533,7 @@ public class MainActivity extends BaseActivity {
 
             boolean canBack = false;
             if (getBackStackEntryCount() == 1){
-                ((BaseFragment) mCurrentFragment).onTitleSet();
+                ((BaseFragment) mCurrentFragment).onTitleSet("");
                 visibleTab();
             }
 

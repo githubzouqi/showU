@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.view.menu.MenuView;
+import android.text.TextUtils;
 
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.activity.MainActivity;
@@ -60,7 +61,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        onTitleSet();
+        onTitleSet("");
         // 首次初始化，默认可见并开启友盟统计
         if (isFirstInit){
             isVisible = true;
@@ -76,7 +77,10 @@ public class BaseFragment extends Fragment {
 
     }
 
-    public void onTitleSet(){
+    public void onTitleSet(String mBaseTitle){
+        if (!TextUtils.isEmpty(mBaseTitle)){
+            baseTitle = mBaseTitle;
+        }
         setTopTitle();
     }
 
@@ -95,7 +99,7 @@ public class BaseFragment extends Fragment {
         if (!hidden){
             isVisible = true;// 用户可见
             MobclickAgent.onPageStart(getClass().getName());
-            onTitleSet();
+            onTitleSet("");
         }else {
             isVisible = false;
             MobclickAgent.onPageEnd(getClass().getName());

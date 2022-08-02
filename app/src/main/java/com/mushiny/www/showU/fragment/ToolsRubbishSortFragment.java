@@ -249,8 +249,7 @@ public class ToolsRubbishSortFragment extends BaseFragment {
     }
 
     @Override
-    public void onTitleSet() {
-        baseTitle = tools_type;
-        super.onTitleSet();
+    public void onTitleSet(String mBaseTitle) {
+        super.onTitleSet(tools_type);
     }
 }

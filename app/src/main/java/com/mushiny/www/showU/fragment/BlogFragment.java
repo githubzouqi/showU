@@ -315,8 +315,7 @@ public class BlogFragment extends BaseFragment {
                 @Override
                 public void onReceivedTitle(WebView webView, String title) {
                     super.onReceivedTitle(webView, title);
-                    baseTitle = title;
-                    onTitleSet();
+                    onTitleSet(title);
                 }
             });
 
