@@ -76,7 +76,7 @@ public class DiscoveryFragment extends BaseFragment {
 
     private List<Object[]> newList = new ArrayList<>();// 保存新闻类型列表
 
-    private static final int DELAY_TIME = 1200;
+    private static final int DELAY_TIME = 200;
     private static final int  WHAT_DELAY_REQUEST = 0x20;
     private Handler handler;
 

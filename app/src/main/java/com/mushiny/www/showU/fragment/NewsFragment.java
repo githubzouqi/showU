@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.mushiny.www.showU.R;
 import com.mushiny.www.showU.activity.MainActivity;
@@ -59,12 +60,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewsFragment extends BaseFragment {
 
     private static final int WHAT_GET_NEWS = 0x30;
+    private static final int WHAT_DELAY_NEWLIST = 0x31;
+    private static final int WHAT_DELAY_TIME = 1000;
+
     private static final String TYPE_ID = "TYPE_ID";// 新闻类型 id
     private static final String TYPE_NAME = "TYPE_NAME";
 
     @BindView(R.id.recycler_view_news)RecyclerView recycler_view_news;
     @BindView(R.id.ptr_frame_news)PtrFrameLayout ptr_frame_news;
     @BindView(R.id.iv_news_timeout)ImageView iv_news_timeout;
+    @BindView(R.id.linear_news_skeleton) LinearLayout linear_news_skeleton;// 骨架布局
 
     private List<NewsEntity.DataBean> dataBeans = new ArrayList<>();// 保存新闻实体
     private NewsAdapter adapter = null;
@@ -72,6 +77,7 @@ public class NewsFragment extends BaseFragment {
     private String typeId = ""; //
     private String typeName = "OpenMe";
     private int page = 1;// 从1开始
+    private boolean isFirstLoadData = true;
 
     private String TAG = "NewsFragment";
     private Handler handler = new MyHandler(this);
@@ -88,6 +94,10 @@ public class NewsFragment extends BaseFragment {
             NewsFragment fragment = weakReference.get();
             if (fragment != null){
                 switch (msg.what){
+                    case WHAT_DELAY_NEWLIST:
+                        String mTypeId = String.valueOf(msg.obj);
+                        fragment.getNews(mTypeId);
+                        break;
                     case WHAT_GET_NEWS:
                         fragment.display();
                         break;
@@ -124,6 +134,7 @@ public class NewsFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LogUtil.e(TAG, ":> onCreateView");
         if (view == null){
             view = inflater.inflate(R.layout.fragment_news, container, false);
         }
@@ -145,7 +156,6 @@ public class NewsFragment extends BaseFragment {
             typeId = getArguments().getString(TYPE_ID, "");
             typeName = getArguments().getString(TYPE_NAME, "OpenMe");
         }
-
     }
 
     /**
@@ -155,7 +165,7 @@ public class NewsFragment extends BaseFragment {
         PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_frame_news);
         PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_frame_news, PtrUtil
                 .DEFAULT_COLOR);
-        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
+//        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
         ptr_frame_news.setMode(PtrFrameLayout.Mode.REFRESH);// 设置模式
 
     }
@@ -201,6 +211,15 @@ public class NewsFragment extends BaseFragment {
                 @Override
                 public void onRefreshBegin(PtrFrameLayout frame) {// 下拉刷新
                     page = 1;
+                    if (isFirstLoadData){
+                        Message message = handler.obtainMessage();
+                        message.obj = typeId;
+                        message.what = WHAT_DELAY_NEWLIST;
+                        handler.sendMessageDelayed(message, WHAT_DELAY_TIME);
+                        isFirstLoadData = false;
+                        return;
+                    }
+
                     getNews(typeId);
                     LogUtil.e(TAG, ":> onRefreshBegin - " + typeId);
                 }
@@ -209,7 +228,6 @@ public class NewsFragment extends BaseFragment {
             // 调用该方法会触发 onRefreshBegin 回调
             PtrUtil.newInstance(getContext()).autoRefresh(ptr_frame_news);
 
-//            loadData();
             reset();
         }
     }
@@ -246,6 +264,7 @@ public class NewsFragment extends BaseFragment {
             @Override
             public void onResponse(Call<NewsEntity> call, Response<NewsEntity> response) {
                 try {
+                    linear_news_skeleton.setVisibility(View.GONE);
                     if (response.code() != 200){
                         showFailUi();
                         ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
@@ -297,10 +316,9 @@ public class NewsFragment extends BaseFragment {
     }
 
     private void display() {
+        recycler_view_news.setVisibility(View.VISIBLE);
         // 自动刷新取消显示
         ptr_frame_news.refreshComplete();
-        recycler_view_news.setVisibility(View.VISIBLE);
-        ptr_frame_news.setMode(PtrFrameLayout.Mode.BOTH);
 
         if (adapter != null && dataBeans.size() != 0){
             adapter.notifyDataSetChanged();
@@ -344,11 +362,15 @@ public class NewsFragment extends BaseFragment {
                 LinearLayoutManager.VERTICAL, false));
         recycler_view_news.setAdapter(adapter);
         recycler_view_news.setItemAnimator(new DefaultItemAnimator());
+
+
+        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_news);
         ptr_frame_news.setMode(PtrFrameLayout.Mode.BOTH);
     }
 
     private void showFailUi(){
         ptr_frame_news.refreshComplete();
+        linear_news_skeleton.setVisibility(View.GONE);
         if (dataBeans.size() == 0){
             iv_news_timeout.setVisibility(View.VISIBLE);
         }
