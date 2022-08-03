@@ -55,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -80,7 +81,6 @@ import retrofit2.http.Url;
  */
 public class NewsDetailFragment extends BaseFragment {
 
-
     @BindView(R.id.linear_new_detail)LinearLayout linear_new_detail;
     @BindView(R.id.tv_new_detail) TextView tv_new_detail;
     @BindView(R.id.tv_detail_title) TextView tv_detail_title;
@@ -89,13 +89,12 @@ public class NewsDetailFragment extends BaseFragment {
     @BindView(R.id.ptr_detail) PtrFrameLayout ptr_detail;
 
     private final static int WHAT_LOAD_HTML_TEXT = 0x80;
+    private final static int WHAT_LOAD_DATA_AGAIN = 0x81;
 
     private static final String TITLE = "TITLE";
     private static final String SOURCE_TIME = "SOURCE_TIME";
     private static final String IMGURL = "IMGURL";
     public final static String NEWS_ID = "NEWS_ID";
-
-    public final static String TAG = NewsDetailFragment.class.getSimpleName();
 
     private String title = "";
     private String  source_time= "";
@@ -103,32 +102,39 @@ public class NewsDetailFragment extends BaseFragment {
     private String newsId = "";
     private List<String[]> images= new ArrayList<>();// 图片集合
 
+    public final static String TAG = NewsDetailFragment.class.getSimpleName();
+
     private RequestOptions options;
     private int w = 300;
     private int h = 300;
 
+    private Handler handler = new MyHandler(this);
     public NewsDetailFragment() {
         // Required empty public constructor
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler(){
+    static class MyHandler extends Handler{
+        private WeakReference<NewsDetailFragment> weakReference;
+        public MyHandler(NewsDetailFragment fragment){
+            this.weakReference = new WeakReference<>(fragment);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
-                case WHAT_LOAD_HTML_TEXT:
-
-                    CharSequence content = (CharSequence) msg.obj;
-                    if (!TextUtils.isEmpty(content)){
-                        tv_new_detail.setText(content);
-                        ptr_detail.refreshComplete();
-//                        ptr_detail.setMode(PtrFrameLayout.Mode.NONE);
-                    }
-
-                    break;
+            NewsDetailFragment fragment = weakReference.get();
+            if (fragment != null){
+                switch (msg.what){
+                    case WHAT_LOAD_HTML_TEXT:
+                        String content = String.valueOf(msg.obj);
+                        fragment.load_html_text(content);
+                        break;
+                    case WHAT_LOAD_DATA_AGAIN:// load data again
+                        fragment.loadData();
+                        break;
+                }
             }
         }
-    };
+    }
 
 
     /**
@@ -175,7 +181,7 @@ public class NewsDetailFragment extends BaseFragment {
 
         PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_detail);
         PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_detail, PtrUtil.DEFAULT_COLOR);
-        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_detail);
+//        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_detail);
         ptr_detail.setMode(PtrFrameLayout.Mode.REFRESH);
         PtrUtil.newInstance(getContext()).autoRefresh(ptr_detail);
 
@@ -227,7 +233,7 @@ public class NewsDetailFragment extends BaseFragment {
         NetworkInterface anInterface = Retrofit2Util.createWithROLLHeader(NetworkInterface.class);
         final Map<String, Object> param = new HashMap<>();
         param.put("newsId", newsId);
-        LogUtil.e("TAG", "newsId = " + newsId);
+        LogUtil.e(TAG, "newsId = " + newsId);
         Call<ResponseBody> call = anInterface.getNewsDetail(param);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -235,7 +241,7 @@ public class NewsDetailFragment extends BaseFragment {
 
                 try {
                     if (response.code() != 200){
-                        ToastUtil.showToast(getContext(), "服务器异常，请稍后重试");
+                        loadDataFail();
                         return;
                     }
                     JSONObject obj = new JSONObject(new String(response.body().bytes()));
@@ -252,9 +258,9 @@ public class NewsDetailFragment extends BaseFragment {
                         Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
                                 .into(iv_detail);
                         iv_detail.setVisibility(View.VISIBLE);
+                        loadDataFail();
 
-                        ptr_detail.refreshComplete();
-                        ToastUtil.showToast(getContext(), obj.optString("msg"));
+//                        ToastUtil.showToast(getContext(), obj.optString("msg"));
 //                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
 //                        .create().show();
                         return;
@@ -297,11 +303,25 @@ public class NewsDetailFragment extends BaseFragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                ptr_detail.refreshComplete();
-                ToastUtil.showToast(getContext(),"网络异常，请稍后重试");
+                loadDataFail();
             }
         });
 
+    }
+
+    private boolean isFirstLoadData = true;
+    // load data fail
+    private void loadDataFail(){
+        if (!isFirstLoadData){
+            ptr_detail.refreshComplete();
+            ToastUtil.showToast(getActivity(), "load data fail!");
+            return;
+        }
+        // first load data fail, then load data try again.
+        isFirstLoadData = false;
+        Message message = handler.obtainMessage();
+        message.what = WHAT_LOAD_DATA_AGAIN;
+        handler.sendMessage(message);
     }
 
     /**
@@ -317,7 +337,7 @@ public class NewsDetailFragment extends BaseFragment {
             String size = images.get(i)[2];// "1014*760"
 
             String htmlImg = "<img src=\"" + imgSrc + "\"/>";
-//            LogUtil.e("TAG", "htmlImg = " + htmlImg);
+//            LogUtil.e(TAG, "htmlImg = " + htmlImg);
             content = content.replace(position, htmlImg);
         }
 
@@ -333,6 +353,7 @@ public class NewsDetailFragment extends BaseFragment {
         new Thread(){
             @Override
             public void run() {
+                // Retrieves images for HTML [ &lt;img&gt; == <img> ] tags
                 final Html.ImageGetter getter = new Html.ImageGetter() {
                     @Override
                     public Drawable getDrawable(String source) {
@@ -346,7 +367,7 @@ public class NewsDetailFragment extends BaseFragment {
                             InputStream inputStream = connection.getInputStream();
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             drawable = new BitmapDrawable(getResources(), bitmap);
-                            LogUtil.e("TAG", "Html.ImageGetter url = " + url);
+                            LogUtil.e(TAG, "Html.ImageGetter url = " + url);
                             inputStream.close();
                             if (drawable != null) {
                                 int w = 400;
@@ -355,13 +376,13 @@ public class NewsDetailFragment extends BaseFragment {
                                     String imgSrc = images.get(i)[1];
                                     String size = images.get(i)[2];
                                     String[] arr = size.split(Pattern.quote("*"));
-                                    LogUtil.e("TAG", "imgSrc " + i + " = " + imgSrc);
+                                    LogUtil.e(TAG, "imgSrc " + i + " = " + imgSrc);
                                     if (url.toString().equals(imgSrc)){
                                         w = Integer.parseInt(arr[0]);
                                         h = Integer.parseInt(arr[1]);
                                     }
                                 }
-                                LogUtil.e("TAG", "w,h = " + w + "," + h);
+                                LogUtil.e(TAG, "w,h = " + w + "," + h);
                                 drawable.setBounds(0, 0, w, h);
                             } else if (drawable == null) {
                                 return null;
@@ -383,6 +404,13 @@ public class NewsDetailFragment extends BaseFragment {
             }
         }.start();
 
+    }
+
+    private void load_html_text(String content){
+        if (!TextUtils.isEmpty(content)){
+            tv_new_detail.setText(content);
+            ptr_detail.refreshComplete();
+        }
     }
 
     @Override
