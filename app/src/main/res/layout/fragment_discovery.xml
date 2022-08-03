@@ -45,7 +45,7 @@
 
     <ImageView
         android:id="@+id/iv_discovery_timeout"
-        android:visibility="visible"
+        android:visibility="gone"
         android:clickable="true"
         android:src="@mipmap/refresh"
         android:foreground="@drawable/water_foreground_whte"
