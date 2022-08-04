@@ -66,7 +66,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
 
         if (options == null){
             options = new RequestOptions();
-            options.placeholder(R.mipmap.app_icon);// 设置占位图
+            options.placeholder(R.drawable.news_placeholder);// 设置占位图
             options.error(R.mipmap.load_error);
             options.override(w,h);// 指定加载图片大小
             options.fitCenter();

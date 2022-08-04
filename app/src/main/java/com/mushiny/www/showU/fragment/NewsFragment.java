@@ -354,7 +354,7 @@ public class NewsFragment extends BaseFragment {
                 NewsDetailFragment newsDetailFragment = NewsDetailFragment
                         .newInstance(newsId, title, source_time, imgUrl);
                 showFragment(getActivity(), NewsFragment.this,
-                        newsDetailFragment, NewsDetailFragment.TAG);
+                        newsDetailFragment, NewsDetailFragment.tag);
             }
         });
 
