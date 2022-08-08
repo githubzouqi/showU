@@ -322,7 +322,7 @@ public class NewsDetailFragment extends BaseFragment {
         isFirstLoadData = false;
         Message message = handler.obtainMessage();
         message.what = WHAT_LOAD_DATA_AGAIN;
-        handler.sendMessage(message);
+        handler.sendMessageDelayed(message, 1000);
     }
 
     /**
