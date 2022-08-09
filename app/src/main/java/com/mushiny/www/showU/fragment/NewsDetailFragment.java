@@ -207,7 +207,7 @@ public class NewsDetailFragment extends BaseFragment {
         if (options == null){
             options = new RequestOptions();
             options.placeholder(R.drawable.news_placeholder);// 设置占位图
-            options.error(R.mipmap.load_error);// 加载失败占位图
+            options.error(R.mipmap.news_placeholder);// 加载失败占位图
             options.override(w,h);// 指定加载图片大小
             options.fitCenter();
             options.diskCacheStrategy(DiskCacheStrategy.ALL);// 缓存所有：原型、转换后的
@@ -250,16 +250,6 @@ public class NewsDetailFragment extends BaseFragment {
                         // 请求超时，请稍后再试
                         tv_detail_title.setText(title);
                         tv_detail_source_time.setText(source_time);
-
-                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) iv_detail
-                                .getLayoutParams();
-                        params.width = w;
-                        params.height = h;
-                        iv_detail.setLayoutParams(params);
-                        Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
-                                .into(iv_detail);
-                        iv_detail.setVisibility(View.VISIBLE);
-                        loadDataFail();
 
 //                        ToastUtil.showToast(getContext(), obj.optString("msg"));
 //                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
@@ -323,6 +313,18 @@ public class NewsDetailFragment extends BaseFragment {
         Message message = handler.obtainMessage();
         message.what = WHAT_LOAD_DATA_AGAIN;
         handler.sendMessageDelayed(message, 1000);
+    }
+
+    private void showLoadFailImg(){
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) iv_detail
+                .getLayoutParams();
+        params.width = w;
+        params.height = h;
+        iv_detail.setLayoutParams(params);
+        Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
+                .into(iv_detail);
+        iv_detail.setVisibility(View.VISIBLE);
+        loadDataFail();
     }
 
     /**
