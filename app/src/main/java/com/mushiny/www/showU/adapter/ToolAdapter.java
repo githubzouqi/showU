@@ -50,7 +50,7 @@ public class ToolAdapter extends RecyclerView.Adapter<ToolAdapter.MyViewHolder>{
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
         if (options == null){
             options = new RequestOptions();
-            options.placeholder(R.mipmap.ic_launcher_round);// 设置占位图
+            options.placeholder(R.drawable.news_placeholder);// 设置占位图
 //            options.override(200,200);// 指定加载图片大小
             options.override(Target.SIZE_ORIGINAL);// 加载图片原始尺寸
 //            options.skipMemoryCache(true);// 禁用内存缓存。默认是开启的
