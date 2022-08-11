@@ -269,7 +269,8 @@ public class DiscoveryFragment extends BaseFragment {
             String typeName = String.valueOf(newList.get(i)[1]);
             if (!TextUtils.isEmpty(typeName) && !typeName.contains("视频")
             && !typeId.equals("509")
-            && !typeId.equals("510")){
+            && !typeId.equals("510")
+                    && !typeId.equals("525")){
                 tabEntitys.add(new TabEntity(typeName));
                 NewsFragment newsFragment = NewsFragment.newInstance(typeId, typeName);
                 newsFragments.add(newsFragment);

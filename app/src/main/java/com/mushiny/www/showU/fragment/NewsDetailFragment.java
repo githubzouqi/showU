@@ -102,7 +102,8 @@ public class NewsDetailFragment extends BaseFragment {
     private String newsId = "";
     private List<String[]> images= new ArrayList<>();// 图片集合
 
-    public final static String TAG = NewsDetailFragment.class.getSimpleName();
+    private String TAG = "NewsDetailFragment";
+    public final static String tag = NewsDetailFragment.class.getSimpleName();
 
     private RequestOptions options;
     private int w = 300;
@@ -125,7 +126,7 @@ public class NewsDetailFragment extends BaseFragment {
             if (fragment != null){
                 switch (msg.what){
                     case WHAT_LOAD_HTML_TEXT:
-                        String content = String.valueOf(msg.obj);
+                        CharSequence content = (CharSequence) msg.obj;
                         fragment.load_html_text(content);
                         break;
                     case WHAT_LOAD_DATA_AGAIN:// load data again
@@ -205,8 +206,8 @@ public class NewsDetailFragment extends BaseFragment {
 
         if (options == null){
             options = new RequestOptions();
-            options.placeholder(R.mipmap.app_icon);// 设置占位图
-            options.error(R.mipmap.load_error);// 加载失败占位图
+            options.placeholder(R.drawable.news_placeholder);// 设置占位图
+            options.error(R.mipmap.news_placeholder);// 加载失败占位图
             options.override(w,h);// 指定加载图片大小
             options.fitCenter();
             options.diskCacheStrategy(DiskCacheStrategy.ALL);// 缓存所有：原型、转换后的
@@ -250,16 +251,6 @@ public class NewsDetailFragment extends BaseFragment {
                         tv_detail_title.setText(title);
                         tv_detail_source_time.setText(source_time);
 
-                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) iv_detail
-                                .getLayoutParams();
-                        params.width = w;
-                        params.height = h;
-                        iv_detail.setLayoutParams(params);
-                        Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
-                                .into(iv_detail);
-                        iv_detail.setVisibility(View.VISIBLE);
-                        loadDataFail();
-
 //                        ToastUtil.showToast(getContext(), obj.optString("msg"));
 //                        new AlertDialog.Builder(getContext()).setMessage(obj.optString("msg"))
 //                        .create().show();
@@ -294,9 +285,9 @@ public class NewsDetailFragment extends BaseFragment {
 
 
                 }catch (Exception e){
-                    ptr_detail.refreshComplete();
+                    loadDataFail();
                     e.printStackTrace();
-                    ToastUtil.showToast(getContext(),"详情数据异常，请稍后重试");
+//                    ToastUtil.showToast(getContext(),"详情数据异常，请稍后重试");
                 }
 
             }
@@ -321,7 +312,19 @@ public class NewsDetailFragment extends BaseFragment {
         isFirstLoadData = false;
         Message message = handler.obtainMessage();
         message.what = WHAT_LOAD_DATA_AGAIN;
-        handler.sendMessage(message);
+        handler.sendMessageDelayed(message, 1000);
+    }
+
+    private void showLoadFailImg(){
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) iv_detail
+                .getLayoutParams();
+        params.width = w;
+        params.height = h;
+        iv_detail.setLayoutParams(params);
+        Glide.with(NewsDetailFragment.this).load(imgUrl).apply(options)
+                .into(iv_detail);
+        iv_detail.setVisibility(View.VISIBLE);
+        loadDataFail();
     }
 
     /**
@@ -406,7 +409,7 @@ public class NewsDetailFragment extends BaseFragment {
 
     }
 
-    private void load_html_text(String content){
+    private void load_html_text(CharSequence content){
         if (!TextUtils.isEmpty(content)){
             tv_new_detail.setText(content);
             ptr_detail.refreshComplete();

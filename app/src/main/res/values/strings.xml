@@ -35,7 +35,7 @@
     <string name="default_loading_text">加载中...</string>
 
     <!--    fragment_mine.xml-->
-    <string name="default_name">UHello</string>
+    <string name="default_name">OpenMe</string>
     <string name="default_birth">破壳日 [1994/09/23]</string>
     <string name="mine_weather">天气查询</string>
     <string name="mine_rubbish_sort">垃圾分类</string>

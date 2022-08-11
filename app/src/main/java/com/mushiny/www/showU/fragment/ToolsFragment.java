@@ -98,7 +98,7 @@ public class ToolsFragment extends BaseFragment {
     private void setPtrFrame() {
         PtrUtil.newInstance(getContext()).set_1_BaseSetting(ptr_frame_tool);
         PtrUtil.newInstance(getContext()).set_2_MaterialHeader(ptr_frame_tool, PtrUtil.DEFAULT_COLOR);
-        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_tool);
+//        PtrUtil.newInstance(getContext()).set_3_Footer(ptr_frame_tool);
         ptr_frame_tool.setMode(PtrFrameLayout.Mode.REFRESH);
     }
 
