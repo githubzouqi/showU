@@ -18,6 +18,8 @@ jobs:
         with:
           java-version:  1.8
       - name:  build with gradle
-        run: ./gradlew
+        run: |
+          sed -i 's/\r//' gradlew
+          ./gradlew
       
   
