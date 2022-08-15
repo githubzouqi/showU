@@ -22,7 +22,7 @@ jobs:
       - name:  build with gradle
         run:  |
           echo "执行 gradle 任务打包"
-          bash ./gradlew app:assemblePeaceRelease
+          bash gradlew app:assemblePeaceRelease
           
       - name:  upload apk
         uses:  actions/upload-artifact@master
