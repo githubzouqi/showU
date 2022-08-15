@@ -19,7 +19,16 @@ jobs:
           java-version:  1.8
       - name:  build with gradle
         run: |
+          echo "当前执行命令目录如下 》"
+          pwd
+          echo "去除 \r 字符 》"
           sed -i 's/\r//' gradlew
-          ./gradlew
-      
+          echo "执行 task 进行打包"
+          ./gradlew assemblePeaceRelease
+      - name:  upload apk
+        uses:  actions/upload-artifact@master
+        if:  always()
+        with:
+          name:  showu-peace-release
+          path: ${{github.workspace}}/app/build/outputs/apk/release
   
