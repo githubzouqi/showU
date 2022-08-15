@@ -26,7 +26,7 @@ android {
         multiDexEnabled true
     }
 
-    ndkVersion '16.1.4479499'
+    ndkVersion '23.2.8568313'
 
     buildTypes {
         release {
