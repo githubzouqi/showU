@@ -45,7 +45,7 @@ android {
     // 渠道风味
     flavorDimensions 'dimensions'
     productFlavors {
-        baidu {
+        peace {
             dimension = 'dimensions'
             signingConfig signingConfigs.release
         }
