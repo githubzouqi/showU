@@ -19,12 +19,15 @@ android {
         versionCode 9
         versionName "3.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-//        ndk {
-//            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
-//        }
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+        }
         // Enabling multidex support.
         multiDexEnabled true
     }
+
+    ndkVersion '16.1.4479499'
+
     buildTypes {
         release {
             minifyEnabled true
