@@ -18,9 +18,7 @@ jobs:
         with:
           java-version:  1.8
       - name:  build with gradle
-        run: |
-          echo "执行 gradle 任务打包"
-          bash ./gradlew app:assemblePeaceRelease
+        run: bash ./gradlew assembleRelease
       - name:  upload apk
         uses:  actions/upload-artifact@master
         if:  always()
