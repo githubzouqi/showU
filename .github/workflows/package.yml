@@ -18,12 +18,6 @@ jobs:
         with:
           java-version:  1.8
       - name:  build with gradle
-        run: bash ./gradlew assembleRelease
-      - name:  upload apk
-        uses:  actions/upload-artifact@master
-        if:  always()
-        with:
-          name:  showu-peace-release
-          path: ${{github.workspace}}/app/build/outputs/apk/release
+        run: pwd
       
   
