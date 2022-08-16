@@ -26,8 +26,6 @@ android {
         multiDexEnabled true
     }
 
-    ndkVersion '23.2.8568313'
-
     buildTypes {
         release {
             minifyEnabled true
