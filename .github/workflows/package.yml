@@ -24,11 +24,12 @@ jobs:
           echo "去除 \r 字符 》"
           sed -i 's/\r//' gradlew
           echo "执行 task 进行打包"
+          chmod +x gradlew
           ./gradlew assemblePeaceRelease
       - name:  upload apk
         uses:  actions/upload-artifact@master
         if:  always()
         with:
-          name:  showu-peace-release
-          path: ${{github.workspace}}/app/build/outputs/apk/release
+          name:  showu-release-outputs
+          path: ${{github.workspace}}/app/build/outputs
   

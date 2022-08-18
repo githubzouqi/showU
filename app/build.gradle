@@ -24,9 +24,9 @@ android {
 //        }
         // Enabling multidex support.
         multiDexEnabled true
-    }
 
-    ndkVersion '23.2.8568313'
+//        ndkVersion '23.2.8568313'
+    }
 
     buildTypes {
         release {
